@@ -1,13 +1,9 @@
-Homebridge-Tuya-Platform
-========================
-[中文版](README_zh.md) | [English](README.md)
-
 本文介绍如何在 macOS 上如何开发和使用涂鸦官方 HomeBridge 插件。
 
-## HomeKit 介绍
+## 什么是 HomeKit
 HomeKit 是苹果 2014 年发布的智能家居平台。借助 HomeKit，用户可以使用苹果设备控制家里所有标有“Works with Apple HomeKit”（兼容 Apple HomeKit）的设备。这些设备包括灯、锁、恒温器和智能插头等。
 
-## HomeBridge 是什么
+## 什么是 HomeBridge
 HomeBridge 是一个轻量级的 NodeJS 服务器，可以在家庭网络上运行。它模拟了 iOS HomeKit API，支持 HomeBridge 插件，提供了各种第三方智能家居设备 API 和 HomeKit 之间的桥梁。
 您可以轻松地通过 HomeBridge 来把第三方智能设备接入 HomeKit。在使用和开发 HomeBridge 插件之前，建议查看 [HomeBridge 官方介绍](https://github.com/homebridge/homebridge/blob/master/README.md)。
 
@@ -54,7 +50,6 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
     ```
     cd ./node_modules/homebridge-tuya-platform
     ```
-    ![](https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/goat/20210422/0ada6960db6b4ea2957865c28096dec8.png)
 2. 进入 config 目录。
     ```
     cd ./config 
@@ -64,7 +59,7 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
     vim config.json
     ```
 4. 在 `options` 中填入注册信息准备过程中获取到的用户名、密码、Access ID 和 Access Secret。其中，`lang` 默认为 en，`endPoint` 为当前 Tuya open API 服务的域名。
-        <img src="https://images.tuyacn.com/app/Hanh/config.json.png" alt="编辑注册信息" style="zoom:100%;" />
+        <img src="https://images.tuyacn.com/app/Hanh/config3.json.png" alt="编辑注册信息" style="zoom:100%;" />
 5. 保存并退出编辑。
 
 ## 启动 Tuya HomeBridge 插件
@@ -81,11 +76,9 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
 打开苹果设备，在 App Store 中安装苹果官方“家庭” 应用软件，通过扫描启动插件步骤中的二维码，或者输入 8 位数字的 Pin 值（Pin 值也可在 Config.json 文件中找到）来添加配件。
 
 ## 开发插件与贡献代码
-
 您可以 fork 仓库代码分支，按照安装、配置、使用 tuya 插件的步骤，将代码启动起来。
 
 ### 开发环境搭建
-------------------------
 ```
 —-VSCode
 —-engines
@@ -99,7 +92,6 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
 ```
 
 ### 品类扩充
-------------------------
 #### 一、插件的实现部分的原理简介
 <img src="https://images.tuyacn.com/app/Hanh/principleflowchart.png" alt="7f02e6c5e6654a882713361ae88a679c" style="zoom:130%;" />
 
@@ -113,11 +105,11 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
 * 文件tuyamqttapi.js：支持 MQTT 服务。
 
 
-### FAQ
-#### 常见安装问题
+## 常见安装问题
+
 请见 [HomeBridge](https://github.com/homebridge/homebridge/blob/master/README.md) Common Issues。
 
-### Tuya Open API
+## Tuya Open API
 - login(username, password) 登录
 - getDeviceList() 获取账号资产下的所有设备（设备对应Accessory）
 - get_assets() 获取人员可操作资产列表
@@ -129,15 +121,15 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
 - getDeviceListStatus(devIds = []) 批量获取设备状态
 - sendCommand(deviceID, params) 下发设备命令
 
-### MQTT
+## MQTT
 - start() 启动mqtt
 - stop() 停止mqtt
 - addMessageListener(listener) 添加回调函数
 - removeMessageListener(listener) 移除回调函数
 
-### 问题反馈
+## 问题反馈
 
 您可以通过 **Github Issue** 或通过 [**工单**](https://service.console.tuya.com) 来进行反馈您所碰到的问题。
 
-### LICENSE
-更多信息请参考[LICENSE](LICENSE)文件
+## LICENSE
+更多信息请参考 [LICENSE](LICENSE) 文件。
