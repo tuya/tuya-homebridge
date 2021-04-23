@@ -53,7 +53,6 @@ See the section **Before use** in [tuya-iot-app-sdk-python](https://github.com/t
         ```
         npm install homebridge-tuya-platform
         ```
-      ![Install plugins](https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/goat/20210422/7f7c8a97e9d74a32aca805371cce532f.png)
    2. Wait for the plugin to install and check whether the installation is successful. For more information, see the video below.
 
       [![asciicast](https://asciinema.org/a/t6GY37mDPbfeG6AXVxuwROBlC.svg)](https://asciinema.org/a/t6GY37mDPbfeG6AXVxuwROBlC?autoplay=1)
@@ -65,7 +64,7 @@ Before use, you need to configure the `config.json` file in the Homebridge plugi
     ```
     cd ./node_modules/homebridge-tuya-platform
     ```
-   ![](https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/goat/20210422/0ada6960db6b4ea2957865c28096dec8.png)
+
 2. Go to the directory `config`.
     ```
     cd ./config 
@@ -75,7 +74,9 @@ Before use, you need to configure the `config.json` file in the Homebridge plugi
     vim config.json
     ```
 4. In `options`, enter the `username`, `password`, `accessId`, and `accessKey` that you get from the [Tuya IoT Platform](https://iot.tuya.com/). The `lang` defaults to `en`. The `endPoint` is the domain name of the currently used Tuya Open API.
-      <img src="https://images.tuyacn.com/app/Hanh/config.json.png" alt="Edit registration information" style="zoom:100%;" />
+      <img src="https://images.tuyacn.com/app/Hanh/config3.json.png" alt="Edit registration information" style="zoom:50%;" />
+
+
 5. Save and exit.
 
 ## Start Tuya Homebridge plugin
@@ -130,10 +131,8 @@ Fork Tuya's Homebridge repo in GitHub and follow the step-by-step tutorial to st
 * The `tuyamqttapi.js` file supports the MQTT service.
 
 
-## FAQ
 
-
-### Common issues
+## Common issues
 
 For more information about Homebridge installation, see the **Common Issues** in the [Homebridge](https://github.com/homebridge/homebridge/blob/master/README.md#common-issues) repo.
 
