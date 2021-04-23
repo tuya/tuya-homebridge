@@ -130,14 +130,14 @@ Fork Tuya's Homebridge repo in GitHub and follow the step-by-step tutorial to st
 * The `tuyamqttapi.js` file supports the MQTT service.
 
 
-### FAQ
+## FAQ
 
 
-#### Common issues
+### Common issues
 
 For more information about Homebridge installation, see the **Common Issues** in the [Homebridge](https://github.com/homebridge/homebridge/blob/master/README.md#common-issues) repo.
 
-### Tuya Open API
+## Tuya Open API
 
 - `login(username, password)`: Login to the Tuya IoT Platform.
 - `getDeviceList()`: Gets all the devices under an account's asset. (Devices correspond to accessories)
@@ -151,7 +151,7 @@ For more information about Homebridge installation, see the **Common Issues** in
 - `sendCommand(deviceID, params)`: Sends commands to a device.
 
 
-### MQTT
+## MQTT
 
 - `start()`: Starts MQTT.
 - `stop()`: Stops MQTT.
@@ -159,10 +159,10 @@ For more information about Homebridge installation, see the **Common Issues** in
 - `removeMessageListener(listener)`: Removes callbacks.
 
 
-### Feedback
+## Feedback
 
 You can use the **GitHub Issue** or [**tickets**](https://service.console.tuya.com) to provide feedback on any problems you encounter.
 
-### LICENSE
+## LICENSE
 
 For more information, see the [LICENSE](LICENSE) file.
