@@ -99,7 +99,7 @@ Open the Home app on your Apple device. Pair with Homebridge by scanning the QR 
 
 Fork Tuya's Homebridge repo in GitHub and follow the step-by-step tutorial to start the plugin service.
 
-### Set up the IDE
+### Set up development environment
 
 ```
 —-VSCode
