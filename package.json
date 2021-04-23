@@ -1,0 +1,24 @@
+{
+  "name": "homebridge-tuya-platform",
+  "version": "1.0.0",
+  "description": "Initial Plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "homebridge-plugin"
+  ],
+  "author": "huhuan",
+  "license": "ISC",
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "crypto-js": "^4.0.0",
+    "mqtt": "^4.2.6",
+    "uuid": "^8.3.2"
+  }
+}
