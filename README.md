@@ -1,102 +1,105 @@
 Homebridge-Tuya-Platform
 ========================
-[中文版](README_zh.md) | [English](README_en.md)
-
-HomeKit
-========================
-HomeKit is a smart home platform released by Apple in 2014. With HomeKit, users can control all of their home accessories labeled "Works with Apple HomeKit" using an iOS device. These include lights, locks, thermostats, smart plugs and other accessories.
-
-HomeBridge & value
-========================
-[HomeBridge](https://github.com/homebridge/homebridge/blob/master/README.md) is a lightweight NodeJS server you can run on your home network that emulates the iOS HomeKit API. It supports Plugins, which are community-contributed modules that provide a basic bridge from HomeKit to various 3rd-party APIs provided by manufacturers of "smart home" devices. (Mind reading this documentation before using and developing the HomeBridge plug-in) 
-
-Control terminal uniformity. Through HomeBridge, devices of different platforms (Xiaomi, Tuya, etc.) that do not support the HomeKit interface and protocol can be bridged to the same platform (HomeKit) for control and linkage, and integrated into the Apple ecosystem.
-
-In addition: if you only have a full set of Tuya products at home, in fact, it is more recommended to use the graffiti intelligent APP with more complete functions, rather than the audience of HomeBridge.
+[中文版](README_zh.md) | [English](README.md)
 
 
+In this tutorial, we will show you how to use and develop Tuya Homebridge plugins on macOS.
 
-User
-========================
-Smart home enthusiasts; There are more intelligent devices in the home; like to toss and play with electronic devices, and have certain skills (through simple technical tutorials, can install and use them)
+## What is HomeKit?
 
+HomeKit is Apple's smart home platform introduced in 2014. It allows users of Apple devices to securely and easily control any devices with a 'Works with Apple HomeKit' badge, such as lights, door locks, thermostats, outlets, and many more.
 
-Install & Use the plug-in
-========================
-What do you need to prepare
-------------------------
-#### I.Precondition
-Please see the BeforeUse of [tuya-iot-app-sdk-python](https://github.com/tuya/tuya-iot-app-sdk-python/blob/master/README.md) 
+## What is Homebridge?
 
-You need to register an account in the Tuya IoT platform, create the corresponding project in the cloud development module, and then create the assets, users and cloud applications under the account, and then you can get the corresponding user name, password, Access ID and Access Secret.
+Homebridge is a lightweight NodeJS server you can run on your home network that emulates the iOS HomeKit API. It supports plugins that provide a basic bridge from HomeKit to various third-party APIs provided by manufacturers of smart home devices. We recommend you check the [official Homebridge docs](https://github.com/homebridge/homebridge/blob/master/README.md) before getting started with Homebridge plugins.
 
-#### II.Hardware
-1. Used to install the plug-in, start the service. PC or Raspberry Pi or personal server.
-2. IoT Smart Devices
-3. Used for terminal control of HomeKit. iOS Devices.
+## Users
 
-#### III.Software
-1. Terminal (command line tools)
-2. Device distribution network (IoT APP network distribution tool Or WeChat applet) [IoT Network Distribution App](https://images.tuyacn.com/smart/docs/activate-tool-app-release.apk)
+If you are a smart home geek and have a bundle of devices from different platforms, this step-by-step tutorial will help you make devices HomeKit-enabled and then develop Tuya Homebridge plugins.
 
-Install
-------------------------
-#### The example On Mac
-#### I.Open the Terminal
-<img src="https://images.tuyacn.com/app/Hanh/commandlineEN.png" alt="7f02e6c5e6654a882713361ae88a679c" style="zoom:20%;" />
+## Preparation
 
-#### II.Install HomeBridge
-If you haven't already installed HomeBridge on your PC or Raspberry Pi or server, please to see [HomeBridge](https://github.com/homebridge/homebridge/blob/master/README.md) ,if already installed, please skip.
-#### III.Install Tuya HomeBridge Plugin
-If you encounter any problems with the installation, you may need to preface this command with sudo and change the permissions to administrator.
+### Registration
 
-Install.  
-Execute the command ``` npm install homebridge-tuya-platform ```
+See the section **Before use** in [tuya-iot-app-sdk-python](https://github.com/tuya/tuya-iot-app-sdk-python/blob/master/README.md#before-use), register an account on the [Tuya IoT Platform](https://iot.tuya.com), and get the required information. Basically, you need to create a Cloud project and complete the configuration of asset, user, and application. Then, you will get the username, password, Access ID, and Access Secret.
 
-Expo:
+### Hardware preparation
 
-[![asciicast](https://asciinema.org/a/t6GY37mDPbfeG6AXVxuwROBlC.svg)](https://asciinema.org/a/t6GY37mDPbfeG6AXVxuwROBlC?autoplay=1)
+| Hardware | Description |
+|:----|:----|
+| A computer, Raspberry Pi, or server | Install plugins and start Homebridge service. This demonstration runs on macOS. |
+| Smart devices | Demonstrate device integration and control.  |
+| An iOS device with the Home app installed | Control HomeKit-enabled devices.  |
 
+### Software preparation
 
-Configuration
-------------------------
-#### Configure the config.json file in the HomeBridge plug-in
-1. Execute the command ```cd ./node_modules/homebridge-tuya-platform```. Go to the homebridge-tuya-platform directory.
-2. Execute the command ```cd ./config ``` Go to the config directory.
-3. Execute the command```vim config.json```. Edit the config.json file.
-<img src="https://images.tuyacn.com/app/Hanh/config3.json.png" alt="7f02e6c5e6654a882713361ae88a679c" style="zoom:100%;" />
+| Software | Description |
+|:----|:----|
+| Command line interface | Use the one you like. We use the built-in **Terminal** on macOS. |
+| Pairing tool | [IoT App Pairing tool](https://images.tuyacn.com/smart/docs/activate-tool-app-release.apk) or WeChat Mini Program (mainland China only). |
 
-4. Enter the user name, password, Access ID, and Access Secret from the preconditions above in Options. The lang defaults to en, and the endPoint is the domain name of the current Tuya Open API service.
-5. Save And Exit.
+## Set up
 
-Expo:
+1. Open the Terminal.
 
-[![asciicast](https://asciinema.org/a/WHrp2iHoelPTyYLFijQLRG7Jr.svg)](https://asciinema.org/a/WHrp2iHoelPTyYLFijQLRG7Jr?autoplay=1)
+    <img src="https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/content-platform/hestia/16191602132dfd87f5eab.png" alt="Terminal" style="zoom: 60%;" />
 
-Start the plug-in service
-------------------------
-#### Start Tuya HomeBridge plugin
-1. Execute the command ```cd ..``` Go back to the homebridge-tuya-platform root directory.
-2. Execute the command ```homebridge -D -U ./config/ -P ./``` Start the plug-in.
+1. See the [official Homebridge docs](https://github.com/homebridge/homebridge/blob/master/README.md) and install Homebridge on your system.
+2. Install Tuya Homebridge plugin.
 
-Expo:
+   > **Note**: If you encounter any problems with the installation, you may need to preface this command with `sudo` to make it run as an administrator.
 
-[![asciicast](https://asciinema.org/a/2gaFGeKXZtEF1pmOhqTG41M30.svg)](https://asciinema.org/a/2gaFGeKXZtEF1pmOhqTG41M30?autoplay=1)
+   1. Install plugins.
+        ```
+        npm install homebridge-tuya-platform
+        ```
+      ![Install plugins](https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/goat/20210422/7f7c8a97e9d74a32aca805371cce532f.png)
+   2. Wait for the plugin to install and check whether the installation is successful. For more information, see the video below.
 
+      [![asciicast](https://asciinema.org/a/t6GY37mDPbfeG6AXVxuwROBlC.svg)](https://asciinema.org/a/t6GY37mDPbfeG6AXVxuwROBlC?autoplay=1)
 
+## Configuration
 
+Before use, you need to configure the `config.json` file in the Homebridge plugin.
+1. Go to the directory `homebridge-tuya-platform`.
+    ```
+    cd ./node_modules/homebridge-tuya-platform
+    ```
+   ![](https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/goat/20210422/0ada6960db6b4ea2957865c28096dec8.png)
+2. Go to the directory `config`.
+    ```
+    cd ./config 
+    ```
+3. Edit the `config.json` file.
+    ```
+    vim config.json
+    ```
+4. In `options`, enter the `username`, `password`, `accessId`, and `accessKey` that you get from the [Tuya IoT Platform](https://iot.tuya.com/). The `lang` defaults to `en`. The `endPoint` is the domain name of the currently used Tuya Open API.
+      <img src="https://images.tuyacn.com/app/Hanh/config.json.png" alt="Edit registration information" style="zoom:100%;" />
+5. Save and exit.
 
-Bridge To HomeKit
-------------------------
-Open the iOS device, find or download the Apple official App "Family" APP, and add accessories (scan the above QR code or enter the above 8-digit PIN value, which can also be found in the config. json file).
+## Start Tuya Homebridge plugin
 
+1. Go back to the directory `homebridge-tuya-platform`.
+    ```
+    cd ..
+    ```
+2. Start the plugin.
+    ```
+    homebridge -D -U ./config/ -P ./ 
+    ```
+   [![asciicast](https://asciinema.org/a/2gaFGeKXZtEF1pmOhqTG41M30.svg)](https://asciinema.org/a/2gaFGeKXZtEF1pmOhqTG41M30?autoplay=1)
 
-Contribution guide
-========================
-Start by forking the repository code branch and following the steps of installing, configuring, and using the Tuya plug-in to start the code.
+## Bridge to HomeKit
 
-Development environment
-------------------------
+Open the Home app on your Apple device. Pair with Homebridge by scanning the QR code printed in the step of starting the plugin, or entering the 8-digit PIN code. You can find the PIN code in the `config.json` file.
+
+## Contribution guide
+
+Fork Tuya's Homebridge repo in GitHub and follow the step-by-step tutorial to start the plugin service.
+
+### Set up the IDE
+
 ```
 —-VSCode
 —-engines
@@ -109,53 +112,57 @@ Development environment
     "uuid": "^8.3.2"
 ```
 
-Accessory expansion
-------------------------
-#### I.Plug-in implementation principle
-<img src="https://images.tuyacn.com/app/Hanh/principleflowchartEN.png" alt="7f02e6c5e6654a882713361ae88a679c" style="zoom:130%;" />
+### Support more accessory types
 
-#### II.Focus on a few JS files
-1. The entry file index.js.
-Add your category to the addAccessory() function and create the corresponding xx_accessy.js file.
-<img src="https://images.tuyacn.com/app/Hanh/index.js.png" alt="7f02e6c5e6654a882713361ae88a679c" style="zoom:130%;" />
+#### How to implement plugins
 
-2. xx_accessory.js. In xx_accessory.js, simply by refreshAccessoryServiceIfNeed () function in traverse your new category support function, and according to the function of support to generate corresponding Characteristic Service.
-<img src="https://images.tuyacn.com/app/Hanh/xx_accessory.js.png" alt="7f02e6c5e6654a882713361ae88a679c" style="zoom:130%;" />
+<img src="https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/content-platform/hestia/16191600887aaa687d0e4.png" alt="Plugin development" style="zoom:130%;" />
 
-3. tuyaopenapi.js. Device related interfaces.
-4. tuyamqttapi.js. Support for MQTT services.
+#### Pay attention to several JSON files
 
-Common Issues
-------------------------
-Please go to [HomeBridge](https://github.com/homebridge/homebridge/blob/master/README.md) Common Issues
+* The entry file `index.js`. Add your desired accessory type to the `addAccessory()` function and create the `xx_accessy.js` file.
+<img src="https://images.tuyacn.com/app/Hanh/index.js.png" alt="JSON file" style="zoom:130%;" />
+
+* The `xx_accessory.js` file. In this file, traverse your newly created function in `refreshAccessoryServiceIfNeed()` and get the `Characteristic` corresponding to a service.
+<img src="https://images.tuyacn.com/app/Hanh/xx_accessory.js.png" alt="JSON file" style="zoom:130%;" />
+
+* The `tuyaopenapi.js` file contains device related APIs.
+* The `tuyamqttapi.js` file supports the MQTT service.
 
 
-Tuya Open API
-------------------------
-- login(username, password). login
-- getDeviceList(). Get all the equipment under the account assets (equipment corresponds to Accessory).
-- get_assets(). Gets a list of human-actionable assets.
-- getDeviceIDList(assetID).Query the list of device IDs under the asset.
-- getDeviceFunctions(deviceID).Gets the device instruction set.
-- getDeviceInfo(deviceID).Get individual device information.
-- getDeviceListInfo(devIds = []). Batch access to device information.
-- getDeviceStatus(deviceID). Gets the individual device state.
-- getDeviceListStatus(devIds = []). Batch access to device status.
-- sendCommand(deviceID, params). Issue device commands.
-
-MQTT
-------------------------
-- start(). start mqtt
-- stop(). stop mqtt
-- addMessageListener(listener). Add a callback function.
-- removeMessageListener(listener). Remove the callback function.
+### FAQ
 
 
-The problem of feedback
-------------------------
+#### Common issues
 
-You can use the **Github Issue** or [**tickets**](https://service.console.tuya.com) to provide feedback on any problems you encounter.
+For more information about Homebridge installation, see the **Common Issues** in the [Homebridge](https://github.com/homebridge/homebridge/blob/master/README.md#common-issues) repo.
 
-LICENSE
-------------------------
-See the [LICENSE](LICENSE) file for more information.
+### Tuya Open API
+
+- `login(username, password)`: Login to the Tuya IoT Platform.
+- `getDeviceList()`: Gets all the devices under an account's asset. (Devices correspond to accessories)
+- `get_assets()`: Gets the available assets.
+- `getDeviceIDList(assetID)`: Queries the list of device IDs under an asset.
+- `getDeviceFunctions(deviceID)`: Gets the instruction set.
+- `getDeviceInfo(deviceID)`: Gets the information of single device.
+- `getDeviceListInfo(devIds = [])`: Gets the information of multiple devices.
+- `getDeviceStatus(deviceID)`: Gets the status of single device.
+- `getDeviceListStatus(devIds = [])`: Gets the status of multiple devices.
+- `sendCommand(deviceID, params)`: Sends commands to a device.
+
+
+### MQTT
+
+- `start()`: Starts MQTT.
+- `stop()`: Stops MQTT.
+- `addMessageListener(listener)`: Adds callbacks.
+- `removeMessageListener(listener)`: Removes callbacks.
+
+
+### Feedback
+
+You can use the **GitHub Issue** or [**tickets**](https://service.console.tuya.com) to provide feedback on any problems you encounter.
+
+### LICENSE
+
+For more information, see the [LICENSE](LICENSE) file.
