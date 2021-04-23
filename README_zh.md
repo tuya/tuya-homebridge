@@ -31,7 +31,9 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
 
 ## 安装
 1. 打开终端工具。
+
     <img src="https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/goat/20210422/84efef3d1ca1435a898455f0c4c7ed48.png" width="70%">
+    
 2. 参考 [HomeBridge 官方文档](https://github.com/homebridge/homebridge/blob/master/README.md) 安装 HomeBridge。
 3. 安装 Tuya HomeBridge 插件。
     >**注意**：如果在安装过程中遇到问题，可尝试在命令行之前加上 sudo，将执行命令角色权限变更为管理员。
@@ -39,7 +41,7 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
         ```
         npm install homebridge-tuya-platform
         ```
-         ![](https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/goat/20210422/7f7c8a97e9d74a32aca805371cce532f.png)       
+          
     2. 等待安装完成，判断是否安装成功。详细过程可以参考下面的视频。
 
         [![asciicast](https://asciinema.org/a/t6GY37mDPbfeG6AXVxuwROBlC.svg)](https://asciinema.org/a/t6GY37mDPbfeG6AXVxuwROBlC?autoplay=1)
@@ -100,7 +102,9 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
     <img src="https://images.tuyacn.com/app/Hanh/index.js.png" alt="7f02e6c5e6654a882713361ae88a679c" style="zoom:130%;" />
 
 * 文件xx_accessory.js。在xx_accessory.js中，只需在 refreshAccessoryServiceIfNeed() 函数中遍历你所新增品类支持的 function，以及根据支持的 function 生成 Service 对应的 Characteristic。
+
     <img src="https://images.tuyacn.com/app/Hanh/xx_accessory.js.png" alt="7f02e6c5e6654a882713361ae88a679c" style="zoom:130%;" />
+    
 * 文件tuyaopenapi.js：设备相关接口。
 * 文件tuyamqttapi.js：支持 MQTT 服务。
 
