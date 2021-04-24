@@ -17,7 +17,7 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
 
 ### 注册信息准备
 涂鸦应用注册信息会在将来用到。
-请参考 [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md), 在[涂鸦 IoT 平台](https://iot.tuya.com) 上注册账号，创建对应的云开发项目，最后创建该账号下的资产、用户和云应用，获取到对应的用户名、密码、Access ID 和 Access Secret。
+请参考 [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md), 在 [涂鸦 IoT 平台](https://iot.tuya.com) 上注册账号，创建对应的云开发项目，最后创建该账号下的资产、用户和云应用，获取到对应的用户名、密码、Access ID 和 Access Secret。
 
 ### 硬件准备
 |硬件|说明|
