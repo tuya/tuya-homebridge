@@ -1,11 +1,14 @@
-本仓库是涂鸦智能官方 HomeBridge 插件。
+Tuya-Homebridge
+========================
+
+[中文版](README_zh.md) | [English](README.md)
 
 ## 什么是 HomeKit
 HomeKit 是苹果 2014 年发布的智能家居平台。借助 HomeKit，用户可以使用苹果设备控制家里所有标有“Works with Apple HomeKit”（兼容 Apple HomeKit）的设备。这些设备包括灯、锁、恒温器和智能插头等。
 
 ## 什么是 HomeBridge
 HomeBridge 是一个轻量级的 NodeJS 服务器，可以在家庭网络上运行。它模拟了 iOS HomeKit API，支持 HomeBridge 插件，提供了各种第三方智能家居设备 API 和 HomeKit 之间的桥梁。
-您可以轻松地通过 HomeBridge 来把第三方智能设备接入 HomeKit。在使用和开发 HomeBridge 插件之前，建议查看 [HomeBridge 官方介绍](https://github.com/homebridge/homebridge/blob/master/README.md)。
+您可以轻松地通过 HomeBridge 来把第三方智能设备接入 HomeKit。在使用和开发 HomeBridge 插件之前，建议查看 [HomeBridge](https://github.com/homebridge/homebridge/blob/master/README.md)。
 
 ## 受众人群/潜在群体
 HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱好者，以及爱折腾、爱玩电子设备且有一定的技术能力（通过简单的技术教程，会安装和使用）的用户。
@@ -14,7 +17,7 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
 
 ### 注册信息准备
 涂鸦应用注册信息会在将来用到。
-请参考 [IoT Cloud Platform User Guide](Tuya_IoT_Cloud_Platform_User_Guide.md), 在[涂鸦 IoT 平台](https://iot.tuya.com) 上注册账号，创建对应的云开发项目，最后创建该账号下的资产、用户和云应用，获取到对应的用户名、密码、Access ID 和 Access Secret。
+请参考 [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md), 在[涂鸦 IoT 平台](https://iot.tuya.com) 上注册账号，创建对应的云开发项目，最后创建该账号下的资产、用户和云应用，获取到对应的用户名、密码、Access ID 和 Access Secret。
 
 ### 硬件准备
 |硬件|说明|
@@ -27,14 +30,14 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
 |软件|说明|
 |:----|:----|
 |命令行工具|用户自行选择。本文使用 macOS 自带的 **终端**。|
-|配网工具|[IoT App 配网工具](https://images.tuyacn.com/smart/docs/activate-tool-app-release.apk) 或 微信小程序（搜索关键词“涂鸦智能配网”）。|
+|配网工具|[Tuya Device Manager App](https://github.com/tuya/tuya-android-iot-app-sdk-sample/releases) 或 微信小程序（搜索关键词“涂鸦智能配网”）。|
 
 ## 安装
 1. 打开终端工具。
 
     <img src="https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/goat/20210422/84efef3d1ca1435a898455f0c4c7ed48.png" width="70%">
     
-2. 参考 [HomeBridge 官方文档](https://github.com/homebridge/homebridge/blob/master/README.md) 安装 HomeBridge。
+2. 参考 [HomeBridge](https://github.com/homebridge/homebridge/blob/master/README.md) 安装 HomeBridge。
 3. 安装 Tuya HomeBridge 插件。
     >**注意**：如果在安装过程中遇到问题，可尝试在命令行之前加上 sudo，将执行命令角色权限变更为管理员。
     1. 安装插件。

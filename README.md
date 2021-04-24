@@ -1,4 +1,4 @@
-Homebridge-Tuya-Platform
+Tuya-Homebridge
 ========================
 
 [中文版](README_zh.md) | [English](README.md)
@@ -9,7 +9,7 @@ HomeKit is Apple's smart home platform introduced in 2014. It allows users of Ap
 
 ## What is Homebridge?
 
-Homebridge is a lightweight NodeJS server you can run on your home network that emulates the iOS HomeKit API. It supports plugins that provide a basic bridge from HomeKit to various third-party APIs provided by manufacturers of smart home devices. We recommend you check the [official Homebridge docs](https://github.com/homebridge/homebridge/blob/master/README.md) before getting started with Homebridge plugins.
+Homebridge is a lightweight NodeJS server you can run on your home network that emulates the iOS HomeKit API. It supports plugins that provide a basic bridge from HomeKit to various third-party APIs provided by manufacturers of smart home devices. We recommend you check the [Homebridge](https://github.com/homebridge/homebridge/blob/master/README.md) before getting started with Homebridge plugins.
 
 ## Users
 
@@ -19,7 +19,7 @@ If you are a smart home geek and have a bundle of devices from different platfor
 
 ### Registration
 
-Please check [IoT Cloud Platform User Guide](Tuya_IoT_Cloud_Platform_User_Guide.md) to register an account on the [Tuya IoT Platform](https://iot.tuya.com?_source=github), and get the required information. Basically, you need to create a Cloud project and complete the configuration of asset, user, and application. Then, you will get the username, password, Access ID, and Access Secret.
+Please check [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md) to register an account on the [Tuya IoT Platform](https://iot.tuya.com?_source=github), and get the required information. Basically, you need to create a Cloud project and complete the configuration of asset, user, and application. Then, you will get the username, password, Access ID, and Access Secret.
 
 ### Hardware Preparation
 
@@ -34,7 +34,7 @@ Please check [IoT Cloud Platform User Guide](Tuya_IoT_Cloud_Platform_User_Guide.
 | Software | Description |
 |:----|:----|
 | Command line interface | Use the one you like. We use the built-in **Terminal** on macOS. |
-| Pairing tool | [IoT App Pairing tool](https://images.tuyacn.com/smart/docs/activate-tool-app-release.apk) or WeChat Mini Program (mainland China only). |
+| Pairing tool | [Tuya Device Manager App](https://github.com/tuya/tuya-android-iot-app-sdk-sample/releases) or WeChat Mini Program (mainland China only). |
 
 ## Quick Start
 
@@ -42,7 +42,7 @@ Please check [IoT Cloud Platform User Guide](Tuya_IoT_Cloud_Platform_User_Guide.
 
     <img src="https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/content-platform/hestia/16191602132dfd87f5eab.png" alt="Terminal" style="zoom: 60%;" />
 
-1. See the [official Homebridge docs](https://github.com/homebridge/homebridge/blob/master/README.md) and install Homebridge on your system.
+1. See the [Homebridge](https://github.com/homebridge/homebridge/blob/master/README.md) and install Homebridge on your system.
 2. Install Tuya Homebridge plugin.
 
    > **Note**: If you encounter any problems with the installation, you may need to preface this command with `sudo` to make it run as an administrator.
@@ -58,6 +58,7 @@ Please check [IoT Cloud Platform User Guide](Tuya_IoT_Cloud_Platform_User_Guide.
 ## Configuration
 
 Before use, you need to configure the `config.json` file in the Homebridge plugin.
+
 1. Go to the directory `homebridge-tuya-platform`.
     ```
     cd ./node_modules/homebridge-tuya-platform
@@ -77,7 +78,7 @@ Before use, you need to configure the `config.json` file in the Homebridge plugi
 
 5. Save and exit.
 
-## Start Tuya Homebridge plugin
+## Start Tuya Homebridge Plugin
 
 1. Go back to the directory `homebridge-tuya-platform`.
     ```
@@ -120,9 +121,11 @@ Fork Tuya's Homebridge repo in GitHub and follow the step-by-step tutorial to st
 #### Pay attention to several JSON files
 
 * The entry file `index.js`. Add your desired accessory type to the `addAccessory()` function and create the `xx_accessy.js` file.
+
 <img src="https://images.tuyacn.com/app/Hanh/index.js.png" alt="JSON file" style="zoom:130%;" />
 
 * The `xx_accessory.js` file. In this file, traverse your newly created function in `refreshAccessoryServiceIfNeed()` and get the `Characteristic` corresponding to a service.
+
 <img src="https://images.tuyacn.com/app/Hanh/xx_accessory.js.png" alt="JSON file" style="zoom:130%;" />
 
 * The `tuyaopenapi.js` file contains device related APIs.
