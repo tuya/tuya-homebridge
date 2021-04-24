@@ -1,9 +1,7 @@
 Homebridge-Tuya-Platform
 ========================
+
 [中文版](README_zh.md) | [English](README.md)
-
-
-In this tutorial, we will show you how to use and develop Tuya Homebridge plugins on macOS.
 
 ## What is HomeKit?
 
@@ -23,7 +21,7 @@ If you are a smart home geek and have a bundle of devices from different platfor
 
 See the section **Before use** in [tuya-iot-app-sdk-python](https://github.com/tuya/tuya-iot-app-sdk-python/blob/master/README.md#before-use), register an account on the [Tuya IoT Platform](https://iot.tuya.com), and get the required information. Basically, you need to create a Cloud project and complete the configuration of asset, user, and application. Then, you will get the username, password, Access ID, and Access Secret.
 
-### Hardware preparation
+### Hardware Preparation
 
 | Hardware | Description |
 |:----|:----|
@@ -31,14 +29,14 @@ See the section **Before use** in [tuya-iot-app-sdk-python](https://github.com/t
 | Smart devices | Demonstrate device integration and control.  |
 | An iOS device with the Home app installed | Control HomeKit-enabled devices.  |
 
-### Software preparation
+### Software Preparation
 
 | Software | Description |
 |:----|:----|
 | Command line interface | Use the one you like. We use the built-in **Terminal** on macOS. |
 | Pairing tool | [IoT App Pairing tool](https://images.tuyacn.com/smart/docs/activate-tool-app-release.apk) or WeChat Mini Program (mainland China only). |
 
-## Set up
+## QuickStart
 
 1. Open the Terminal.
 
@@ -129,8 +127,6 @@ Fork Tuya's Homebridge repo in GitHub and follow the step-by-step tutorial to st
 
 * The `tuyaopenapi.js` file contains device related APIs.
 * The `tuyamqttapi.js` file supports the MQTT service.
-
-
 
 ## Common issues
 

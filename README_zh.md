@@ -1,4 +1,4 @@
-本文介绍如何在 macOS 上如何开发和使用涂鸦官方 HomeBridge 插件。
+本仓库是涂鸦智能官方 HomeBridge 插件。
 
 ## 什么是 HomeKit
 HomeKit 是苹果 2014 年发布的智能家居平台。借助 HomeKit，用户可以使用苹果设备控制家里所有标有“Works with Apple HomeKit”（兼容 Apple HomeKit）的设备。这些设备包括灯、锁、恒温器和智能插头等。
