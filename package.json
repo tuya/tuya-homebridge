@@ -1,7 +1,7 @@
 {
   "name": "homebridge-tuya-platform",
-  "version": "1.0.0",
-  "description": "Initial Plugin",
+  "version": "1.0.2",
+  "description": "Tuya official Homebridge plugin maintained by the Tuya Developer Team.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
