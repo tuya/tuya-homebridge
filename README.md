@@ -1,6 +1,20 @@
 Tuya-Homebridge
 ========================
 
+<p align="center">
+    <img src="https://images.tuyacn.com/app/hass/hb_tuya.png" width="70%"><br>
+</p>
+
+<span align="center">
+    
+[![npm](https://img.shields.io/npm/v/homebridge-tuya-platform.svg)](https://www.npmjs.com/package/homebridge-tuya-platform)
+[![npm](https://img.shields.io/npm/dt/homebridge-tuya-platform.svg)](https://www.npmjs.com/package/homebridge-tuya-platform)
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
+
+</span>
+
+https://www.npmjs.com/package/homebridge-tuya-platform
+
 [中文版](README_zh.md) | [English](README.md)
 
 ## What is HomeKit?
