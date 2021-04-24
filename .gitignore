@@ -1,0 +1,4 @@
+node_modules/
+config/accessories/
+config/persist/
+package-lock.json
