@@ -1,6 +1,6 @@
 {
   "name": "homebridge-tuya-platform",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Official Homebridge plugin for Tuya Open API, maintained by the Tuya Developer Team.",
   "main": "index.js",
   "scripts": {
@@ -11,6 +11,7 @@
   ],
   "author": "huhuan",
   "license": "ISC",
+  "homepage": "https://github.com/tuya/tuya-homebridge",
   "engines": {
     "node": ">=0.12.0",
     "homebridge": ">=0.2.0"
