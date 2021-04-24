@@ -1,0 +1,27 @@
+{
+    "bridge": {
+        "name": "homebridge-tuya-platform",
+        "username": "08:F8:BC:79:6C:C9",
+        "port": 8081,
+        "pin": "034-85-687"
+    },
+
+    "description": "This is an Homebridge Plugin of Tuya.",
+
+    "platforms": [
+        {
+            "platform": "TuyaPlatform",
+            "name": "TuyaPlatform",
+            "options":
+              {
+                "username": "*****************",
+                "password": "*****************",
+                "accessId": "*****************",
+                "accessKey": "*****************",
+                "lang": "en",
+                "endPoint":"https://openapi-cn.wgine.com/"
+              }
+        }
+    ]                   
+}
+
