@@ -14,7 +14,7 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
 
 ### 注册信息准备
 涂鸦应用注册信息会在将来用到。
-请参考 [tuya-iot-app-sdk-python](https://github.com/tuya/tuya-iot-app-sdk-python/blob/master/README.md) 中的 **BeforeUse** 章节， 在[涂鸦 IoT 平台](https://iot.tuya.com) 上注册账号，创建对应的云开发项目，最后创建该账号下的资产、用户和云应用，获取到对应的用户名、密码、Access ID 和 Access Secret。
+请参考 [IoT Cloud Platform User Guide](Tuya_IoT_Cloud_Platform_User_Guide.md), 在[涂鸦 IoT 平台](https://iot.tuya.com) 上注册账号，创建对应的云开发项目，最后创建该账号下的资产、用户和云应用，获取到对应的用户名、密码、Access ID 和 Access Secret。
 
 ### 硬件准备
 |硬件|说明|
@@ -94,10 +94,13 @@ HomeBridge 插件开发适合家里有比较多的智能设备的智能家居爱
 ```
 
 ### 品类扩充
+
 #### 一、插件的实现部分的原理简介
+
 <img src="https://images.tuyacn.com/app/Hanh/principleflowchart.png" alt="7f02e6c5e6654a882713361ae88a679c" style="zoom:130%;" />
 
 #### 二、需要关注的 js 文件
+
 * 入口文件 index.js。在 addAccessory() 函数中新增你的品类，并创建对应的 xx_accessory.js 文件。
     <img src="https://images.tuyacn.com/app/Hanh/index.js.png" alt="7f02e6c5e6654a882713361ae88a679c" style="zoom:130%;" />
 

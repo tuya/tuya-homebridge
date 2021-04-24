@@ -19,13 +19,13 @@ If you are a smart home geek and have a bundle of devices from different platfor
 
 ### Registration
 
-See the section **Before use** in [tuya-iot-app-sdk-python](https://github.com/tuya/tuya-iot-app-sdk-python/blob/master/README.md#before-use), register an account on the [Tuya IoT Platform](https://iot.tuya.com), and get the required information. Basically, you need to create a Cloud project and complete the configuration of asset, user, and application. Then, you will get the username, password, Access ID, and Access Secret.
+Please check [IoT Cloud Platform User Guide](Tuya_IoT_Cloud_Platform_User_Guide.md) to register an account on the [Tuya IoT Platform](https://iot.tuya.com?_source=github), and get the required information. Basically, you need to create a Cloud project and complete the configuration of asset, user, and application. Then, you will get the username, password, Access ID, and Access Secret.
 
 ### Hardware Preparation
 
 | Hardware | Description |
 |:----|:----|
-| A computer, Raspberry Pi, or server | Install plugins and start Homebridge service. This demonstration runs on macOS. |
+| A Mac/PC, Raspberry Pi, or server | Install plugins and start Homebridge service. This demonstration runs on macOS. |
 | Smart devices | Demonstrate device integration and control.  |
 | An iOS device with the Home app installed | Control HomeKit-enabled devices.  |
 
@@ -36,7 +36,7 @@ See the section **Before use** in [tuya-iot-app-sdk-python](https://github.com/t
 | Command line interface | Use the one you like. We use the built-in **Terminal** on macOS. |
 | Pairing tool | [IoT App Pairing tool](https://images.tuyacn.com/smart/docs/activate-tool-app-release.apk) or WeChat Mini Program (mainland China only). |
 
-## QuickStart
+## Quick Start
 
 1. Open the Terminal.
 
