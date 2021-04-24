@@ -1,4 +1,4 @@
-Tuya-Homebridge
+Tuya Homebridge Plugin
 ========================
 
 <p align="center">
