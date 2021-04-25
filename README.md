@@ -86,7 +86,7 @@ Before use, you need to configure the `config.json` file in the Homebridge plugi
     ```
     vim config.json
     ```
-4. In `options`, enter the `username`, `password`, `accessId`, and `accessKey` that you get from the [Tuya IoT Platform](https://iot.tuya.com/). The `lang` defaults to `en`. The `endPoint` is the domain name of the currently used Tuya Open API.
+4. In `options`, enter the `username`, `password`, `accessId`, and `accessKey` that you get from the [Tuya IoT Platform](https://iot.tuya.com/). The `lang` defaults to `en`. The `endPoint` is the domain name of the currently used [Tuya Open API](https://developer.tuya.com/en/docs/cloud/?_source=github).
       <img src="https://images.tuyacn.com/app/Hanh/config3.json.png" alt="Edit registration information" style="zoom:50%;" />
 
 
@@ -162,6 +162,7 @@ For more information about Homebridge installation, see the **Common Issues** in
 - `getDeviceListStatus(devIds = [])`: Gets the status of multiple devices.
 - `sendCommand(deviceID, params)`: Sends commands to a device.
 
+For more info, please check the [Tuya Open API docs](https://developer.tuya.com/en/docs/cloud/?_source=github).
 
 ## MQTT
 
