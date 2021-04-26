@@ -10,7 +10,7 @@
     "homebridge-plugin"
   ],
   "author": "huhuan",
-  "license": "ISC",
+  "license": "MIT",
   "homepage": "https://github.com/tuya/tuya-homebridge",
   "engines": {
     "node": ">=0.12.0",
