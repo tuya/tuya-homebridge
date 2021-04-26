@@ -21,8 +21,8 @@ Homebridge custom plugin for controlling Powered by Tuya (PBT) devices in HomeKi
 
 The following Tuya Device types are currently supported by this plugin:
 
-- [Light](https://github.com/tuya/tuya-homebridge/blob/master/lib/light_accessory.js): Supports Tuya WiFi light devices
-- [Outlet](https://github.com/tuya/tuya-homebridge/blob/master/lib/outlet_accessory.js): Supports Tuya WiFi Outlet devices
+- [Light](https://github.com/tuya/tuya-homebridge/blob/master/lib/light_accessory.js): Supports Tuya Wi-Fi light devices.
+- [Outlet](https://github.com/tuya/tuya-homebridge/blob/master/lib/outlet_accessory.js): Supports Tuya Wi-Fi Outlet devices.
 
 ## Preparation
 
