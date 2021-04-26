@@ -22,7 +22,7 @@ Homebridge custom plugin for controlling Powered by Tuya (PBT) devices in HomeKi
 The following Tuya Device types are currently supported by this plugin:
 
 - [Light](https://github.com/tuya/tuya-homebridge/blob/master/lib/light_accessory.js): Supports Tuya WiFi light devices
-- [Switch](https://github.com/tuya/tuya-homebridge/blob/master/lib/outlet_accessory.js): Supports Tuya WiFi switch devices
+- [Outlet](https://github.com/tuya/tuya-homebridge/blob/master/lib/outlet_accessory.js): Supports Tuya WiFi Outlet devices
 
 ## Preparation
 
@@ -69,34 +69,34 @@ Please check [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuy
 
 You need to configure the `config.json` file in the Homebridge plugin.
 
-**1.** Go to the directory `homebridge-tuya-platform`.
+1. Go to the directory `homebridge-tuya-platform`.
 
 
     ```
     cd ./node_modules/homebridge-tuya-platform
     ```
 
-**2.** Go to the directory `config`.
+2. Go to the directory `config`.
 
 
     ```
     cd ./config 
     ```
     
-**3.** Edit the `config.json` file.
+3. Edit the `config.json` file.
 
 
     ```
     vim config.json
     ```
     
-**4.** In the `options` part, enter the `username`, `password`, `accessId`, and `accessKey`, which you can follow the **Configure Cloud Development Project** part in [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md) to get.
+4. In the `options` part, enter the `username`, `password`, `accessId`, and `accessKey`, which you can follow the **Configure Cloud Development Project** part in [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md) to get.
 
-The `lang` value can set `en` as default and the `endPoint` is the domain name of the currently used [Tuya Open API](https://developer.tuya.com/en/docs/cloud/?_source=github).
+	The `lang` value can set `en` as default and the `endPoint` is the domain name of the currently used [Tuya Open API](https://developer.tuya.com/en/docs/cloud/?_source=github).
 
-<img src="https://images.tuyacn.com/app/Hanh/config3.json.png" alt="Edit registration information" style="zoom:50%;" />
+	<img src="https://images.tuyacn.com/app/Hanh/config3.json.png" alt="Edit registration information" style="zoom:50%;" />
 
-**5.** Save and close the file.
+5. Save and close the file.
 
 ## Start Tuya Homebridge Plugin
 
