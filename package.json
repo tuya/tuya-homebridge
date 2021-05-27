@@ -1,24 +1,31 @@
 {
   "name": "homebridge-tuya-platform",
-  "version": "1.0.2",
-  "description": "Tuya official Homebridge plugin maintained by the Tuya Developer Team.",
+  "version": "1.0.6",
+  "description": "Official Homebridge plugin for Tuya Open API, maintained by the Tuya Developer Team.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": " homebridge -D -U ./config/ -P ./"
   },
   "keywords": [
     "homebridge-plugin"
   ],
   "author": "huhuan",
-  "license": "ISC",
+  "license": "MIT",
+  "homepage": "https://github.com/tuya/tuya-homebridge",
   "engines": {
     "node": ">=0.12.0",
     "homebridge": ">=0.2.0"
   },
   "dependencies": {
+    "@clubedaentrega/cipher": "^1.0.0",
+    "aes-decrypter": "^3.1.2",
     "axios": "^0.21.1",
     "crypto-js": "^4.0.0",
+    "js-base64": "^3.6.1",
     "mqtt": "^4.2.6",
+    "string-cipher": "^1.0.8",
+    "text-encoding": "^0.7.0",
     "uuid": "^8.3.2"
   }
 }

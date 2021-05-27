@@ -1,7 +1,7 @@
 {
     "bridge": {
         "name": "homebridge-tuya-platform",
-        "username": "08:F8:BC:79:6C:C9",
+        "username": "BE:B9:AC:79:6C:CA",
         "port": 8081,
         "pin": "034-85-687"
     },
@@ -14,14 +14,17 @@
             "name": "TuyaPlatform",
             "options":
               {
-                "username": "*****************",
-                "password": "*****************",
-                "accessId": "*****************",
-                "accessKey": "*****************",
+                "username": "******************",
+                "password": "******************",
+                "accessId": "******************",
+                "accessKey": "******************",
                 "lang": "en",
-                "endPoint":"https://openapi-cn.wgine.com/"
+                "endPoint":"******************",
+                "projectType": "2",
+                "appSchema": "tuyaSmart",
+                "countryCode": 86
               }
         }
-    ]                   
+    ]
 }
 

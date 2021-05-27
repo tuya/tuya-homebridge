@@ -1,25 +1,34 @@
-Tuya-Homebridge
+Tuya Homebridge Plugin
 ========================
 
-[中文版](README_zh.md) | [English](README.md)
+<p align="center">
+    <img src="https://images.tuyacn.com/app/hass/hb_tuya.png" width="70%"><br>
+</p>
 
-## What is HomeKit?
+<span align="center">
+    
+[![npm](https://img.shields.io/npm/v/homebridge-tuya-platform.svg)](https://www.npmjs.com/package/homebridge-tuya-platform)
+[![npm](https://img.shields.io/npm/dt/homebridge-tuya-platform.svg)](https://www.npmjs.com/package/homebridge-tuya-platform)
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
-HomeKit is Apple's smart home platform introduced in 2014. It allows users of Apple devices to securely and easily control any devices with a 'Works with Apple HomeKit' badge, such as lights, door locks, thermostats, outlets, and many more.
+</span>
 
-## What is Homebridge?
+Homebridge custom plugin for controlling Powered by Tuya (PBT) devices in HomeKit, it's based on [Tuya Open API](https://developer.tuya.com/en/docs/cloud/?_source=github). The plugin is officially maintained by the Tuya Developer Team.
 
-Homebridge is a lightweight NodeJS server you can run on your home network that emulates the iOS HomeKit API. It supports plugins that provide a basic bridge from HomeKit to various third-party APIs provided by manufacturers of smart home devices. We recommend you check the [Homebridge](https://github.com/homebridge/homebridge/blob/master/README.md) before getting started with Homebridge plugins.
+<https://www.npmjs.com/package/homebridge-tuya-platform>
 
-## Users
+## Supported Tuya Device Types
 
-If you are a smart home geek and have a bundle of devices from different platforms, this step-by-step tutorial will help you make devices HomeKit-enabled and then develop Tuya Homebridge plugins.
+The following Tuya Device types are currently supported by this plugin:
+
+- [Light](https://github.com/tuya/tuya-homebridge/blob/master/lib/light_accessory.js): Supports Tuya Wi-Fi light devices.
+- [Outlet](https://github.com/tuya/tuya-homebridge/blob/master/lib/outlet_accessory.js): Supports Tuya Wi-Fi Outlet devices.
 
 ## Preparation
 
 ### Registration
 
-Please check [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md) to register an account on the [Tuya IoT Platform](https://iot.tuya.com?_source=github), and get the required information. Basically, you need to create a Cloud project and complete the configuration of asset, user, and application. Then, you will get the username, password, Access ID, and Access Secret.
+Please check [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md) to register an account on the [Tuya IoT Platform](https://iot.tuya.com?_source=github), and get the required information. You need to create a Cloud project and complete the configuration of asset, user, and application. Then, you will get the **username**, **password**, **Access ID**, and **Access Secret**.
 
 ### Hardware Preparation
 
@@ -38,12 +47,13 @@ Please check [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuy
 
 ## Quick Start
 
-1. Open the Terminal.
+**1.** Open the Terminal.
 
-    <img src="https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/content-platform/hestia/16191602132dfd87f5eab.png" alt="Terminal" style="zoom: 60%;" />
+ <img src="https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/content-platform/hestia/16191602132dfd87f5eab.png" alt="Terminal" style="zoom: 60%;" />
 
-1. See the [Homebridge](https://github.com/homebridge/homebridge/blob/master/README.md) and install Homebridge on your system.
-2. Install Tuya Homebridge plugin.
+**2.** Check the [Homebridge](https://github.com/homebridge/homebridge/blob/master/README.md) and install Homebridge in your system.
+
+**3.** Install Tuya Homebridge plugin.
 
    > **Note**: If you encounter any problems with the installation, you may need to preface this command with `sudo` to make it run as an administrator.
 
@@ -53,30 +63,68 @@ Please check [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuy
         ```
    2. Wait for the plugin to install and check whether the installation is successful. For more information, see the video below.
 
-      [![asciicast](https://asciinema.org/a/t6GY37mDPbfeG6AXVxuwROBlC.svg)](https://asciinema.org/a/t6GY37mDPbfeG6AXVxuwROBlC?autoplay=1)
+   [<img src="https://asciinema.org/a/eYhi5T5Ht92TDplWU0j35k2Xg.svg" width="40%" />](https://asciinema.org/a/eYhi5T5Ht92TDplWU0j35k2Xg?autoplay=1)
 
 ## Configuration
 
-Before use, you need to configure the `config.json` file in the Homebridge plugin.
+You need to configure the `config.json` file in the Homebridge plugin.
 
 1. Go to the directory `homebridge-tuya-platform`.
+
+
     ```
     cd ./node_modules/homebridge-tuya-platform
     ```
 
 2. Go to the directory `config`.
+
+
     ```
     cd ./config 
     ```
+    
 3. Edit the `config.json` file.
+
+
     ```
     vim config.json
     ```
-4. In `options`, enter the `username`, `password`, `accessId`, and `accessKey` that you get from the [Tuya IoT Platform](https://iot.tuya.com/). The `lang` defaults to `en`. The `endPoint` is the domain name of the currently used Tuya Open API.
-      <img src="https://images.tuyacn.com/app/Hanh/config3.json.png" alt="Edit registration information" style="zoom:50%;" />
+    
+4. In the `options` part, enter the `username`, `password`, `accessId`, and `accessKey`, which you can follow the **Configure Cloud Development Project** part in [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md) to get.
 
+	The `lang` value can set `en` as default and the `endPoint` is the domain name of the currently used [Tuya Open API](https://developer.tuya.com/en/docs/cloud/?_source=github).
+	
+	**Choose endPoint**
+	
+	1. America:
+	```
+    https://openapi.tuyaus.com
+   ```
+   2. China:
+	```
+    https://openapi.tuyacn.com
+   ```
+   3. Europe:
+	```
+    https://openapi.tuyaeu.com
+   ```
+   4. India:
+	```
+    https://openapi.tuyain.com
+   ```
+   5. EasternAmerica:
+	```
+    https://openapi-ueaz.tuyaus.com
+   ```
+   6. WesternEurope:
+	```
+    https://openapi-weaz.tuyaeu.com
+   ```
+	
+ 
+	<img src="https://images.tuyacn.com/app/Hanh/config4.json.png" alt="Edit registration information" style="zoom:70%;" />
 
-5. Save and exit.
+5. Save and close the file.
 
 ## Start Tuya Homebridge Plugin
 
@@ -88,7 +136,8 @@ Before use, you need to configure the `config.json` file in the Homebridge plugi
     ```
     homebridge -D -U ./config/ -P ./ 
     ```
-   [![asciicast](https://asciinema.org/a/2gaFGeKXZtEF1pmOhqTG41M30.svg)](https://asciinema.org/a/2gaFGeKXZtEF1pmOhqTG41M30?autoplay=1)
+   
+    [<img src="https://asciinema.org/a/KMdki4JjhW0sEmAqS6t3YBGtI.svg" width="60%" />](https://asciinema.org/a/KMdki4JjhW0sEmAqS6t3YBGtI?autoplay=1)
 
 ## Bridge to HomeKit
 
@@ -98,7 +147,7 @@ Open the Home app on your Apple device. Pair with Homebridge by scanning the QR 
 
 Fork Tuya's Homebridge repo in GitHub and follow the step-by-step tutorial to start the plugin service.
 
-### Set up development environment
+### Set up the development environment
 
 ```
 —-VSCode
@@ -148,6 +197,7 @@ For more information about Homebridge installation, see the **Common Issues** in
 - `getDeviceListStatus(devIds = [])`: Gets the status of multiple devices.
 - `sendCommand(deviceID, params)`: Sends commands to a device.
 
+For more info, please check the [Tuya Open API docs](https://developer.tuya.com/en/docs/cloud/?_source=github).
 
 ## MQTT
 
@@ -156,6 +206,17 @@ For more information about Homebridge installation, see the **Common Issues** in
 - `addMessageListener(listener)`: Adds callbacks.
 - `removeMessageListener(listener)`: Removes callbacks.
 
+## What is HomeKit?
+
+HomeKit is Apple's smart home platform introduced in 2014. It allows users of Apple devices to securely and easily control any devices with a 'Works with Apple HomeKit' badge, such as lights, door locks, thermostats, outlets, and many more.
+
+## What is Homebridge?
+
+Homebridge is a lightweight NodeJS server you can run on your home network that emulates the iOS HomeKit API. It supports plugins that provide a basic bridge from HomeKit to various third-party APIs provided by manufacturers of smart home devices. We recommend you check the [Homebridge](https://github.com/homebridge/homebridge/blob/master/README.md) before getting started with Homebridge plugins.
+
+## Users
+
+If you are a smart home geek and have a bundle of devices from different platforms, this step-by-step tutorial will help you make devices HomeKit-enabled and then develop Tuya Homebridge plugins.
 
 ## Feedback
 
