@@ -23,12 +23,18 @@ The following Tuya Device types are currently supported by this plugin:
 
 - [Light](https://github.com/tuya/tuya-homebridge/blob/master/lib/light_accessory.js): Supports Tuya Wi-Fi light devices.
 - [Outlet](https://github.com/tuya/tuya-homebridge/blob/master/lib/outlet_accessory.js): Supports Tuya Wi-Fi Outlet devices.
+- [Smoke Sensor](https://github.com/tuya/tuya-homebridge/blob/master/lib/smokesensor_accessory.js): Supports Tuya smoke sensor devices.
+- [Switch](https://github.com/tuya/tuya-homebridge/blob/master/lib/switch_accessory.js): Supports Tuya switch devices.
+- [heater](https://github.com/tuya/tuya-homebridge/blob/master/lib/heater_accessory.js): Support Tuya heater devices.
+- [Garage Door](https://github.com/tuya/tuya-homebridge/blob/master/lib/garagedoor_accessory.js): Support Tuya smart garage door devices.
+- [Fan](https://github.com/tuya/tuya-homebridge/blob/master/lib/fanv2_accessory.js): Support Tuya fan devices.
+- [Air Purifier](https://github.com/tuya/tuya-homebridge/blob/master/lib/air_purifier_accessory.js): Support Tuya air purifier devices.
 
 ## Preparation
 
 ### Registration
 
-Please check [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md) to register an account on the [Tuya IoT Platform](https://iot.tuya.com?_source=github), and get the required information. You need to create a Cloud project and complete the configuration of asset, user, and application. Then, you will get the **username**, **password**, **Access ID**, and **Access Secret**.
+Create a cloud project of **Smart Home PaaS** on the [Tuya IoT Platform](https://iot.tuya.com/cloud/) and linked devices with this project. For more information, see [Tuya IoT Platform Configuration Guide Using Smart Home PaaS](https://developer.tuya.com/en/docs/iot/Platform_Configuration_smarthome?id=Kamcgamwoevrx).
 
 ### Hardware Preparation
 
@@ -90,12 +96,22 @@ You need to configure the `config.json` file in the Homebridge plugin.
     vim config.json
     ```
     
-4. In the `options` part, enter the `username`, `password`, `accessId`, and `accessKey`, which you can follow the **Configure Cloud Development Project** part in [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md) to get.
+4. Specify values for **options**.
 
-	The `lang` value can set `en` as default and the `endPoint` is the domain name of the currently used [Tuya Open API](https://developer.tuya.com/en/docs/cloud/?_source=github).
-	
-	**Choose endPoint**
-	
+- **username** and **password**: The user name and password of your Tuya Smart App or Tuya Smart Life App account.
+
+- **accessId** and **accessKey**: The **AccessID** and **Access Secret** of your cloud project respectively. Go to the [Tuya IoT Platform](https://iot.tuya.com/cloud/) and select your cloud project. Navigate to the **Project Overview** tab and find the **Authorization key**.
+
+<img src="https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/content-platform/hestia/16220229068dc72e7ebd9.png" alt="Edit registration information" style="zoom:70%;" />
+
+- **lang**: Keep the default value **en**.
+
+- **projectType**: "Custom Development" is 1, "Smart Home PaaS" is 2. Here we choose **2**.
+
+- **appSchema**: Use "tuyaSmart" for Tuya Smart App. Use "smartlife" for Tuya Smart Life App.
+
+- **endPoint**: Set it to the address of your location.
+
 	1. America:
 	```
     https://openapi.tuyaus.com
@@ -120,11 +136,10 @@ You need to configure the `config.json` file in the Homebridge plugin.
 	```
     https://openapi-weaz.tuyaeu.com
    ```
-	
- 
-	<img src="https://images.tuyacn.com/app/Hanh/config4.json.png" alt="Edit registration information" style="zoom:70%;" />
+   
+<img src="https://images.tuyacn.com/app/Hanh/newconfig.png" alt="Edit registration information" width="90%;" />
 
-5. Save and close the file.
+**5.** Save and close the file.
 
 ## Start Tuya Homebridge Plugin
 
