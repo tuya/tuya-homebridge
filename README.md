@@ -137,7 +137,7 @@ You need to configure the `config.json` file in the Homebridge plugin.
     https://openapi-weaz.tuyaeu.com
    ```
    
-<img src="https://images.tuyacn.com/app/Hanh/newconfig.png" alt="Edit registration information" width="90%;" />
+<img src="https://images.tuyacn.com/app/Hanh/newconfig.png"  width="90%;" />
 
 **5.** Save and close the file.
 
