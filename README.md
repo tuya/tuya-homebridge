@@ -22,7 +22,7 @@ Homebridge custom plugin for controlling Powered by Tuya (PBT) devices in HomeKi
 The following Tuya Device types are currently supported by this plugin:
 
 - [Light](https://github.com/tuya/tuya-homebridge/blob/master/lib/light_accessory.js): Supports Tuya WiFi light devices
-- [Switch](https://github.com/tuya/tuya-homebridge/blob/master/lib/outlet_accessory.js): Supports Tuya WiFi switch devices
+- [Outlet](https://github.com/tuya/tuya-homebridge/blob/master/lib/outlet_accessory.js): Supports Tuya Wi-Fi Outlet devices.
 
 ## Preparation
 
@@ -71,45 +71,74 @@ You need to configure the `config.json` file in the Homebridge plugin.
 
 **1.** Go to the directory `homebridge-tuya-platform`.
 
-
-    ```
-    cd ./node_modules/homebridge-tuya-platform
-    ```
+```
+cd ./node_modules/homebridge-tuya-platform
+```
 
 **2.** Go to the directory `config`.
 
-
-    ```
-    cd ./config 
-    ```
+```
+cd ./config 
+```
     
 **3.** Edit the `config.json` file.
 
-
-    ```
-    vim config.json
-    ```
-    
+```
+vim config.json
+```
+ 
 **4.** In the `options` part, enter the `username`, `password`, `accessId`, and `accessKey`, which you can follow the **Configure Cloud Development Project** part in [Tuya IoT Platform Configuration Guide](https://github.com/tuya/tuya-android-iot-app-sdk-sample/blob/activator_tool/Tuya_IoT_Platform_Configuration_Guide.md) to get.
 
 The `lang` value can set `en` as default and the `endPoint` is the domain name of the currently used [Tuya Open API](https://developer.tuya.com/en/docs/cloud/?_source=github).
-
-<img src="https://images.tuyacn.com/app/Hanh/config3.json.png" alt="Edit registration information" style="zoom:50%;" />
+	
+**Choose endPoint**
+	
+1. America:
+```
+https://openapi.tuyaus.com
+```
+2. China:
+```
+https://openapi.tuyacn.com
+```
+3. Europe:
+```
+https://openapi.tuyaeu.com
+```
+4. India:
+```
+https://openapi.tuyain.com
+```
+5. EasternAmerica:
+```
+https://openapi-ueaz.tuyaus.com
+```
+6. WesternEurope:
+```
+https://openapi-weaz.tuyaeu.com
+```
+ 
+<img src="https://images.tuyacn.com/app/Hanh/config4.json.png" alt="Edit registration information" style="zoom:70%;" />
 
 **5.** Save and close the file.
 
 ## Start Tuya Homebridge Plugin
 
 1. Go back to the directory `homebridge-tuya-platform`.
-    ```
-    cd ..
-    ```
+
+
+```
+cd ..
+```
+    
 2. Start the plugin.
-    ```
-    homebridge -D -U ./config/ -P ./ 
-    ```
+
+
+```
+homebridge -D -U ./config/ -P ./ 
+```
    
-    [<img src="https://asciinema.org/a/2gaFGeKXZtEF1pmOhqTG41M30.svg" width="40%" />](https://asciinema.org/a/2gaFGeKXZtEF1pmOhqTG41M30?autoplay=1)
+[<img src="https://asciinema.org/a/2gaFGeKXZtEF1pmOhqTG41M30.svg" width="40%" />](https://asciinema.org/a/2gaFGeKXZtEF1pmOhqTG41M30?autoplay=1)
 
 ## Bridge to HomeKit
 
