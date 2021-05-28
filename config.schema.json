@@ -29,6 +29,16 @@
 						"type": "string",
 						"required": true
 					},
+					"accessId": {
+						"title": "Access ID",
+						"type": "string",
+						"required": true
+					},
+					"accessKey": {
+						"title": "Access Key",
+						"type": "string",
+						"required": true
+					},
 					"lang": {
 						"title": "Language Code",
 						"type": "string",
