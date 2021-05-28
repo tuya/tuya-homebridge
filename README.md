@@ -25,7 +25,7 @@ The following Tuya Device types are currently supported by this plugin:
 - [Outlet](https://github.com/tuya/tuya-homebridge/blob/master/lib/outlet_accessory.js): Supports Tuya Wi-Fi Outlet devices.
 - [Smoke Sensor](https://github.com/tuya/tuya-homebridge/blob/master/lib/smokesensor_accessory.js): Supports Tuya smoke sensor devices.
 - [Switch](https://github.com/tuya/tuya-homebridge/blob/master/lib/switch_accessory.js): Supports Tuya switch devices.
-- [heater](https://github.com/tuya/tuya-homebridge/blob/master/lib/heater_accessory.js): Support Tuya heater devices.
+- [Heater](https://github.com/tuya/tuya-homebridge/blob/master/lib/heater_accessory.js): Support Tuya heater devices.
 - [Garage Door](https://github.com/tuya/tuya-homebridge/blob/master/lib/garagedoor_accessory.js): Support Tuya smart garage door devices.
 - [Fan](https://github.com/tuya/tuya-homebridge/blob/master/lib/fanv2_accessory.js): Support Tuya fan devices.
 - [Air Purifier](https://github.com/tuya/tuya-homebridge/blob/master/lib/air_purifier_accessory.js): Support Tuya air purifier devices.
