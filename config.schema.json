@@ -1,68 +1,68 @@
 {
-    "pluginAlias": "TuyaPlatform",
-    "pluginType": "platform",
-    "singular": true,
-    "headerDisplay": "Homebridge custom plugin for controlling Powered by Tuya (PBT) devices in HomeKit, it's based on Tuya Open API. The plugin is officially maintained by the Tuya Developer Team.",
-    "footerDisplay": "For more information, please check [How to Use Tuya Homebridge Plugin](https://developer.tuya.com/en/docs/iot/Tuya_Homebridge_Plugin?id=Kamcldj76lhzt).",
-    "schema": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "title": "Name",
-          "defaults": "TuyaPlatform",
-          "required": true
-        },
-        "options": {
-          "type": "object",
-          "properties": {
-            "username": {
-              "type": "string",
-              "title": "Username",
-              "required": true
-            },
-            "password": {
-              "type": "string",
-              "title": "Password",
-              "required": true
-            },
-            "accessId": {
-              "type": "string",
-              "title": "Access ID (Access ID/Client ID)",
-              "required": true
-            },
-            "accessKey": {
-              "type": "string",
-              "title": "Access Key (Access Secret/Client Secret)",
-              "required": true
-            },
-            "lang": {
-              "type": "string",
-              "title": "Language",
-              "required": true
-            },
-            "appSchema": {
-              "type": "string",
-              "title": "App Schema",
-              "required": true
-            },
-            "projectType": {
-              "type": "string",
-              "title": "Project Type",
-              "required": true
-            },
-            "endPoint": {
-              "type": "string",
-              "title": "End Point",
-              "required": true
-            },
-            "countryCode": {
-              "type": "integer",
-              "title": "Country Code",
-              "required": true
-            }
+  "pluginAlias": "TuyaPlatform",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "Homebridge custom plugin for controlling Powered by Tuya (PBT) devices in HomeKit, it's based on Tuya Open API. The plugin is officially maintained by the Tuya Developer Team.",
+  "footerDisplay": "For more information, please check [How to Use Tuya Homebridge Plugin](https://developer.tuya.com/en/docs/iot/Tuya_Homebridge_Plugin?id=Kamcldj76lhzt).",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "title": "Name",
+        "defaults": "TuyaPlatform",
+        "required": true
+      },
+      "options": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "required": true
+          },
+          "password": {
+            "type": "string",
+            "title": "Password",
+            "required": true
+          },
+          "accessId": {
+            "type": "string",
+            "title": "Access ID (Access ID/Client ID)",
+            "required": true
+          },
+          "accessKey": {
+            "type": "string",
+            "title": "Access Key (Access Secret/Client Secret)",
+            "required": true
+          },
+          "lang": {
+            "type": "string",
+            "title": "Language",
+            "required": true
+          },
+          "appSchema": {
+            "type": "string",
+            "title": "App Schema",
+            "required": true
+          },
+          "projectType": {
+            "type": "string",
+            "title": "Project Type",
+            "required": true
+          },
+          "endPoint": {
+            "type": "string",
+            "title": "End Point",
+            "required": true
+          },
+          "countryCode": {
+            "type": "integer",
+            "title": "Country Code",
+            "required": true
           }
         }
       }
     }
   }
+}

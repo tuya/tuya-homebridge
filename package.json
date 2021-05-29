@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": " homebridge -D -U ./config/ -P ./"
+    "dev": " homebridge -D -U ./config/ -P ./",
+    "watch": "nodemon"
   },
   "keywords": [
     "homebridge-plugin"
@@ -27,5 +28,9 @@
     "string-cipher": "^1.0.8",
     "text-encoding": "^0.7.0",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7",
+    "rimraf": "^3.0.2"
   }
 }
