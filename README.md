@@ -30,6 +30,10 @@ The following Tuya Device types are currently supported by this plugin:
 - [Fan](https://github.com/tuya/tuya-homebridge/blob/master/lib/fanv2_accessory.js): Support Tuya fan devices.
 - [Air Purifier](https://github.com/tuya/tuya-homebridge/blob/master/lib/air_purifier_accessory.js): Support Tuya air purifier devices.
 
+## Tuya Homebridge Integration User Guide
+
+For more information, please check [How to Use Tuya Homebridge Plugin](https://developer.tuya.com/en/docs/iot/Tuya_Homebridge_Plugin?id=Kamcldj76lhzt). 
+
 ## Preparation
 
 ### Registration
