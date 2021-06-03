@@ -79,15 +79,18 @@ class TuyaPlatform {
       console.log("TuyaOpenAPI getDeviceFunctions",func)
       // await api.authRequest(config.options.username, config.options.password, config.options.countryCode, config.opti)
     }
+
+    for (const device of devices) {
+      this.addAccessory(device);
+    }
+
     const type = config.options.projectType == "1" ? "2.0" : "1.0"
     let mq = new TuyaOpenMQ(api, type);
     this.tuyaOpenMQ = mq;
     this.tuyaOpenMQ.start();
     this.tuyaOpenMQ.addMessageListener(this.onMQTTMessage.bind(this));
 
-    for (const device of devices) {
-      this.addAccessory(device);
-    }
+    
   }
 
   addAccessory(device) {
@@ -118,6 +121,7 @@ class TuyaPlatform {
       case 'dj':
       case 'dd':
       case 'fwd':
+      case 'xdd':
         deviceAccessory = new LightAccessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
