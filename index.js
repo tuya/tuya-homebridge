@@ -9,6 +9,7 @@ const Fanv2Accessory = require('./lib/fanv2_accessory');
 const HeaterAccessory = require('./lib/heater_accessory');
 const GarageDoorAccessory = require('./lib/garagedoor_accessory');
 const AirPurifierAccessory = require('./lib/air_purifier_accessory')
+const LogUtil = require('./lib/logutil')
 
 var Accessory, Service, Characteristic;
 
@@ -23,10 +24,12 @@ module.exports = function (homebridge) {
 // Accessory constructor
 class TuyaPlatform {
   constructor(log, config, api) {
-    this.log = log;
+    this.log = new LogUtil(
+      config.options.debug,
+    );
     this.config = config;
     if (!config || !config.options) {
-      this.log('No config found, disabling plugin.')
+      this.log.log('No config found, disabling plugin.')
       return;
     }
     this.deviceAccessories = new Map();
@@ -39,7 +42,7 @@ class TuyaPlatform {
       // Platform Plugin should only register new accessory that doesn't exist in homebridge after this event.
       // Or start discover new accessories.
       this.api.on('didFinishLaunching', function () {
-        this.log("Initializing TuyaPlatform...");
+        this.log.log("Initializing TuyaPlatform...");
         this.initTuyaSDK(config);
       }.bind(this));
     }
@@ -49,18 +52,18 @@ class TuyaPlatform {
     let devices
     let api
     if (config.options.projectType == '1') {
-      console.log("TuyaOpenAPI")
       api = new TuyaOpenAPI(
         config.options.endPoint,
         config.options.accessId,
         config.options.accessKey,
+        this.log,
       );
       this.tuyaOpenApi = api;
       //login before everything start
       await api.login(config.options.username, config.options.password);
       //init Mqtt service and register some Listener
       devices = await api.getDeviceList();
-      console.log("TuyaOpenAPI getDevices",devices)
+      // console.log("TuyaOpenAPI getDevices",devices)
     } else {
       api = new TuyaSHOpenAPI(
         config.options.endPoint,
@@ -70,13 +73,12 @@ class TuyaPlatform {
         config.options.password,
         config.options.countryCode,
         config.options.appSchema,
+        this.log,
       );
       this.tuyaOpenApi = api;
 
       devices = await api.getDevices()
-      console.log("TuyaOpenAPI getDevices",devices)
-      let func = await api.getDeviceFunctions('6cb2c761afc1e455d3rakk')
-      console.log("TuyaOpenAPI getDeviceFunctions",func)
+      // console.log("TuyaOpenAPI getDevices",devices)
       // await api.authRequest(config.options.username, config.options.password, config.options.countryCode, config.opti)
     }
 
@@ -85,17 +87,15 @@ class TuyaPlatform {
     }
 
     const type = config.options.projectType == "1" ? "2.0" : "1.0"
-    let mq = new TuyaOpenMQ(api, type);
+    let mq = new TuyaOpenMQ(api, type, this.log);
     this.tuyaOpenMQ = mq;
     this.tuyaOpenMQ.start();
     this.tuyaOpenMQ.addMessageListener(this.onMQTTMessage.bind(this));
-
-    
   }
 
   addAccessory(device) {
     var deviceType = device.category || 'dj';
-    this.log.info('Adding: %s (%s / %s)', device.name || 'unnamed', deviceType, device.id);
+    this.log.log(`Adding: ${device.name || 'unnamed'} (${deviceType} / ${device.id})`);
     // Get UUID
     const uuid = this.api.hap.uuid.generate(device.id);
     const homebridgeAccessory = this.accessories.get(uuid);
@@ -105,7 +105,7 @@ class TuyaPlatform {
       for (const def of this.config.defaults) {
         if (def.id === device.id) {
           deviceType = def.device_type || deviceType;
-          this.log('Device type is overruled in config to: ', deviceType);
+          this.log.log(`Device type is overruled in config to: ${deviceType}`);
         }
       }
     }
@@ -172,10 +172,10 @@ class TuyaPlatform {
       }else if(message.bizCode == 'bindUser'){
         let deviceInfo = await this.tuyaOpenApi.getDeviceInfo(message.bizData.devId)
         let functions = await this.tuyaOpenApi.getDeviceFunctions(message.bizData.devId)
-        this.log('accessory  bindUser functions', functions);
+        // this.log('accessory  bindUser functions', functions);
         let device = Object.assign(deviceInfo, functions);
         this.addAccessory(device) 
-        this.log('accessory getDeviceInfo', device);
+        // this.log('accessory getDeviceInfo', device);
       }
     }else{
       this.refreshDeviceStates(message)
@@ -188,19 +188,19 @@ class TuyaPlatform {
     const deviceAccessorie = this.deviceAccessories.get(uuid);
     if (deviceAccessorie) {
       let functions = await this.tuyaOpenApi.getDeviceFunctions(message.devId)
-      this.log('accessory  refreshDeviceStates functions', functions);
+      // this.log('accessory  refreshDeviceStates functions', functions);
       let device = Object.assign(message, functions);
       deviceAccessorie.updateState(device);
-      this.log('accessory refreshDeviceStates', device);
+      // this.log('accessory refreshDeviceStates', device);
     }
     else {
-      this.log.error('Could not find accessory in dictionary');
+      this.log.log('Could not find accessory in dictionary');
     }
   }
 
   // Called from device classes
   registerPlatformAccessory(platformAccessory) {
-    // this.log.debug('Register Platform Accessory (%s)', platformAccessory.displayName);
+    this.log.log(`Register Platform Accessory ${platformAccessory.displayName}`);
     this.api.registerPlatformAccessories('homebridge-tuya-platform', 'TuyaPlatform', [platformAccessory]);
   }
 
@@ -208,7 +208,7 @@ class TuyaPlatform {
   // Developer can configure accessory at here (like setup event handler).
   // Update current value.
   configureAccessory(accessory) {
-    this.log("Configuring cached accessory [%s]", accessory.displayName, accessory.context.deviceId, accessory.UUID);
+    // this.log("Configuring cached accessory [%s]", accessory.displayName, accessory.context.deviceId, accessory.UUID);
     // Set the accessory to reachable if plugin can currently process the accessory,
     // otherwise set to false and update the reachability later by invoking
     // accessory.updateReachability()
@@ -222,7 +222,7 @@ class TuyaPlatform {
 
   // Sample function to show how developer can remove accessory dynamically from outside event
   removeAccessory(accessory) {
-    this.log("Remove Accessory [%s]", accessory);
+    this.log.log(`Remove Accessory ${accessory}`);
     this.api.unregisterPlatformAccessories("homebridge-tuya-platform", "TuyaPlatform", [accessory]);
     this.accessories.delete(accessory.uuid);
     this.deviceAccessories.delete(accessory.uuid);

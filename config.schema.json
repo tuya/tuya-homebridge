@@ -113,6 +113,12 @@
 						"default": "",
 						"description": "Your two integer country code",
 						"required": true
+					},
+					"debug": {
+						"title": "Debug",
+						"type": "bool",
+						"default": false,
+						"required": true
 					}
 				}
 			}
