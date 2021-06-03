@@ -115,7 +115,7 @@
 						"required": true
 					},
 					"debug": {
-						"title": "Debug",
+						"title": "Enable Debug Logging",
 						"type": "boolean",
 						"default": false,
 						"required": true
