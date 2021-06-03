@@ -116,7 +116,7 @@
 					},
 					"debug": {
 						"title": "Debug",
-						"type": "bool",
+						"type": "boolean",
 						"default": false,
 						"required": true
 					}
