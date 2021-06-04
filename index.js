@@ -94,7 +94,7 @@ class TuyaPlatform {
   }
 
   addAccessory(device) {
-    var deviceType = device.category || 'dj';
+    var deviceType = device.category;
     this.log.log(`Adding: ${device.name || 'unnamed'} (${deviceType} / ${device.id})`);
     // Get UUID
     const uuid = this.api.hap.uuid.generate(device.id);
@@ -152,21 +152,21 @@ class TuyaPlatform {
   }
 
   //Handle device deletion, addition, status update
-  async onMQTTMessage(message){
-    if(message.bizCode){
-      if(message.bizCode == 'delete'){
+  async onMQTTMessage(message) {
+    if (message.bizCode) {
+      if (message.bizCode == 'delete') {
         const uuid = this.api.hap.uuid.generate(message.devId);
         const homebridgeAccessory = this.accessories.get(uuid);
         this.removeAccessory(homebridgeAccessory)
-      }else if(message.bizCode == 'bindUser'){
+      } else if (message.bizCode == 'bindUser') {
         let deviceInfo = await this.tuyaOpenApi.getDeviceInfo(message.bizData.devId)
         let functions = await this.tuyaOpenApi.getDeviceFunctions(message.bizData.devId)
         // this.log('accessory  bindUser functions', functions);
         let device = Object.assign(deviceInfo, functions);
-        this.addAccessory(device) 
+        this.addAccessory(device)
         // this.log('accessory getDeviceInfo', device);
       }
-    }else{
+    } else {
       this.refreshDeviceStates(message)
     }
   }
@@ -176,11 +176,7 @@ class TuyaPlatform {
     const uuid = this.api.hap.uuid.generate(message.devId);
     const deviceAccessorie = this.deviceAccessories.get(uuid);
     if (deviceAccessorie) {
-      let functions = await this.tuyaOpenApi.getDeviceFunctions(message.devId)
-      // this.log('accessory  refreshDeviceStates functions', functions);
-      let device = Object.assign(message, functions);
-      deviceAccessorie.updateState(device);
-      // this.log('accessory refreshDeviceStates', device);
+      deviceAccessorie.updateState(message);
     }
     else {
       this.log.log('Could not find accessory in dictionary');
@@ -211,9 +207,11 @@ class TuyaPlatform {
 
   // Sample function to show how developer can remove accessory dynamically from outside event
   removeAccessory(accessory) {
-    this.log.log(`Remove Accessory ${accessory}`);
-    this.api.unregisterPlatformAccessories("homebridge-tuya-platform", "TuyaPlatform", [accessory]);
-    this.accessories.delete(accessory.uuid);
-    this.deviceAccessories.delete(accessory.uuid);
+    if (accessory) {
+      this.log.log(`Remove Accessory ${accessory}`);
+      this.api.unregisterPlatformAccessories("homebridge-tuya-platform", "TuyaPlatform", [accessory]);
+      this.accessories.delete(accessory.uuid);
+      this.deviceAccessories.delete(accessory.uuid);
+    }
   }
 }
