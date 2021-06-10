@@ -9,7 +9,8 @@ const Fanv2Accessory = require('./lib/fanv2_accessory');
 const HeaterAccessory = require('./lib/heater_accessory');
 const GarageDoorAccessory = require('./lib/garagedoor_accessory');
 const AirPurifierAccessory = require('./lib/air_purifier_accessory')
-const LogUtil = require('./lib/logutil')
+const LogUtil = require('./util/logutil')
+const DataUtil = require('./util/datautil')
 
 var Accessory, Service, Characteristic;
 
@@ -63,7 +64,6 @@ class TuyaPlatform {
       await api.login(config.options.username, config.options.password);
       //init Mqtt service and register some Listener
       devices = await api.getDeviceList();
-      // console.log("TuyaOpenAPI getDevices",devices)
     } else {
       api = new TuyaSHOpenAPI(
         config.options.endPoint,
@@ -78,8 +78,6 @@ class TuyaPlatform {
       this.tuyaOpenApi = api;
 
       devices = await api.getDevices()
-      // console.log("TuyaOpenAPI getDevices",devices)
-      // await api.authRequest(config.options.username, config.options.password, config.options.countryCode, config.opti)
     }
 
     for (const device of devices) {
@@ -117,12 +115,15 @@ class TuyaPlatform {
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
       case 'cz':
-        deviceAccessory = new OutletAccessory(this, homebridgeAccessory, device);
+      case 'pc':
+        var deviceData = new DataUtil().getSubService(device.status)
+        deviceAccessory = new OutletAccessory(this, homebridgeAccessory, device, deviceData);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
       case 'kg':
-        deviceAccessory = new SwitchAccessory(this, homebridgeAccessory, device);
+        var deviceData = new DataUtil().getSubService(device.status)
+        deviceAccessory = new SwitchAccessory(this, homebridgeAccessory, device, deviceData);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
@@ -162,10 +163,8 @@ class TuyaPlatform {
       } else if (message.bizCode == 'bindUser') {
         let deviceInfo = await this.tuyaOpenApi.getDeviceInfo(message.bizData.devId)
         let functions = await this.tuyaOpenApi.getDeviceFunctions(message.bizData.devId)
-        // this.log('accessory  bindUser functions', functions);
         let device = Object.assign(deviceInfo, functions);
         this.addAccessory(device)
-        // this.log('accessory getDeviceInfo', device);
       }
     } else {
       this.refreshDeviceStates(message)
@@ -178,9 +177,6 @@ class TuyaPlatform {
     const deviceAccessorie = this.deviceAccessories.get(uuid);
     if (deviceAccessorie) {
       deviceAccessorie.updateState(message);
-    }
-    else {
-      this.log.log('Could not find accessory in dictionary');
     }
   }
 
