@@ -58,7 +58,7 @@ Create a cloud project of **Smart Home PaaS** on the [Tuya IoT Platform](https:/
 | Software | Description |
 |:----|:----|
 | Command line interface | Use the one you like. We use the built-in **Terminal** on macOS. |
-| Pairing tool | [Tuya Device Manager App](https://github.com/tuya/tuya-android-iot-app-sdk-sample/releases) or WeChat Mini Program (mainland China only). |
+| Mobile Apps | **Tuya Smart App** or **Tuya Smart Life App** |
 
 ## Quick Start
 
