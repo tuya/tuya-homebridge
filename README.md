@@ -34,6 +34,11 @@ The following Tuya Device types are currently supported by this plugin:
 
 For more information, please check [How to Use Tuya Homebridge Plugin](https://developer.tuya.com/en/docs/iot/Tuya_Homebridge_Plugin?id=Kamcldj76lhzt). 
 
+Youtube tutorial:
+
+[![Youtube](https://img.youtube.com/vi/YH6d-2VJMaU/0.jpg)](https://www.youtube.com/watch?v=YH6d-2VJMaU)
+
+
 ## Preparation
 
 ### Registration
@@ -53,7 +58,7 @@ Create a cloud project of **Smart Home PaaS** on the [Tuya IoT Platform](https:/
 | Software | Description |
 |:----|:----|
 | Command line interface | Use the one you like. We use the built-in **Terminal** on macOS. |
-| Pairing tool | [Tuya Device Manager App](https://github.com/tuya/tuya-android-iot-app-sdk-sample/releases) or WeChat Mini Program (mainland China only). |
+| Mobile Apps | **Tuya Smart App** or **Tuya Smart Life App** |
 
 ## Quick Start
 
