@@ -34,6 +34,11 @@ The following Tuya Device types are currently supported by this plugin:
 
 For more information, please check [How to Use Tuya Homebridge Plugin](https://developer.tuya.com/en/docs/iot/Tuya_Homebridge_Plugin?id=Kamcldj76lhzt). 
 
+Youtube tutorial:
+
+[![Youtube](https://img.youtube.com/vi/YH6d-2VJMaU/0.jpg)](https://www.youtube.com/watch?v=YH6d-2VJMaU)
+
+
 ## Preparation
 
 ### Registration
