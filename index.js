@@ -29,8 +29,8 @@ class TuyaPlatform {
       config.options.debug,
     );
     this.config = config;
-    if (!config || !config.options) {
-      this.log.log('No config found, disabling plugin.')
+    if (!config || !config.options || config.options.username === "" || config.options.password === "" || config.options.accessId === "" || config.options.accessKey === "" || config.options.endPoint === "") {
+      this.log.log('The config configuration is incorrect, disabling plugin.')
       return;
     }
     this.deviceAccessories = new Map();

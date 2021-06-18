@@ -5,7 +5,9 @@ class DataUtil {
         var subTypeArr = []
         for (var map of status) {
             if (map.code.indexOf("switch") != -1) {
-                subTypeArr.push(map.code)
+                if (typeof map.value === 'boolean') {
+                    subTypeArr.push(map.code)
+                } 
             }
         }
         return {
