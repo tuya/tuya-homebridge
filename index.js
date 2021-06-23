@@ -29,10 +29,15 @@ class TuyaPlatform {
       config.options.debug,
     );
     this.config = config;
-    if (!config || !config.options || config.options.username === "" || config.options.password === "" || config.options.accessId === "" || config.options.accessKey === "" || config.options.endPoint === "") {
+    try {
+      this.verifyConfig();
+      this.log('Config OK');
+    } catch (e) {
+      this.log(JSON.stringify(e));
       this.log.log('The config configuration is incorrect, disabling plugin.')
       return;
     }
+    
     this.deviceAccessories = new Map();
     this.accessories = new Map();
 
@@ -49,6 +54,14 @@ class TuyaPlatform {
     }
   }
 
+    /**
+   * Verify the config passed to the plugin is valid
+   */
+     verifyConfig() {
+      if (!config || !config.options || config.options.username === "" || config.options.password === "" || config.options.accessId === "" || config.options.accessKey === "" || config.options.endPoint === "") {
+        return;
+      }
+    }
   async initTuyaSDK(config) {
     let devices
     let api
