@@ -29,7 +29,7 @@ class TuyaPlatform {
       config.options.debug,
     );
     this.config = config;
-    if (!config || !config.options || config.options.username === "" || config.options.password === "" || config.options.accessId === "" || config.options.accessKey === "" || config.options.endPoint === "") {
+    if (!config || !config.options) {
       this.log.log('The config configuration is incorrect, disabling plugin.')
       return;
     }
@@ -63,7 +63,13 @@ class TuyaPlatform {
       //login before everything start
       await api.login(config.options.username, config.options.password);
       //init Mqtt service and register some Listener
-      devices = await api.getDeviceList();
+      try {
+        devices = await api.getDeviceList();
+      } catch (e) {
+        // this.log.log(JSON.stringify(e.message));
+        this.log.log('Failed to get device information. Please check if the config.json is correct.')
+        return;
+      }
     } else {
       api = new TuyaSHOpenAPI(
         config.options.endPoint,
