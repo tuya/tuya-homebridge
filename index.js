@@ -77,7 +77,13 @@ class TuyaPlatform {
       );
       this.tuyaOpenApi = api;
 
-      devices = await api.getDevices()
+      try {
+        devices = await api.getDevices()
+      } catch (e) {
+        // this.log.log(JSON.stringify(e.message));
+        this.log.log('Failed to get device information. Please check if the config.json is correct.')
+        return;
+      }
     }
 
     for (const device of devices) {
