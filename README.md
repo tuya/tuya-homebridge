@@ -13,7 +13,10 @@ Tuya Homebridge Plugin
 
 </span>
 
-Homebridge custom plugin for controlling Powered by Tuya (PBT) devices in HomeKit, it's based on [Tuya Open API](https://developer.tuya.com/en/docs/cloud/?_source=github). The plugin is officially maintained by the Tuya Developer Team.
+Homebridge custom plugin for controlling Powered by Tuya (PBT) devices in HomeKit, it's based on [Tuya Open API](https://developer.tuya.com/en/docs/cloud/?_source=2e646f88eae60b7eb595e94fc3866975). The plugin is officially maintained by the Tuya Developer Team.
+
+## [Tuya Beta Test Program](https://pages.tuya.com/develop/Homebridgebetainvitation?_source=ea61b9486f59eb89a3ee74b43140b9f3#form)
+Welcome to join the [Tuya Beta Test Program](https://pages.tuya.com/develop/Homebridgebetainvitation?_source=ea61b9486f59eb89a3ee74b43140b9f3#form) to get your development gifts and make the contribution to the plugin.Your feedback is valuable to the whole community.
 
 <https://www.npmjs.com/package/homebridge-tuya-platform>
 
@@ -32,7 +35,7 @@ The following Tuya Device types are currently supported by this plugin:
 
 ## Tuya Homebridge Integration User Guide
 
-For more information, please check [How to Use Tuya Homebridge Plugin](https://developer.tuya.com/en/docs/iot/Tuya_Homebridge_Plugin?id=Kamcldj76lhzt). 
+For more information, please check [How to Use Tuya Homebridge Plugin](https://developer.tuya.com/en/docs/iot/Tuya_Homebridge_Plugin?id=Kamcldj76lhzt&_source=f3feb8f41d71c863087f8bc8032c9a4a). 
 
 Youtube tutorial:
 
@@ -43,7 +46,7 @@ Youtube tutorial:
 
 ### Registration
 
-Create a cloud project of **Smart Home PaaS** on the [Tuya IoT Platform](https://iot.tuya.com/cloud/) and linked devices with this project. For more information, see [Tuya IoT Platform Configuration Guide Using Smart Home PaaS](https://developer.tuya.com/en/docs/iot/Platform_Configuration_smarthome?id=Kamcgamwoevrx).
+Create a cloud project of **Smart Home PaaS** on the [Tuya IoT Platform](https://iot.tuya.com/cloud/?_source=681de17de8fab5904815ae7734942be6) and linked devices with this project. For more information, see [Tuya IoT Platform Configuration Guide Using Smart Home PaaS](https://developer.tuya.com/en/docs/iot/Platform_Configuration_smarthome?id=Kamcgamwoevrx&_source=6435717a3be1bc67fdd1f6699a1a59ac).
 
 ### Hardware Preparation
 
@@ -109,7 +112,7 @@ You need to configure the `config.json` file in the Homebridge plugin.
 
 - **username** and **password**: The user name and password of your Tuya Smart App or Tuya Smart Life App account.
 
-- **accessId** and **accessKey**: The **AccessID** and **Access Secret** of your cloud project respectively. Go to the [Tuya IoT Platform](https://iot.tuya.com/cloud/) and select your cloud project. Navigate to the **Project Overview** tab and find the **Authorization key**.
+- **accessId** and **accessKey**: The **AccessID** and **Access Secret** of your cloud project respectively. Go to the [Tuya IoT Platform](https://iot.tuya.com/cloud/?_source=681de17de8fab5904815ae7734942be6) and select your cloud project. Navigate to the **Project Overview** tab and find the **Authorization key**.
 
 <img src="https://airtake-public-data-1254153901.cos.ap-shanghai.myqcloud.com/content-platform/hestia/16220229068dc72e7ebd9.png" alt="Edit registration information" style="zoom:70%;" />
 
@@ -221,7 +224,7 @@ For more information about Homebridge installation, see the **Common Issues** in
 - `getDeviceListStatus(devIds = [])`: Gets the status of multiple devices.
 - `sendCommand(deviceID, params)`: Sends commands to a device.
 
-For more info, please check the [Tuya Open API docs](https://developer.tuya.com/en/docs/cloud/?_source=github).
+For more info, please check the [Tuya Open API docs](https://developer.tuya.com/en/docs/cloud/?_source=2e646f88eae60b7eb595e94fc3866975).
 
 ## MQTT
 
@@ -244,7 +247,7 @@ If you are a smart home geek and have a bundle of devices from different platfor
 
 ## Feedback
 
-You can use the **GitHub Issue** or [**tickets**](https://service.console.tuya.com) to provide feedback on any problems you encounter.
+You can use the **GitHub Issue** or [**tickets**](https://service.console.tuya.com/8/2/list?_source=c5965e0f53c87ba9d0eb99af0f4b124f) to provide feedback on any problems you encounter.
 
 ## LICENSE
 
