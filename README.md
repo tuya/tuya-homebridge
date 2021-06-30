@@ -18,7 +18,7 @@ Homebridge custom plugin for controlling Powered by Tuya (PBT) devices in HomeKi
 ## [Tuya Beta Test Program](https://pages.tuya.com/develop/Homebridgebetainvitation?_source=ea61b9486f59eb89a3ee74b43140b9f3#form)
 Welcome to join the [Tuya Beta Test Program](https://pages.tuya.com/develop/Homebridgebetainvitation?_source=ea61b9486f59eb89a3ee74b43140b9f3#form) to get your development gifts and make the contribution to the plugin.Your feedback is valuable to the whole community.
 
-<https://www.npmjs.com/package/homebridge-tuya-platform>
+<https://www.npmjs.com/package/homebridge-tuya-platform?_source=ce0b8527b06cd3ca2822cc83fe7a0aa4>
 
 ## Supported Tuya Device Types
 
