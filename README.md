@@ -20,6 +20,8 @@ Welcome to join the [Tuya Beta Test Program](https://pages.tuya.com/develop/Home
 
 <https://www.npmjs.com/package/homebridge-tuya-platform?_source=ce0b8527b06cd3ca2822cc83fe7a0aa4>
 
+ :tada: :tada: :tada: [Vote for Tuya Homebridge Plugin New Device Driver Support!](https://github.com/tuya/tuya-homebridge/discussions/58) :tada::tada::tada:
+
 ## Supported Tuya Device Types
 
 The following Tuya Device types are currently supported by this plugin:
