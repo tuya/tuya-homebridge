@@ -29,11 +29,9 @@ Welcome to join the [Tuya Beta Test Program](https://pages.tuya.com/develop/Home
 
 
 ## Preparation
-- [How To Register Iot Cloud Project](https://developer.tuya.com/en/docs/iot/Platform_Configuration_smarthome?id=Kamcgamwoevrx&_source=6435717a3be1bc67fdd1f6699a1a59ac)
-
-- [How To Use Tuya Homebridge Plugin](https://developer.tuya.com/en/docs/iot/Tuya_Homebridge_Plugin?id=Kamcldj76lhzt&_source=f3feb8f41d71c863087f8bc8032c9a4a)
-
-- [How To Contribute Code](https://github.com/tuya/tuya-homebridge/wiki/How-to-Develop-a-New-Driver)
+  1. [Tuya IoT Platform Configuration](https://github.com/tuya/tuya-homebridge/wiki/Tuya-IoT-Platform-Configuration-Guide-Using-Smart-Home-PaaS)
+  2. [Use the Tuya Homebridge Plugin](https://github.com/tuya/tuya-homebridge/wiki/How-to-Use-Tuya-Homebridge-Plugin)
+  3. [Develop a New Driver](https://github.com/tuya/tuya-homebridge/wiki/How-to-Develop-a-New-Driver)
 
 ## Set up the development environment
 
