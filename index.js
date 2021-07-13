@@ -119,6 +119,7 @@ class TuyaPlatform {
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
       case 'dj':
+      case 'dd':
       case 'fwd':
       case 'tgq':
       case 'xdd':
