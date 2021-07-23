@@ -9,6 +9,8 @@ const Fanv2Accessory = require('./lib/fanv2_accessory');
 const HeaterAccessory = require('./lib/heater_accessory');
 const GarageDoorAccessory = require('./lib/garagedoor_accessory');
 const AirPurifierAccessory = require('./lib/air_purifier_accessory')
+const WindowCoveringAccessory = require('./lib/window_covering_accessory')
+
 const LogUtil = require('./util/logutil')
 const DataUtil = require('./util/datautil')
 
@@ -72,7 +74,6 @@ class TuyaPlatform {
       }
     } else {
       api = new TuyaSHOpenAPI(
-        config.options.endPoint,
         config.options.accessId,
         config.options.accessKey,
         config.options.username,
@@ -123,6 +124,7 @@ class TuyaPlatform {
       case 'fwd':
       case 'tgq':
       case 'xdd':
+      case 'dc':
         deviceAccessory = new LightAccessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
@@ -159,6 +161,11 @@ class TuyaPlatform {
         break;
       case 'ckmkzq': //garage_door_opener
         deviceAccessory = new GarageDoorAccessory(this, homebridgeAccessory, device);
+        this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+        this.deviceAccessories.set(uuid, deviceAccessory);
+        break;
+      case 'cl':
+        deviceAccessory = new WindowCoveringAccessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;

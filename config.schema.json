@@ -76,37 +76,6 @@
 						],
 						"required": true
 					},
-					"endPoint": {
-						"title": "API Region",
-						"type": "string",
-						"default": "form",
-						"oneOf": [{
-								"title": "America",
-								"enum": ["https://openapi.tuyaus.com"]
-							},
-							{
-								"title": "China",
-								"enum": ["https://openapi.tuyacn.com"]
-							},
-							{
-								"title": "Europe",
-								"enum": ["https://openapi.tuyaeu.com"]
-							},
-							{
-								"title": "India",
-								"enum": ["https://openapi.tuyain.com"]
-							},
-							{
-								"title": "EasternAmerica",
-								"enum": ["https://openapi-ueaz.tuyaus.com"]
-							},
-							{
-								"title": "WesternEurope",
-								"enum": ["https://openapi-weaz.tuyaeu.com"]
-							}
-						],
-						"required": true
-					},
 					"countryCode": {
 						"title": "Country Code",
 						"type": "number",
