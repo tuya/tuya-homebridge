@@ -19,7 +19,7 @@ Homebridge custom plugin for controlling Powered by Tuya (PBT) devices in HomeKi
 Welcome to join the [Tuya Beta Test Program](https://pages.tuya.com/develop/Homebridgebetainvitation?_source=ea61b9486f59eb89a3ee74b43140b9f3#form) to get your development gifts and make the contribution to the plugin.Your feedback is valuable to the whole community.
 
 
-✌️✌️✌️ [Supported Tuya Device Types](https://github.com/tuya/tuya-homebridge/wiki/Supported-Tuya-Device-Types) ✌️✌️✌️
+✌️✌️✌️ [Supported Tuya Device Types](https://github.com/tuya/tuya-homebridge/wiki/Supported-Tuya-Device-Types?_source=6a1b8046224626e798190c06532c8be2) ✌️✌️✌️
 
  :tada: :tada: :tada: [Vote for Tuya Homebridge Plugin New Device Driver Support!](https://github.com/tuya/tuya-homebridge/discussions/58) :tada::tada::tada:
 
@@ -29,9 +29,9 @@ Welcome to join the [Tuya Beta Test Program](https://pages.tuya.com/develop/Home
 
 
 ## Preparation
-  1. [Tuya IoT Platform Configuration](https://github.com/tuya/tuya-homebridge/wiki/Tuya-IoT-Platform-Configuration-Guide-Using-Smart-Home-PaaS)
-  2. [Use the Tuya Homebridge Plugin](https://github.com/tuya/tuya-homebridge/wiki/How-to-Use-Tuya-Homebridge-Plugin)
-  3. [Develop a New Driver](https://github.com/tuya/tuya-homebridge/wiki/How-to-Develop-a-New-Driver)
+  1. [Tuya IoT Platform Configuration](https://github.com/tuya/tuya-homebridge/wiki/Tuya-IoT-Platform-Configuration-Guide-Using-Smart-Home-PaaS?_source=d8fba44feeef4757f7f22a14c2295f3f)
+  2. [Use the Tuya Homebridge Plugin](https://github.com/tuya/tuya-homebridge/wiki/How-to-Use-Tuya-Homebridge-Plugin?_source=6a2b624bdb6dce83dd246e014ccd0bcf)
+  3. [Develop a New Driver](https://github.com/tuya/tuya-homebridge/wiki/How-to-Develop-a-New-Driver?_source=44108482f4dfcf47095e53dcf7dbba95)
 
 ## Set up the development environment
 
@@ -62,7 +62,7 @@ Welcome to join the [Tuya Beta Test Program](https://pages.tuya.com/develop/Home
 
 **Q: Will I be billed after the 1-year free trial of the API product expires?**
 
-A: After expiration, you can renew the subscription for free. The Trial Edition allows you to use all free API products but puts limits on the quota of API calls. For more information about the quota, see [Pricing](https://developer.tuya.com/en/docs/iot/membership-service?id=K9m8k45jwvg9j).
+A: After expiration, you can renew the subscription for free. The Trial Edition allows you to use all free API products but puts limits on the quota of API calls. For more information about the quota, see [Pricing](https://developer.tuya.com/en/docs/iot/membership-service?id=K9m8k45jwvg9j&_source=bb1b5b405f43ab2b3c7a7cb9ca95773d).
 
 ## Users
 
