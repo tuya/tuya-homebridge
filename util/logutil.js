@@ -3,10 +3,14 @@ class LogUtil {
         this.isDebug = isDebug;
     }
 
-    log(str) {
+    log(...args) {
         if (this.isDebug) {
-            console.log(str);
+            console.log(...args);
         }
+    }
+
+    error(...args) {
+        console.log(...args);
     }
 }
 
