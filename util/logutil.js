@@ -10,7 +10,9 @@ class LogUtil {
     }
 
     error(...args) {
-        console.log(...args);
+        if (this.isDebug) {
+            console.log(...args);
+        }
     }
 }
 
