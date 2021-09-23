@@ -10,6 +10,12 @@ Tuya Homebridge Plugin
 [![npm](https://img.shields.io/npm/v/homebridge-tuya-platform.svg)](https://www.npmjs.com/package/homebridge-tuya-platform)
 [![npm](https://img.shields.io/npm/dt/homebridge-tuya-platform.svg)](https://www.npmjs.com/package/homebridge-tuya-platform)
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
+    
+[![GitHub watchers](https://img.shields.io/github/watchers/tuya/tuya-homebridge.svg?style=social&label=Watch)](https://GitHub.com/tuya/tuya-homebridge/watchers/)
+[![GitHub stars](https://img.shields.io/github/stars/tuya/tuya-homebridge.svg?style=social&label=Star)](https://GitHub.com/tuya/tuya-homebridge/stargazers/)
+[![GitHub forks](https://img.shields.io/github/forks/tuya/tuya-homebridge.svg?style=social&label=Fork)](https://GitHub.com/tuya/tuya-homebridge/network/)
+
+If you like Tuya Homebridge Plugin - give it a star, or fork it and contribute!
 
 </span>
 
