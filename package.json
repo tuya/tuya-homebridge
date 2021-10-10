@@ -1,6 +1,6 @@
 {
   "name": "homebridge-tuya-platform",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "description": "Official Homebridge plugin for Tuya Open API, maintained by the Tuya Developer Team.",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,7 @@
     "@clubedaentrega/cipher": "^1.0.0",
     "aes-decrypter": "^3.1.2",
     "axios": "^0.21.1",
+    "chai": "^4.3.4",
     "crypto-js": "^4.0.0",
     "js-base64": "^3.6.1",
     "mqtt": "^4.2.6",
