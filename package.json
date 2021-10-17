@@ -4,6 +4,7 @@
   "description": "Official Homebridge plugin for Tuya Open API, maintained by the Tuya Developer Team.",
   "main": "index.js",
   "scripts": {
+    "watch": "npm install && npm link && nodemon",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": " homebridge -D -U ./config/ -P ./"
   },
@@ -27,6 +28,7 @@
     "mqtt": "^4.2.6",
     "string-cipher": "^1.0.8",
     "text-encoding": "^0.7.0",
+    "nodemon": "^2.0.13",
     "uuid": "^8.3.2"
   }
 }
