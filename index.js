@@ -22,6 +22,7 @@ module.exports = function (homebridge) {
   homebridge.registerPlatform('homebridge-tuya-platform', 'TuyaPlatform', TuyaPlatform, true);
 }
 
+
 // Accessory constructor
 class TuyaPlatform {
   constructor(log, config, api) {
