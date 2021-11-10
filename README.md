@@ -30,7 +30,7 @@ Welcome to join the [Tuya Beta Test Program](https://pages.tuya.com/develop/Home
 
 ## Important Note
 
-If you cannot login successfully, please update to v1.4.1+ as the previous version has security issues on the login feature of the plugin.
+If you cannot login successfully, please update to v1.5.0 as the previous version has security issues on the login feature of the plugin.
 
 ### Youtube Tutorial:
 
