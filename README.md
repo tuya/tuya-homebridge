@@ -1,5 +1,5 @@
 Tuya Homebridge Plugin
-========================
+=======================
 
 <p align="center">
     <img src="https://images.tuyacn.com/app/hass/hb_tuya.png" width="70%"><br>
