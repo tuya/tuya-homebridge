@@ -179,6 +179,7 @@ class TuyaPlatform {
         break;
       case 'rqbj':
       case 'jwbj':
+      case 'sj':
         deviceAccessory = new LeakSensorAccessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
