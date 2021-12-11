@@ -19,7 +19,7 @@ If you like Tuya Homebridge Plugin - give it a star, or fork it and contribute!
 
 </span>
 
-Homebridge custom plugin for controlling Powered by Tuya (PBT) devices in HomeKit, it's based on [Tuya Open API](https://developer.tuya.com/en/docs/cloud/?_source=2e646f88eae60b7eb595e94fc3866975). The plugin is officially maintained by the Tuya Developer Team.
+Homebridge custom plugin for controlling Connected by Tuya (CBT) devices in HomeKit, it's based on [Tuya Open API](https://developer.tuya.com/en/docs/cloud/?_source=2e646f88eae60b7eb595e94fc3866975). The plugin is officially maintained by the Tuya Developer Team.
 
 ✌️✌️✌️ [Supported Tuya Device Types](https://github.com/tuya/tuya-homebridge/wiki/Supported-Tuya-Device-Types?_source=6a1b8046224626e798190c06532c8be2) ✌️✌️✌️
 
