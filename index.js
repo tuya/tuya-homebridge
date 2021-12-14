@@ -168,6 +168,7 @@ class TuyaPlatform {
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
       case 'cl':
+      case 'clkg':
         deviceAccessory = new WindowCoveringAccessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
