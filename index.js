@@ -128,7 +128,8 @@ class TuyaPlatform {
       case 'xdd':
       case 'dc':
       case 'tgkg':
-        deviceAccessory = new LightAccessory(this, homebridgeAccessory, device);
+        var deviceData = new DataUtil().getSubService(device.status)
+        deviceAccessory = new LightAccessory(this, homebridgeAccessory, device, deviceData);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
