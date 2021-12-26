@@ -9,6 +9,7 @@ const Fanv2Accessory = require('./lib/fanv2_accessory');
 const HeaterAccessory = require('./lib/heater_accessory');
 const GarageDoorAccessory = require('./lib/garagedoor_accessory');
 const AirPurifierAccessory = require('./lib/air_purifier_accessory')
+const TRVAccessory = require('./lib/trv_accessory')
 const WindowCoveringAccessory = require('./lib/window_covering_accessory')
 const ContactSensorAccessory = require('./lib/contactsensor_accessory');
 const LeakSensorAccessory = require('./lib/leak_sensor_accessory')
@@ -183,7 +184,13 @@ class TuyaPlatform {
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
+      case 'wk':
+        deviceAccessory = new TRVAccessory(this, homebridgeAccessory, device);
+        this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+        this.deviceAccessories.set(uuid, deviceAccessory);
+        break;
       default:
+        this.log.log(deviceType+" was not a recognised deviceType")
         break;
     }
 
@@ -211,6 +218,7 @@ class TuyaPlatform {
   async refreshDeviceStates(message) {
     const uuid = this.api.hap.uuid.generate(message.devId);
     const deviceAccessorie = this.deviceAccessories.get(uuid);
+    this.log.log("Update Device-------------------")
     if (deviceAccessorie) {
       deviceAccessorie.updateState(message);
     }
