@@ -83,6 +83,16 @@
 						"description": "Your two integer country code",
 						"required": true
 					},
+					"valve":{
+						"title": "switch with timer",
+						"type":"array",
+						"description":"This feature let you use the switch as a valve accessory. it means that you can set countdown directly through the home app which is great for boiler switch the only issue is that valve accessories do not support automation, it can be set only through Tuya / SmartLife App.",
+						"items":{
+							"title":"device id",
+							"type":"string"
+						}
+					},
+					
 					"debug": {
 						"title": "Enable Debug Logging",
 						"type": "boolean",

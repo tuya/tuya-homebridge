@@ -1,9 +1,9 @@
 {
     "bridge": {
         "name": "homebridge-tuya-platform",
-        "username": "BE:B9:AC:79:6C:CA",
+        "username": "BE:B9:AC:79:6C:CB",
         "port": 8081,
-        "pin": "034-85-687"
+        "pin": "034-85-682"
     },
 
     "description": "This is an Homebridge Plugin of Tuya.",
@@ -12,19 +12,19 @@
         {
             "platform": "TuyaPlatform",
             "name": "TuyaPlatform",
-            "options":
-              {
-                "username": "",
-                "password": "",
-                "accessId": "",
-                "accessKey": "",
-                "lang": "en",
-                "projectType": "2",
-                "appSchema": "tuyaSmart",
-                "countryCode": 86,
-                "debug":false
-              }
-        }
+            "options": {
+              "username": "talrhv1@gmail.com",
+              "password": "Philipss1",
+              "accessId": "8xenwu3jax2t6bici2b7",
+              "accessKey": "94d8c23698f34d64b59b4de782699793",
+              "lang": "en",
+              "projectType": "2",
+              "appSchema": "smartlife",
+              "countryCode": 972,
+              "debug": true,
+              "valve": ["bf6795c4ec30c086488re3","bf8a7c381852c28da1jop9"]
+            }
+          }
     ]
 }
 

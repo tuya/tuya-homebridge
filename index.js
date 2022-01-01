@@ -13,9 +13,13 @@ const WindowCoveringAccessory = require('./lib/window_covering_accessory')
 const ContactSensorAccessory = require('./lib/contactsensor_accessory');
 const LeakSensorAccessory = require('./lib/leak_sensor_accessory')
 const PushAccessory = require("./lib/push_accessory");
+const MotionSensorAccessory = require('./lib/motionsensor_accessory')
+const ValveAccessory = require('./lib/valve_accessory')
+
 
 const LogUtil = require('./util/logutil')
-const DataUtil = require('./util/datautil')
+const DataUtil = require('./util/datautil');
+
 
 var Accessory, Service, Characteristic;
 
@@ -140,7 +144,7 @@ class TuyaPlatform {
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
-      case 'kg':
+      // case 'kg':
       case 'tdq':
         var deviceData = new DataUtil().getSubService(device.status)
         deviceAccessory = new SwitchAccessory(this, homebridgeAccessory, device, deviceData);
@@ -185,12 +189,26 @@ class TuyaPlatform {
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
-         case 'szjqr':
-          var deviceData = new DataUtil().getSubService(device.status)
-          deviceAccessory = new PushAccessory(this, homebridgeAccessory, device, deviceData);
-          this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
-          this.deviceAccessories.set(uuid, deviceAccessory);
-          break;
+      case 'szjqr':
+        var deviceData = new DataUtil().getSubService(device.status)
+        deviceAccessory = new PushAccessory(this, homebridgeAccessory, device, deviceData);
+        this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+        this.deviceAccessories.set(uuid, deviceAccessory);
+        break;
+      case 'pir':
+        deviceAccessory = new MotionSensorAccessory(this, homebridgeAccessory, device);
+        this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+        this.deviceAccessories.set(uuid, deviceAccessory);
+        break;
+      case 'kg':
+        var deviceData = new DataUtil().getSubService(device.status)
+        if (this.config.options.valve.includes(device.id))
+          deviceAccessory = new ValveAccessory(this, homebridgeAccessory, device, deviceData);
+        else
+          deviceAccessory = new SwitchAccessory(this, homebridgeAccessory, device, deviceData);
+        this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+        this.deviceAccessories.set(uuid, deviceAccessory);
+        break;
       default:
         break;
     }
