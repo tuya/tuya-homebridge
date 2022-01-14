@@ -196,13 +196,17 @@ class TuyaPlatform {
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
       case 'pir':
-        deviceAccessory = new MotionSensorAccessory(this, homebridgeAccessory, device);
-        this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
-        this.deviceAccessories.set(uuid, deviceAccessory);
+        let accPir = this.config.options.motion.find(v => { return v.deviceId === device.id });
+        if (accPir != null) {
+          deviceAccessory = new MotionSensorAccessory(this, homebridgeAccessory, device,accPir.overrideTuya);
+          this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+          this.deviceAccessories.set(uuid, deviceAccessory);
+        }
         break;
       case 'kg':
         var deviceData = new DataUtil().getSubService(device.status)
-        if (this.config.options.valve.includes(device.id))
+        let accKg = this.config.options.valve.find(v => { return v.deviceId === device.id && v.isActive == true });
+        if (accKg != null)
           deviceAccessory = new ValveAccessory(this, homebridgeAccessory, device, deviceData);
         else
           deviceAccessory = new SwitchAccessory(this, homebridgeAccessory, device, deviceData);

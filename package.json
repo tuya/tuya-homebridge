@@ -1,7 +1,7 @@
 {
-  "name": "homebridge-tuya-platform",
-  "version": "1.5.0",
-  "description": "Official Homebridge plugin for Tuya Open API, maintained by the Tuya Developer Team.",
+  "name": "homebridge-tuya-platform-talrhvfork",
+  "version": "1.5.0.2",
+  "description": "Official Homebridge plugin for Tuya Open API - talrhv fork, maintained by talrhv.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,7 +12,7 @@
   ],
   "author": "huhuan",
   "license": "MIT",
-  "homepage": "https://github.com/tuya/tuya-homebridge",
+  "homepage": "https://github.com/talrhv/tuya-homebridge",
   "engines": {
     "node": ">=0.12.0",
     "homebridge": ">=0.2.0"
@@ -23,6 +23,7 @@
     "axios": "^0.21.1",
     "chai": "^4.3.4",
     "crypto-js": "^4.0.0",
+    "homebridge": "^1.3.9",
     "js-base64": "^3.6.1",
     "mqtt": "^4.2.6",
     "string-cipher": "^1.0.8",
