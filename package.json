@@ -1,6 +1,6 @@
 {
   "name": "homebridge-tuya-platform-talrhvfork",
-  "version": "1.5.f3",
+  "version": "1.5.03f",
   "description": "Official Homebridge plugin for Tuya Open API - talrhv fork, maintained by talrhv.",
   "main": "index.js",
   "scripts": {
