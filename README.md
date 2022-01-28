@@ -1,3 +1,5 @@
+[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
+
 This Fork adds more device support for the fantastaic Homebridge-Tuya plugin!
 
 * Valve accessory support for switches! - turn your regular switch (kg category) to a valve accessory! what it means? it means that you 
