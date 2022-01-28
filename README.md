@@ -1,4 +1,3 @@
-[![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 
 This Fork adds more device support for the fantastaic Homebridge-Tuya plugin!
 
