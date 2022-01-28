@@ -146,6 +146,7 @@ class TuyaPlatform {
         break;
       // case 'kg':
       case 'tdq':
+      case 'dlq':
         var deviceData = new DataUtil().getSubService(device.status)
         deviceAccessory = new SwitchAccessory(this, homebridgeAccessory, device, deviceData);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
