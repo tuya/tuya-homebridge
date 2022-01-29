@@ -1,3 +1,4 @@
+
 This Fork adds more device support for the fantastaic Homebridge-Tuya plugin!
 
 * Valve accessory support for switches! - turn your regular switch (kg category) to a valve accessory! what it means? it means that you 
