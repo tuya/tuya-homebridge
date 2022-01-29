@@ -118,6 +118,10 @@ class TuyaPlatform {
     const uuid = this.api.hap.uuid.generate(device.id);
     const homebridgeAccessory = this.accessories.get(uuid);
 
+    //ignore accessories
+    if (this.config.options.ignoreDevices != null && this.config.options.ignoreDevices.includes(device.id))
+      return;
+
     // Construct new accessory
     let deviceAccessory;
     switch (deviceType) {
@@ -199,7 +203,7 @@ class TuyaPlatform {
       case 'pir':
         let accPir = this.config.options.motion.find(v => { return v.deviceId === device.id });
         if (accPir != null) {
-          deviceAccessory = new MotionSensorAccessory(this, homebridgeAccessory, device,accPir.overrideTuya);
+          deviceAccessory = new MotionSensorAccessory(this, homebridgeAccessory, device, accPir.overrideTuya);
           this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
           this.deviceAccessories.set(uuid, deviceAccessory);
         }
