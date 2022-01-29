@@ -1,6 +1,6 @@
 {
   "name": "homebridge-tuya-platform-talrhvfork",
-  "version": "1.5.04f",
+  "version": "1.5.4",
   "description": "Official Homebridge plugin for Tuya Open API - talrhv fork, maintained by talrhv.",
   "main": "index.js",
   "scripts": {
@@ -14,8 +14,8 @@
   "license": "MIT",
   "homepage": "https://github.com/talrhv/tuya-homebridge",
   "engines": {
-    "node": ">=0.12.0",
-    "homebridge": ">=0.2.0"
+    "node": ">=14.0.0",
+    "homebridge": ">=1.0.0"
   },
   "dependencies": {
     "@clubedaentrega/cipher": "^1.0.0",
