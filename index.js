@@ -12,9 +12,14 @@ const AirPurifierAccessory = require('./lib/air_purifier_accessory')
 const WindowCoveringAccessory = require('./lib/window_covering_accessory')
 const ContactSensorAccessory = require('./lib/contactsensor_accessory');
 const LeakSensorAccessory = require('./lib/leak_sensor_accessory')
+const PushAccessory = require("./lib/push_accessory");
+const MotionSensorAccessory = require('./lib/motionsensor_accessory')
+const ValveAccessory = require('./lib/valve_accessory')
+
 
 const LogUtil = require('./util/logutil')
-const DataUtil = require('./util/datautil')
+const DataUtil = require('./util/datautil');
+
 
 var Accessory, Service, Characteristic;
 
@@ -113,6 +118,10 @@ class TuyaPlatform {
     const uuid = this.api.hap.uuid.generate(device.id);
     const homebridgeAccessory = this.accessories.get(uuid);
 
+    //ignore accessories
+    if (this.config.options.ignoreDevices != null && this.config.options.ignoreDevices.includes(device.id))
+      return;
+
     // Construct new accessory
     let deviceAccessory;
     switch (deviceType) {
@@ -139,8 +148,9 @@ class TuyaPlatform {
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
-      case 'kg':
+      // case 'kg':
       case 'tdq':
+      case 'dlq':
         var deviceData = new DataUtil().getSubService(device.status)
         deviceAccessory = new SwitchAccessory(this, homebridgeAccessory, device, deviceData);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
@@ -168,6 +178,7 @@ class TuyaPlatform {
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
       case 'cl':
+      case 'clkg':
         deviceAccessory = new WindowCoveringAccessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
@@ -180,6 +191,30 @@ class TuyaPlatform {
       case 'rqbj':
       case 'jwbj':
         deviceAccessory = new LeakSensorAccessory(this, homebridgeAccessory, device);
+        this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+        this.deviceAccessories.set(uuid, deviceAccessory);
+        break;
+      case 'szjqr':
+        var deviceData = new DataUtil().getSubService(device.status)
+        deviceAccessory = new PushAccessory(this, homebridgeAccessory, device, deviceData);
+        this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+        this.deviceAccessories.set(uuid, deviceAccessory);
+        break;
+      case 'pir':
+        let accPir = this.config.options.motion.find(v => { return v.deviceId === device.id });
+        if (accPir != null) {
+          deviceAccessory = new MotionSensorAccessory(this, homebridgeAccessory, device, accPir.overrideTuya);
+          this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+          this.deviceAccessories.set(uuid, deviceAccessory);
+        }
+        break;
+      case 'kg':
+        var deviceData = new DataUtil().getSubService(device.status)
+        let accKg = this.config.options.valve.find(v => { return v.deviceId === device.id && v.isActive == true });
+        if (accKg != null)
+          deviceAccessory = new ValveAccessory(this, homebridgeAccessory, device, deviceData);
+        else
+          deviceAccessory = new SwitchAccessory(this, homebridgeAccessory, device, deviceData);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
