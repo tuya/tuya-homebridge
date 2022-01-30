@@ -28,5 +28,9 @@
     "string-cipher": "^1.0.8",
     "text-encoding": "^0.7.0",
     "uuid": "^8.3.2"
+  },
+  "funding": {
+    "type" : "paypal",
+    "url" : "https://www.paypal.com/donate/?business=GMUF9X9PKPW3J&no_recurring=1&item_name=Buy+me+a+cup+of+coffee&currency_code=USD"
   }
 }
