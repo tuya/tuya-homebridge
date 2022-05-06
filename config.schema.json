@@ -1,96 +1,98 @@
 {
-	"pluginAlias": "TuyaPlatform",
-	"pluginType": "platform",
-	"singular": true,
-	"headerDisplay": "Official Tuya Homebridge plugin, supported by Tuya Developers.",
-	"footerDisplay": "",
-	"schema": {
-		"type": "object",
-		"properties": {
-			"name": {
-				"title": "Name",
-				"type": "string",
-				"required": true,
-				"default": "TuyaPlatform",
-				"description": "You shouldn't need to change this."
-			},
-			"options": {
-				"title": "",
-				"type": "object",
-				"required": true,
-				"properties": {
-					"username": {
-						"title": "Username",
-						"type": "string",
-						"required": true
-					},
-					"password": {
-						"title": "Password",
-						"type": "string",
-						"required": true
-					},
-					"accessId": {
-						"title": "Access ID",
-						"type": "string",
-						"required": true
-					},
-					"accessKey": {
-						"title": "Access Key",
-						"type": "string",
-						"required": true
-					},
-					"lang": {
-						"title": "Language Code",
-						"type": "string",
-						"default": "en",
-						"description": "Your two letter language code",
-						"required": true
-					},
-					"projectType": {
-						"title": "Project Type",
-						"type": "string",
-						"default": "form",
-						"oneOf": [{
-								"title": "PaaS",
-								"enum": ["2"]
-							},
-							{
-								"title": "Custom",
-								"enum": ["1"]
-							}
-						],
-						"required": true
-					},
-					"appSchema": {
-						"title": "PaaS Platform",
-						"type": "string",
-						"default": "form",
-						"oneOf": [{
-								"title": "Tuya Smart",
-								"enum": ["tuyaSmart"]
-							},
-							{
-								"title": "Smart Life",
-								"enum": ["smartlife"]
-							}
-						],
-						"required": true
-					},
-					"countryCode": {
-						"title": "Country Code",
-						"type": "number",
-						"default": "",
-						"description": "Your two integer country code",
-						"required": true
-					},
-					"debug": {
-						"title": "Enable Debug Logging",
-						"type": "boolean",
-						"default": false,
-						"required": true
-					}
-				}
-			}
-		}
+  "pluginAlias": "TuyaPlatform",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "Upgraded Tuya Homebridge plugin, supported by linanw",
+  "footerDisplay": "",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string",
+        "required": true,
+        "default": "TuyaPlatform",
+        "description": "You shouldn't need to change this."
+      },
+      "options": {
+        "title": "",
+        "type": "object",
+        "required": true,
+        "properties": {
+          "username": {
+            "title": "Username",
+            "type": "string",
+            "required": true
+          },
+          "password": {
+            "title": "Password",
+            "type": "string",
+            "required": true
+          },
+          "accessId": {
+            "title": "Access ID",
+            "type": "string",
+            "required": true
+          },
+          "accessKey": {
+            "title": "Access Key",
+            "type": "string",
+            "required": true
+          },
+          "lang": {
+            "title": "Language Code",
+            "type": "string",
+            "default": "en",
+            "description": "Your two letter language code",
+            "required": true
+          },
+          "projectType": {
+            "title": "Project Type",
+            "type": "string",
+            "default": "form",
+            "oneOf": [
+              {
+                "title": "PaaS",
+                "enum": ["2"]
+              },
+              {
+                "title": "Custom",
+                "enum": ["1"]
+              }
+            ],
+            "required": true
+          },
+          "appSchema": {
+            "title": "PaaS Platform",
+            "type": "string",
+            "default": "form",
+            "oneOf": [
+              {
+                "title": "Tuya Smart",
+                "enum": ["tuyaSmart"]
+              },
+              {
+                "title": "Smart Life",
+                "enum": ["smartlife"]
+              }
+            ],
+            "required": true
+          },
+          "countryCode": {
+            "title": "Country Code",
+            "type": "number",
+            "default": "",
+            "description": "Your two integer country code",
+            "required": true
+          },
+          "debug": {
+            "title": "Enable Debug Logging",
+            "type": "boolean",
+            "default": false,
+            "required": true
+          }
+        }
+      }
+    }
   }
 }
