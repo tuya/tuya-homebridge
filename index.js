@@ -159,7 +159,7 @@ class TuyaPlatform {
         deviceAccessory = new LightAccessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
-        break:
+        break;
       case 'ywbj':
         deviceAccessory = new SmokeSensorAccessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
