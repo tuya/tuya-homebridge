@@ -156,9 +156,6 @@ class TuyaPlatform {
         deviceAccessory = new Fanv2Accessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
-        deviceAccessory = new LightAccessory(this, homebridgeAccessory, device);
-        this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
-        this.deviceAccessories.set(uuid, deviceAccessory);
         break;
       case 'ywbj':
         deviceAccessory = new SmokeSensorAccessory(this, homebridgeAccessory, device);
