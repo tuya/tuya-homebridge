@@ -147,6 +147,7 @@ class TuyaPlatform {
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
       case 'fs':
+      case 'fsd':
       case 'fskg':
         deviceAccessory = new Fanv2Accessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
