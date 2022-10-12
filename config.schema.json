@@ -7,13 +7,6 @@
 	"schema": {
 		"type": "object",
 		"properties": {
-			"name": {
-				"title": "Name",
-				"type": "string",
-				"required": true,
-				"default": "TuyaPlatform",
-				"description": "You shouldn't need to change this."
-			},
 			"options": {
 				"title": "",
 				"type": "object",
