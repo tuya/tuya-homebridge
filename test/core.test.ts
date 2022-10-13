@@ -1,9 +1,9 @@
 import {describe, expect, test} from '@jest/globals';
-import TuyaCustomOpenAPI from '../src/core/TuyaCustomOpenAPI';
+import TuyaHomeOpenAPI from '../src/core/TuyaHomeOpenAPI';
 import TuyaOpenMQ from '../src/core/TuyaOpenMQ';
 
-const customAPI = new TuyaCustomOpenAPI(
-  TuyaCustomOpenAPI.Endpoints.CHINA,
+const homeAPI = new TuyaHomeOpenAPI(
+  TuyaHomeOpenAPI.Endpoints.CHINA,
   'xxxxxxxxxxxxxxx',
   'xxxxxxxxxxxxxxx',
   '86',
@@ -13,11 +13,11 @@ const customAPI = new TuyaCustomOpenAPI(
   null,
 );
 
-const customMQ = new TuyaOpenMQ(customAPI, '1.0', null);
+const homeMQ = new TuyaOpenMQ(homeAPI, '1.0', null);
 
 describe('TuyaCustomOpenAPI', () => {
   test('getDevices() not null', async () => {
-    const devices = await customAPI.getDevices();
+    const devices = await homeAPI.getDevices();
     expect(devices).not.toBeNull();
   });
 });
@@ -25,20 +25,20 @@ describe('TuyaCustomOpenAPI', () => {
 describe('TuyaOpenMQ', () => {
   test('Connection', async () => {
     return new Promise((resolve, reject) => {
-      customMQ._onConnect = () => {
+      homeMQ._onConnect = () => {
         console.log('TuyaOpenMQ connected');
         resolve(null);
-        customMQ.stop();
+        homeMQ.stop();
       };
-      customMQ._onError = (err) => {
+      homeMQ._onError = (err) => {
         console.log('TuyaOpenMQ error:', err);
         reject(err);
       };
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      customMQ._onEnd = () => {
+      homeMQ._onEnd = () => {
 
       };
-      customMQ.start();
+      homeMQ.start();
     });
   });
 });
