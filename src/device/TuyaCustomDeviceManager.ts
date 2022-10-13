@@ -1,16 +1,7 @@
-import TuyaCustomOpenAPI from '../core/TuyaCustomOpenAPI';
-import TuyaOpenMQ from '../core/TuyaOpenMQ';
 import TuyaDevice from './TuyaDevice';
 import TuyaDeviceManager, { Events } from './TuyaDeviceManager';
 
 export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
-
-  constructor(
-    public api: TuyaCustomOpenAPI,
-    public mq: TuyaOpenMQ,
-  ) {
-    super(api, mq);
-  }
 
   async updateDevices() {
 
@@ -127,11 +118,15 @@ export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
         this.devices.delete(message.devId);
         this.emit(Events.DEVICE_DELETE, message.devId);
       } else if (bizCode === 'bindUser') {
-        this.updateDevice(bizData.devId);
-        this.emit(Events.DEVICE_BIND, message.devId);
+        const device = this.updateDevice(bizData.devId);
+        this.emit(Events.DEVICE_BIND, device);
       }
     } else {
-      this.emit(Events.DEVICE_UPDATE, message.devId);
+      for (const device of this.devices) {
+        if (device.devId === message.devId) {
+          this.emit(Events.DEVICE_UPDATE, message.devId);
+        }
+      }
     }
   }
 

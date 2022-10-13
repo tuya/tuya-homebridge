@@ -1,6 +1,7 @@
 
 export default class TuyaDevice {
-  public devId?: string;
+  public devId = '';
+  public name = '';
   // ...
 
   constructor(...obj: object[]) {
