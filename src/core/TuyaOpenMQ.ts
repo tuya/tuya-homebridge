@@ -49,9 +49,9 @@ export default class TuyaOpenMQ {
 
       const mqConfig = res.result;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const {url, client_id, username, password, expire_time, source_topic, sink_topic } = mqConfig;
+      const { url, client_id, username, password, expire_time, source_topic, sink_topic } = mqConfig;
       that.deviceTopic = source_topic.device;
-      this.log.log(`TuyaOpenMQ connecting: ${url}`);
+      console.log(`TuyaOpenMQ connecting: ${url}`);
       const client = mqtt.connect(url, {
         clientId: client_id,
         username: username,
@@ -87,15 +87,15 @@ export default class TuyaOpenMQ {
   }
 
   _onConnect() {
-    this.log.log('TuyaOpenMQ connected');
+    console.log('TuyaOpenMQ connected');
   }
 
   _onError(err) {
-    this.log.log('TuyaOpenMQ error:', err);
+    console.log('TuyaOpenMQ error:', err);
   }
 
   _onEnd() {
-    this.log.log('TuyaOpenMQ end');
+    console.log('TuyaOpenMQ end');
   }
 
   _onMessage(client: mqtt.MqttClient, mqConfig, topic: string, payload: Buffer) {
@@ -103,7 +103,7 @@ export default class TuyaOpenMQ {
     message.data = JSON.parse(this.type === '2.0' ?
       this._decodeMQMessage(message.data, mqConfig.password, message.t)
       : this._decodeMQMessage_1_0(message.data, mqConfig.password));
-    this.log.log(`TuyaOpenMQ onMessage: topic = ${topic}, message = ${JSON.stringify(message)}`);
+    console.log(`TuyaOpenMQ onMessage: topic = ${topic}, message = ${JSON.stringify(message)}`);
     this.messageListeners.forEach(listener => {
       if(this.deviceTopic === topic){
         listener(message.data);

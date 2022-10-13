@@ -65,7 +65,7 @@ export default class TuyaPaaSOpenAPI extends TuyaOpenAPI {
     const devicesInfoArr = await this.getDeviceListInfo(deviceIdArr);
     const devicesStatusArr = await this.getDeviceListStatus(deviceIdArr);
 
-    const devices: unknown[] = [];
+    const devices: object[] = [];
     for (let i = 0; i < devicesInfoArr.length; i++) {
       const info = devicesInfoArr[i];
       const functions = await this.getDeviceFunctions(info.id);

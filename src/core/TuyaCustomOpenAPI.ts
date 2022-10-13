@@ -56,15 +56,22 @@ export default class TuyaCustomOpenAPI extends TuyaOpenAPI {
       tempIds.push(res.result.devices[i].id);
     }
     const deviceIds = this._refactoringIdsGroup(tempIds, 20);
-    let devicesFunctions = [];
+    const devicesFunctions: object[] = [];
     for (const ids of deviceIds) {
-      devicesFunctions += await this.getDevicesFunctions(ids);
+      const functions = await this.getDevicesFunctions(ids);
+      devicesFunctions.push(functions);
     }
-    let devices: unknown[] = [];
+    let devices: object[] = [];
     if (devicesFunctions) {
       for (let i = 0; i < res.result.devices.length; i++) {
         const device = res.result.devices[i];
-        const functions = devicesFunctions.find((j) => j['devices'][0] === device.id);
+        const functions = devicesFunctions.find((item) => {
+          const devices = item['devices'];
+          if (!devices || devices.length === 0) {
+            return false;
+          }
+          return devices[0] === device.id;
+        });
         devices.push(Object.assign({}, device, functions));
       }
     } else {
