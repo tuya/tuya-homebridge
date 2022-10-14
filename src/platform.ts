@@ -89,7 +89,8 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
     } else if (projectType === '2') {
 
-      const api = new TuyaHomeOpenAPI(accessId, accessKey, countryCode, username, password, appSchema, this.log);
+      const api = new TuyaHomeOpenAPI(endpoint || TuyaHomeOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
+      await api.login(countryCode, username, password, appSchema);
 
       const mq = new TuyaOpenMQ(api, '1.0', this.log);
       mq.start();

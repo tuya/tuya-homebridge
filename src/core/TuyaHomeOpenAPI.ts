@@ -12,44 +12,35 @@ export const DEFAULT_ENDPOINTS = {
 
 export default class TuyaHomeOpenAPI extends TuyaOpenAPI {
 
-  constructor(
-    public accessId: string,
-    public accessKey: string,
-    public countryCode: string,
-    public username: string,
-    public password: string,
-    public appSchema: string,
-    public log: Logger = console,
-    public lang = 'en',
-  ) {
-
-    let endpoint = Endpoints.AMERICA;
-    for (const _endpoint of Object.keys(DEFAULT_ENDPOINTS)) {
-      const countryCodeList = DEFAULT_ENDPOINTS[_endpoint];
-      if (countryCodeList.includes(countryCode)) {
-        endpoint = <Endpoints>_endpoint;
-      }
-    }
-
-    super(endpoint, accessId, accessKey, log, lang);
-  }
+  public countryCode?: string;
+  public username?: string;
+  public password?: string;
+  public appSchema?: string;
 
   async _refreshAccessTokenIfNeed(path: string) {
+
+    if (!this.isTokenExpired()) {
+      return;
+    }
 
     if (path.startsWith('/v1.0/iot-01/associated-users/actions/authorized-login')) {
       return;
     }
 
-    if (this.tokenInfo.expire - 60 * 1000 > new Date().getTime()) {
-      return;
-    }
+    // login after expired
+    await this.login(this.countryCode!, this.username!, this.password!, this.appSchema!);
 
-    await this.login(this.appSchema, this.countryCode, this.username, this.password);
-
-    return;
   }
 
-  async login(appSchema: string, countryCode: string, username: string, password: string) {
+  async login(countryCode: string, username: string, password: string, appSchema: string) {
+
+    for (const _endpoint of Object.keys(DEFAULT_ENDPOINTS)) {
+      const countryCodeList = DEFAULT_ENDPOINTS[_endpoint];
+      if (countryCodeList.includes(countryCode)) {
+        this.endpoint = <Endpoints>_endpoint;
+      }
+    }
+
     this.tokenInfo.access_token = '';
     const res = await this.post('/v1.0/iot-01/associated-users/actions/authorized-login', {
       'country_code': countryCode,
@@ -66,6 +57,11 @@ export default class TuyaHomeOpenAPI extends TuyaOpenAPI {
       uid: uid,
       expire: expire_time * 1000 + new Date().getTime(),
     };
+
+    this.countryCode = countryCode;
+    this.username = username;
+    this.password = password;
+    this.appSchema = appSchema;
 
     return res.result;
   }

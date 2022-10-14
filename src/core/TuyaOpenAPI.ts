@@ -43,6 +43,10 @@ export default class TuyaOpenAPI {
     return this.tokenInfo && this.tokenInfo.access_token && this.tokenInfo.access_token.length > 0;
   }
 
+  isTokenExpired() {
+    return (this.tokenInfo.expire - 60 * 1000 <= new Date().getTime());
+  }
+
   async _refreshAccessTokenIfNeed(path: string) {
     //
   }

@@ -4,15 +4,15 @@ import TuyaOpenAPI from './TuyaOpenAPI';
 export default class TuyaCustomOpenAPI extends TuyaOpenAPI {
 
   async _refreshAccessTokenIfNeed(path: string) {
-    if (this.isLogin() === false) {
+    if (!this.isLogin()) {
+      return;
+    }
+
+    if (!this.isTokenExpired()) {
       return;
     }
 
     if (path.startsWith('/v1.0/token')) {
-      return;
-    }
-
-    if (this.tokenInfo.expire - 60 * 1000 > new Date().getTime()) {
       return;
     }
 

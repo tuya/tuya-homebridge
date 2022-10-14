@@ -5,19 +5,25 @@ import TuyaOpenMQ from '../src/core/TuyaOpenMQ';
 import TuyaHomeDeviceManager from '../src/device/TuyaHomeDeviceManager';
 import { HomeConfig } from './env';
 
-const homeAPI = new TuyaHomeOpenAPI(...HomeConfig);
+const homeAPI = new TuyaHomeOpenAPI(TuyaHomeOpenAPI.Endpoints.CHINA, HomeConfig.accessId, HomeConfig.accessKey);
 const homeMQ = new TuyaOpenMQ(homeAPI, '1.0');
 const homeDeviceManager = new TuyaHomeDeviceManager(homeAPI, homeMQ);
 
-describe('TuyaCustomOpenAPI', () => {
-  test('getDevices() not null', async () => {
+describe('TuyaHomeOpenAPI', () => {
+  test('login()', async () => {
+    await homeAPI.login(HomeConfig.countryCode, HomeConfig.username, HomeConfig.password, HomeConfig.appSchema);
+  });
+});
+
+describe('TuyaHomeDeviceManager', () => {
+  test('updateDevices() not null', async () => {
     const devices = await homeDeviceManager.updateDevices();
     expect(devices).not.toBeNull();
   });
 });
 
 describe('TuyaOpenMQ', () => {
-  test('Connection', async () => {
+  test('start()', async () => {
     return new Promise((resolve, reject) => {
       homeMQ._onConnect = () => {
         console.log('TuyaOpenMQ connected');
