@@ -8,6 +8,7 @@ import TuyaDevice from './device/TuyaDevice';
 import TuyaDeviceManager, { Events } from './device/TuyaDeviceManager';
 import TuyaCustomDeviceManager from './device/TuyaCustomDeviceManager';
 import TuyaHomeDeviceManager from './device/TuyaHomeDeviceManager';
+import TuyaAccessoryFactory from './accessory/TuyaAccessoryFactory';
 
 /**
  * HomebridgePlatform
@@ -19,9 +20,10 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
 
   // this is used to track restored cached accessories
-  public readonly accessories: Set<PlatformAccessory> = new Set();
+  public readonly accessories: PlatformAccessory[] = [];
 
-  public tuyaDeviceManager?: TuyaDeviceManager;
+  public deviceManager?: TuyaDeviceManager;
+  public accessoryHandlers = [];
 
   constructor(
     public readonly log: Logger,
@@ -34,10 +36,10 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     // Dynamic Platform plugins should only register new accessories after this event was fired,
     // in order to ensure they weren't added to homebridge already. This event can also be used
     // to start discovery of new accessories.
-    this.api.on('didFinishLaunching', () => {
+    this.api.on('didFinishLaunching', async () => {
       log.debug('Executed didFinishLaunching callback');
       // run the method to discover / register your devices as accessories
-      this.discoverDevices();
+      await this.initDevices();
     });
   }
 
@@ -49,7 +51,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     this.log.info('Loading accessory from cache:', accessory.displayName);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
-    this.accessories.add(accessory);
+    this.accessories.push(accessory);
   }
 
   /**
@@ -57,7 +59,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
    * Accessories must only be registered once, previously created accessories
    * must not be registered again to prevent "duplicate UUID" errors.
    */
-  async discoverDevices() {
+  async initDevices() {
 
     const {
       endpoint,
@@ -79,9 +81,9 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       const mq = new TuyaOpenMQ(api, '2.0', this.log);
       mq.start();
 
-      this.tuyaDeviceManager = new TuyaCustomDeviceManager(api, mq);
+      this.deviceManager = new TuyaCustomDeviceManager(api, mq);
       try {
-        devices = await this.tuyaDeviceManager.updateDevices();
+        devices = await this.deviceManager.updateDevices();
       } catch (e) {
         this.log.warn('Failed to get device information. Please check if the config.json is correct.');
         return;
@@ -95,9 +97,9 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       const mq = new TuyaOpenMQ(api, '1.0', this.log);
       mq.start();
 
-      this.tuyaDeviceManager = new TuyaHomeDeviceManager(api, mq);
+      this.deviceManager = new TuyaHomeDeviceManager(api, mq);
       try {
-        devices = await this.tuyaDeviceManager.updateDevices();
+        devices = await this.deviceManager.updateDevices();
       } catch (e) {
         this.log.warn('Failed to get device information. Please check if the config.json is correct.');
         return;
@@ -112,130 +114,67 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       this.addAccessory(device);
     }
 
-    this.tuyaDeviceManager.on(Events.DEVICE_DELETE, devId => {
-      const uuid = this.api.hap.uuid.generate(devId);
-      for (const accessory of this.accessories) {
-        if (accessory.UUID === uuid) {
-          this.removeAccessory(accessory);
-        }
-      }
-    });
+    this.deviceManager.on(Events.DEVICE_DELETE, this.removeAccessory.bind(this));
+    this.deviceManager.on(Events.DEVICE_BIND, this.addAccessory.bind(this));
+    this.deviceManager.on(Events.DEVICE_UPDATE, this.updateAccessory.bind(this));
 
-    this.tuyaDeviceManager.on(Events.DEVICE_BIND, device => {
-      this.addAccessory(device);
-    });
-
-    this.tuyaDeviceManager.on(Events.DEVICE_UPDATE, device => {
-      this.addAccessory(device);
-    });
-
-    /*
-    // EXAMPLE ONLY
-    // A real plugin you would discover accessories from the local network, cloud services
-    // or a user-defined array in the platform config.
-    const exampleDevices = [
-      {
-        exampleUniqueId: 'ABCD',
-        exampleDisplayName: 'Bedroom',
-      },
-      {
-        exampleUniqueId: 'EFGH',
-        exampleDisplayName: 'Kitchen',
-      },
-    ];
-
-    // loop over the discovered devices and register each one if it has not already been registered
-    for (const device of exampleDevices) {
-
-      // generate a unique id for the accessory this should be generated from
-      // something globally unique, but constant, for example, the device serial
-      // number or MAC address
-      const uuid = this.api.hap.uuid.generate(device.exampleUniqueId);
-
-      // see if an accessory with the same uuid has already been registered and restored from
-      // the cached devices we stored in the `configureAccessory` method above
-      const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
-
-      if (existingAccessory) {
-        // the accessory already exists
-        this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
-
-        // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        // existingAccessory.context.device = device;
-        // this.api.updatePlatformAccessories([existingAccessory]);
-
-        // create the accessory handler for the restored accessory
-        // this is imported from `platformAccessory.ts`
-        new TuyaPlatformAccessory(this, existingAccessory);
-
-        // it is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
-        // remove platform accessories when no longer present
-        // this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
-        // this.log.info('Removing existing accessory from cache:', existingAccessory.displayName);
-      } else {
-        // the accessory does not yet exist, so we need to create it
-        this.log.info('Adding new accessory:', device.exampleDisplayName);
-
-        // create a new accessory
-        const accessory = new this.api.platformAccessory(device.exampleDisplayName, uuid);
-
-        // store a copy of the device object in the `accessory.context`
-        // the `context` property can be used to store any data about the accessory you may need
-        accessory.context.device = device;
-
-        // create the accessory handler for the newly create accessory
-        // this is imported from `platformAccessory.ts`
-        new TuyaPlatformAccessory(this, accessory);
-
-        // link the accessory to your platform
-        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
-      }
-    }
-    */
   }
 
   addAccessory(device: TuyaDevice) {
 
-    const uuid = this.api.hap.uuid.generate(device.id);
-
-    const existingAccessory = Array.from(this.accessories).find(accessory => accessory.UUID === uuid);
+    const existingAccessory = this.getAccessory(device.id);
     if (existingAccessory) {
       this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
 
-      // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-      existingAccessory.context.device = device;
-      this.api.updatePlatformAccessories([existingAccessory]);
-
       // create the accessory handler for the restored accessory
-      // this is imported from `platformAccessory.ts`
-      // new TuyaPlatformAccessory(this, existingAccessory);
-      // TODO
+      const handler = TuyaAccessoryFactory.createAccessory(this, existingAccessory, device);
+      // this.accessoryHandlers.push(handler);
 
     } else {
       // the accessory does not yet exist, so we need to create it
       this.log.info('Adding new accessory:', device.name);
 
       // create a new accessory
+      const uuid = this.api.hap.uuid.generate(device.id);
       const accessory = new this.api.platformAccessory(device.name, uuid);
-
-      // store a copy of the device object in the `accessory.context`
-      // the `context` property can be used to store any data about the accessory you may need
-      accessory.context.device = device;
+      accessory.context.deviceID = device.id;
 
       // create the accessory handler for the newly create accessory
-      // this is imported from `platformAccessory.ts`
-      // new TuyaPlatformAccessory(this, accessory);
+      const handler = TuyaAccessoryFactory.createAccessory(this, accessory, device);
+      // this.accessoryHandlers.push(handler);
 
       // link the accessory to your platform
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     }
   }
 
-  // Sample function to show how developer can remove accessory dynamically from outside event
-  removeAccessory(accessory: PlatformAccessory) {
-    this.accessories.delete(accessory);
+  updateAccessory(device: TuyaDevice) {
+    const accessory = this.getAccessory(device.id);
+    if (!accessory) {
+      return;
+    }
+
+    accessory.displayName = device.name;
+  }
+
+  removeAccessory(deviceID: string) {
+    const accessory = this.getAccessory(deviceID);
+    if (!accessory) {
+      return;
+    }
+
+    const index = this.accessories.indexOf(accessory);
+    if (index >= 0) {
+      this.accessories.splice(index, 1);
+    }
+
     this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     this.log.info('Removing existing accessory from cache:', accessory.displayName);
+  }
+
+  getAccessory(deviceID: string) {
+    const uuid = this.api.hap.uuid.generate(deviceID);
+    return this.accessories.find(accessory => accessory.UUID === uuid);
   }
 
 }

@@ -9,7 +9,7 @@ export const CustomConfig = {
 export const HomeConfig = {
   accessId: '',
   accessKey: '',
-  countryCode: '',
+  countryCode: 86,
   username: '',
   password: '',
   appSchema: '',

@@ -77,17 +77,17 @@ export default class TuyaOpenMQ {
       password: password,
     });
 
-    client.on('connect', this._onConnect);
-    client.on('error', this._onError);
-    client.on('end', this._onEnd);
-    client.on('message', this._onMessage);
+    client.on('connect', this._onConnect.bind(this));
+    client.on('error', this._onError.bind(this));
+    client.on('end', this._onEnd.bind(this));
+    client.on('message', this._onMessage.bind(this));
     client.subscribe(source_topic.device);
 
     this.client = client;
     this.config = res.result;
 
     // reconnect every 2 hours required
-    this.timer = setTimeout(this._loop, (expire_time - 60) * 1000);
+    this.timer = setTimeout(this._loop.bind(this), (expire_time - 60) * 1000);
 
   }
 
