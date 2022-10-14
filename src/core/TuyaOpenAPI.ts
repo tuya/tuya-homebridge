@@ -80,7 +80,7 @@ export default class TuyaOpenAPI {
       data: body,
     });
 
-    this.log.debug(`TuyaOpenAPI response: ${JSON.stringify(res.data)} path = ${path}`);
+    this.log.debug(`TuyaOpenAPI response: path = ${path}, data = ${JSON.stringify(res.data)}`);
     return res.data;
   }
 
