@@ -1,35 +1,28 @@
-import TuyaDevice from './TuyaDevice';
+import TuyaDevice, { TuyaDeviceFunction } from './TuyaDevice';
 import TuyaDeviceManager, { Events } from './TuyaDeviceManager';
 
 export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
 
   async updateDevices() {
 
-    const devices = new Set<TuyaDevice>();
     const res = await this.api.get('/v1.0/iot-01/associated-users/devices', { 'size': 100 });
+    const devices = new Set<TuyaDevice>(res.result.devices);
 
-    const tempIds: string[] = [];
-    for (let i = 0; i < res.result.devices.length; i++) {
-      tempIds.push(res.result.devices[i].id);
-    }
-    const deviceIds = this._refactoringIdsGroup(tempIds, 20);
-    const devicesFunctions: object[] = [];
-    for (const ids of deviceIds) {
-      const functions = await this.getDevicesFunctions(ids);
-      devicesFunctions.push(functions);
+    const devIds: string[] = [];
+    for (const device of devices) {
+      devIds.push(device.id);
     }
 
-    for (let i = 0; i < res.result.devices.length; i++) {
-      const deviceInfo = res.result.devices[i];
-      const functions = devicesFunctions.find((item) => {
-        const devices = item['devices'];
-        if (!devices || devices.length === 0) {
-          return false;
+    const functions = await this.getDeviceListFunctions(devIds);
+
+    for (const device of devices) {
+      for (const item of functions) {
+        if (device.product_id === item['product_id']) {
+          device.functions = item['functions'] as TuyaDeviceFunction[];
+          break;
         }
-        return devices[0] === deviceInfo.id;
-      }) || {};
-      const device: TuyaDevice = Object.assign({}, deviceInfo, functions);
-      devices.add(device);
+      }
+      device.functions = device.functions || [];
     }
 
     this.devices = devices;
@@ -38,16 +31,19 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
 
   async updateDevice(deviceID: string) {
 
-    const deviceInfo = await this.getDeviceInfo(deviceID);
+    const device: TuyaDevice = await this.getDeviceInfo(deviceID);
     const functions = await this.getDeviceFunctions(deviceID);
-    // TODO status?
+    if (functions) {
+      device.functions = functions['functions'];
+    } else {
+      device.functions = [];
+    }
 
     const oldDevice = this.getDevice(deviceID);
     if (oldDevice) {
       this.devices.delete(oldDevice);
     }
 
-    const device: TuyaDevice = Object.assign({}, deviceInfo, functions);
     this.devices.add(device);
 
     return device;
@@ -68,15 +64,6 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
   }
 
 
-  _refactoringIdsGroup(array: string[], subGroupLength: number) {
-    let index = 0;
-    const newArray: string[][] = [];
-    while(index < array.length) {
-      newArray.push(array.slice(index, index += subGroupLength));
-    }
-    return newArray;
-  }
-
   // single device gets the instruction set
   async getDeviceFunctions(deviceID: string) {
     const res = await this.api.get(`/v1.0/devices/${deviceID}/functions`);
@@ -84,9 +71,17 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
   }
 
   // Batch access to device instruction sets
-  async getDevicesFunctions(devIds: string[] = []) {
-    const res = await this.api.get('/v1.0/devices/functions', { 'device_ids': devIds.join(',') });
-    return res.result;
+  async getDeviceListFunctions(devIds: string[] = []) {
+    const PAGE_COUNT = 20;
+
+    let index = 0;
+    const results: object[] = [];
+    while(index < devIds.length) {
+      const res = await this.api.get('/v1.0/devices/functions', { 'device_ids': devIds.slice(index, index += PAGE_COUNT).join(',') });
+      results.push(...res.result);
+    }
+
+    return results;
   }
 
   // Get individual device details
