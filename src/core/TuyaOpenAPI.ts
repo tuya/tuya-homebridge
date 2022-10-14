@@ -6,6 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 // @ts-ignore
 import { version } from '../../package.json';
 
+import Logger from '../util/Logger';
+
 export enum Endpoints {
   AMERICA = 'https://openapi.tuyaus.com',
   CHINA = 'https://openapi.tuyacn.com',
@@ -31,7 +33,7 @@ export default class TuyaOpenAPI {
     public endpoint: Endpoints,
     public accessId: string,
     public accessKey: string,
-    public log,
+    public log: Logger = console,
     public lang = 'en',
   ) {
 
@@ -67,7 +69,7 @@ export default class TuyaOpenAPI {
       'devVersion': version,
     };
     // eslint-disable-next-line max-len
-    console.log(`TuyaOpenAPI request: method = ${method}, endpoint = ${this.endpoint}, path = ${path}, params = ${JSON.stringify(params)}, body = ${JSON.stringify(body)}, headers = ${JSON.stringify(headers)}`);
+    this.log.debug(`TuyaOpenAPI request: method = ${method}, endpoint = ${this.endpoint}, path = ${path}, params = ${JSON.stringify(params)}, body = ${JSON.stringify(body)}, headers = ${JSON.stringify(headers)}`);
 
     const res = await axios({
       baseURL: this.endpoint,
@@ -78,7 +80,7 @@ export default class TuyaOpenAPI {
       data: body,
     });
 
-    console.log(`TuyaOpenAPI response: ${JSON.stringify(res.data)} path = ${path}`);
+    this.log.debug(`TuyaOpenAPI response: ${JSON.stringify(res.data)} path = ${path}`);
     return res.data;
   }
 

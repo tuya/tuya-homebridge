@@ -4,17 +4,15 @@ import TuyaOpenMQ from '../src/core/TuyaOpenMQ';
 import TuyaHomeDeviceManager from '../src/device/TuyaHomeDeviceManager';
 
 const homeAPI = new TuyaHomeOpenAPI(
-  TuyaHomeOpenAPI.Endpoints.CHINA,
   'xxxxxxxxxxxxxxx',
   'xxxxxxxxxxxxxxx',
   '86',
   'xxxxxxxxxxx',
   'xxxxxxxxxxx',
   'smartlife',
-  null,
 );
 
-const homeMQ = new TuyaOpenMQ(homeAPI, '1.0', null);
+const homeMQ = new TuyaOpenMQ(homeAPI, '1.0');
 
 const homeDeviceManager = new TuyaHomeDeviceManager(homeAPI, homeMQ);
 

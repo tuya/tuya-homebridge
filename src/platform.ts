@@ -68,7 +68,6 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       username,
       password,
       appSchema,
-      debug,
     } = this.config.options;
 
     let devices: Set<TuyaDevice>;
@@ -90,11 +89,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
     } else if (projectType === '2') {
 
-      let _endpoint = endpoint;
-      // TODO endpoint from countryCode
-      _endpoint = TuyaHomeOpenAPI.Endpoints.AMERICA;
-
-      const api = new TuyaHomeOpenAPI(_endpoint, accessId, accessKey, countryCode, username, password, appSchema, this.log);
+      const api = new TuyaHomeOpenAPI(accessId, accessKey, countryCode, username, password, appSchema, this.log);
 
       const mq = new TuyaOpenMQ(api, '1.0', this.log);
       mq.start();
@@ -108,7 +103,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       }
 
     } else {
-      this.log.info(`Unsupported projectType: ${projectType}, stop device discovery.`);
+      this.log.warn(`Unsupported projectType: ${projectType}, stop device discovery.`);
       return;
     }
 

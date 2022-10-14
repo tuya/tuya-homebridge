@@ -4,6 +4,7 @@ import Crypto from 'crypto';
 import CryptoJS from 'crypto-js';
 
 import TuyaOpenAPI from './TuyaOpenAPI';
+import Logger from '../util/Logger';
 
 const GCM_TAG_LENGTH = 16;
 
@@ -18,7 +19,7 @@ export default class TuyaOpenMQ {
   constructor(
     public api: TuyaOpenAPI,
     public type: string,
-    public log,
+    public log: Logger = console,
   ) {
 
   }
@@ -51,7 +52,7 @@ export default class TuyaOpenMQ {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { url, client_id, username, password, expire_time, source_topic, sink_topic } = mqConfig;
       that.deviceTopic = source_topic.device;
-      console.log(`TuyaOpenMQ connecting: ${url}`);
+      this.log.debug(`TuyaOpenMQ connecting: ${url}`);
       const client = mqtt.connect(url, {
         clientId: client_id,
         username: username,
@@ -87,15 +88,15 @@ export default class TuyaOpenMQ {
   }
 
   _onConnect() {
-    console.log('TuyaOpenMQ connected');
+    this.log.debug('TuyaOpenMQ connected');
   }
 
   _onError(err) {
-    console.log('TuyaOpenMQ error:', err);
+    this.log.error('TuyaOpenMQ error:', err);
   }
 
   _onEnd() {
-    console.log('TuyaOpenMQ end');
+    this.log.debug('TuyaOpenMQ end');
   }
 
   _onMessage(client: mqtt.MqttClient, mqConfig, topic: string, payload: Buffer) {
@@ -103,7 +104,7 @@ export default class TuyaOpenMQ {
     message.data = JSON.parse(this.type === '2.0' ?
       this._decodeMQMessage(message.data, mqConfig.password, message.t)
       : this._decodeMQMessage_1_0(message.data, mqConfig.password));
-    console.log(`TuyaOpenMQ onMessage: topic = ${topic}, message = ${JSON.stringify(message)}`);
+    this.log.debug(`TuyaOpenMQ onMessage: topic = ${topic}, message = ${JSON.stringify(message)}`);
     this.messageListeners.forEach(listener => {
       if(this.deviceTopic === topic){
         listener(message.data);
