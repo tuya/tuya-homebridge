@@ -28,7 +28,8 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
         }
         return devices[0] === deviceInfo.id;
       }) || {};
-      devices.add(new TuyaDevice(deviceInfo, functions));
+      const device: TuyaDevice = Object.assign({}, deviceInfo, functions);
+      devices.add(device);
     }
 
     this.devices = devices;
@@ -39,13 +40,14 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
 
     const deviceInfo = await this.getDeviceInfo(deviceID);
     const functions = await this.getDeviceFunctions(deviceID);
+    // TODO status?
 
-    let device = Array.from(this.devices).find(device => device.devId === deviceID);
-    if (device) {
-      this.devices.delete(device);
+    const oldDevice = this.getDevice(deviceID);
+    if (oldDevice) {
+      this.devices.delete(oldDevice);
     }
 
-    device = new TuyaDevice(deviceInfo, functions);
+    const device: TuyaDevice = Object.assign({}, deviceInfo, functions);
     this.devices.add(device);
 
     return device;
@@ -53,7 +55,7 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
 
   async removeDevice(deviceID: string) {
     const res = await this.api.delete(`/v1.0/devices/${deviceID}`);
-    const device = Array.from(this.devices).find(device => device.devId === deviceID);
+    const device = this.getDevice(deviceID);
     if (device) {
       this.devices.delete(device);
     }
@@ -120,10 +122,9 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
         this.emit(Events.DEVICE_BIND, device);
       }
     } else {
-      for (const device of this.devices) {
-        if (device.devId === message.devId) {
-          this.emit(Events.DEVICE_UPDATE, message.devId);
-        }
+      const device = this.getDevice(message.devId);
+      if (device && device.id === message.devId) {
+        this.emit(Events.DEVICE_UPDATE, message.devId);
       }
     }
   }

@@ -195,7 +195,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
   addAccessory(device: TuyaDevice) {
 
-    const uuid = this.api.hap.uuid.generate(device.devId);
+    const uuid = this.api.hap.uuid.generate(device.id);
 
     const existingAccessory = Array.from(this.accessories).find(accessory => accessory.UUID === uuid);
     if (existingAccessory) {

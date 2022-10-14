@@ -43,9 +43,8 @@ export default class TuyaOpenAPI {
     return this.tokenInfo && this.tokenInfo.access_token && this.tokenInfo.access_token.length > 0;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async _refreshAccessTokenIfNeed(path: string) {
-    throw new Error('Not implemented.');
+    //
   }
 
   async request(method: Method, path: string, params?, body?) {

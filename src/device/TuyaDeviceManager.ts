@@ -23,12 +23,16 @@ export default class TuyaDeviceManager extends EventEmitter {
     mq.addMessageListener(this.onMQTTMessage.bind(this));
   }
 
+  getDevice(deviceID: string) {
+    return Array.from(this.devices).find(device => device.id === deviceID);
+  }
+
   async updateDevices() {
     return new Set<TuyaDevice>();
   }
 
   async updateDevice(deviceID: string) {
-    return new TuyaDevice();
+    return <TuyaDevice>{};
   }
 
   async removeDevice(deviceID: string) {
