@@ -22,7 +22,7 @@ const APP_INFO = {
  * An instance of this class is created for each accessory your platform registers
  * Each accessory may expose multiple services of different service types.
  */
-export class TuyaBaseAccessory {
+export class BaseAccessory {
 
   public deviceManager: TuyaDeviceManager;
   public device: TuyaDevice;

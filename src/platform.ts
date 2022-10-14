@@ -8,7 +8,7 @@ import TuyaDevice from './device/TuyaDevice';
 import TuyaDeviceManager, { Events } from './device/TuyaDeviceManager';
 import TuyaCustomDeviceManager from './device/TuyaCustomDeviceManager';
 import TuyaHomeDeviceManager from './device/TuyaHomeDeviceManager';
-import TuyaAccessoryFactory from './accessory/TuyaAccessoryFactory';
+import AccessoryFactory from './accessory/AccessoryFactory';
 
 /**
  * HomebridgePlatform
@@ -30,7 +30,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
-    this.log.debug('Finished initializing platform:', this.config.name);
+    this.log.debug('Finished initializing platform');
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.
     // Dynamic Platform plugins should only register new accessories after this event was fired,
@@ -127,7 +127,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
 
       // create the accessory handler for the restored accessory
-      const handler = TuyaAccessoryFactory.createAccessory(this, existingAccessory, device);
+      const handler = AccessoryFactory.createAccessory(this, existingAccessory, device);
       // this.accessoryHandlers.push(handler);
 
     } else {
@@ -140,7 +140,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       accessory.context.deviceID = device.id;
 
       // create the accessory handler for the newly create accessory
-      const handler = TuyaAccessoryFactory.createAccessory(this, accessory, device);
+      const handler = AccessoryFactory.createAccessory(this, accessory, device);
       // this.accessoryHandlers.push(handler);
 
       // link the accessory to your platform
