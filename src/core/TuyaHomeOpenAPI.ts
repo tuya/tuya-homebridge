@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
 import Crypto from 'crypto-js';
 import TuyaOpenAPI, { Endpoints } from './TuyaOpenAPI';
-import Logger from '../util/Logger';
 
 export const DEFAULT_ENDPOINTS = {
   [Endpoints.AMERICA.toString()]: ['1', '51', '52', '54', '55', '56', '57', '58', '60', '62', '63', '64', '66', '81', '82', '84', '95', '239', '245', '246', '500', '502', '591', '593', '594', '595', '597', '598', '670', '672', '674', '675', '677', '678', '682', '683', '686', '690', '852', '853', '886', '970', '1721', '1787', '1809', '1829', '1849', '4779', '5999', '35818'],

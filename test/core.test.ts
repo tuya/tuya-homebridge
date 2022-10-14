@@ -24,21 +24,21 @@ describe('TuyaHomeDeviceManager', () => {
 
 describe('TuyaOpenMQ', () => {
   test('start()', async () => {
-    return new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
       homeMQ._onConnect = () => {
         console.log('TuyaOpenMQ connected');
         resolve(null);
-        homeMQ.stop();
       };
       homeMQ._onError = (err) => {
         console.log('TuyaOpenMQ error:', err);
         reject(err);
       };
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      homeMQ._onEnd = () => {
-
-      };
       homeMQ.start();
     });
   });
+
+  test('stop()', async () => {
+    homeMQ.stop();
+  });
+
 });

@@ -8,13 +8,29 @@ import Logger from '../util/Logger';
 
 const GCM_TAG_LENGTH = 16;
 
+interface TuyaMQTTConfigSourceTopic {
+  device: string;
+}
+
+interface TuyaMQTTConfig {
+  url: string;
+  client_id: string;
+  username: string;
+  password: string;
+  expire_time: number;
+  source_topic: TuyaMQTTConfigSourceTopic;
+  sink_topic: object;
+}
+
 export default class TuyaOpenMQ {
 
   public running = false;
   public client?: mqtt.MqttClient;
+  public config?: TuyaMQTTConfig;
   public messageListeners = new Set<CallableFunction>();
-  public deviceTopic?: string;
   public linkId = uuid_v4();
+
+  public timer?: NodeJS.Timer;
 
   constructor(
     public api: TuyaOpenAPI,
@@ -26,53 +42,52 @@ export default class TuyaOpenMQ {
 
   start() {
     this.running = true;
-    this._loop_start();
+    this._loop();
   }
 
   stop() {
     this.running = false;
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
     if (this.client) {
+      this.client.removeAllListeners();
       this.client.end();
     }
   }
 
-  async _loop_start() {
+  async _loop() {
 
-    // eslint-disable-next-line
-    const that = this;
-    while (this.running) {
-
-      const res = await this._getMQConfig('mqtt');
-      if (res.success === false) {
-        this.stop();
-        break;
-      }
-
-      const mqConfig = res.result;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { url, client_id, username, password, expire_time, source_topic, sink_topic } = mqConfig;
-      that.deviceTopic = source_topic.device;
-      this.log.debug(`TuyaOpenMQ connecting: ${url}`);
-      const client = mqtt.connect(url, {
-        clientId: client_id,
-        username: username,
-        password: password,
-      });
-
-      client.on('connect', this._onConnect);
-      client.on('error', this._onError);
-      client.on('end', this._onEnd);
-      client.on('message', (topic, payload) => that._onMessage(client, mqConfig, topic, payload));
-      client.subscribe(that.deviceTopic!);
-
-      if (this.client) {
-        this.client.end();
-      }
-      this.client = client;
-
-      // reconnect every 2 hours required
-      await new Promise(r => setTimeout(r, (expire_time - 60) * 1000));
+    const res = await this._getMQConfig('mqtt');
+    if (res.success === false) {
+      this.stop();
+      return;
     }
+
+    if (this.client) {
+      this.client.removeAllListeners();
+      this.client.end();
+    }
+
+    const { url, client_id, username, password, expire_time, source_topic } = res.result;
+    this.log.debug(`TuyaOpenMQ connecting: ${url}`);
+    const client = mqtt.connect(url, {
+      clientId: client_id,
+      username: username,
+      password: password,
+    });
+
+    client.on('connect', this._onConnect);
+    client.on('error', this._onError);
+    client.on('end', this._onEnd);
+    client.on('message', this._onMessage);
+    client.subscribe(source_topic.device);
+
+    this.client = client;
+    this.config = res.result;
+
+    // reconnect every 2 hours required
+    this.timer = setTimeout(this._loop, (expire_time - 60) * 1000);
 
   }
 
@@ -91,28 +106,25 @@ export default class TuyaOpenMQ {
     this.log.debug('TuyaOpenMQ connected');
   }
 
-  _onError(err) {
-    this.log.error('TuyaOpenMQ error:', err);
+  _onError(error: Error) {
+    this.log.error('TuyaOpenMQ error:', error);
   }
 
   _onEnd() {
     this.log.debug('TuyaOpenMQ end');
   }
 
-  _onMessage(client: mqtt.MqttClient, mqConfig, topic: string, payload: Buffer) {
+  _onMessage(topic: string, payload: Buffer) {
     const message = JSON.parse(payload.toString());
-    message.data = JSON.parse(this.type === '2.0' ?
-      this._decodeMQMessage(message.data, mqConfig.password, message.t)
-      : this._decodeMQMessage_1_0(message.data, mqConfig.password));
+    message.data = this._decodeMQMessage(message.data, this.config!.password, message.t);
     this.log.debug(`TuyaOpenMQ onMessage: topic = ${topic}, message = ${JSON.stringify(message)}`);
     this.messageListeners.forEach(listener => {
-      if(this.deviceTopic === topic){
+      if (this.config!.source_topic.device === topic) {
         listener(message.data);
       }
     });
   }
 
-  // 1.0
   _decodeMQMessage_1_0(b64msg: string, password: string) {
     password = password.substring(8, 24);
     const msg = CryptoJS.AES.decrypt(b64msg, CryptoJS.enc.Utf8.parse(password), {
@@ -122,7 +134,7 @@ export default class TuyaOpenMQ {
     return msg;
   }
 
-  _decodeMQMessage(data: string, password: string, t: number) {
+  _decodeMQMessage_2_0(data: string, password: string, t: number) {
     // Base64 decoding generates Buffers
     const tmpbuffer = Buffer.from(data, 'base64');
     const key = password.substring(8, 24).toString();
@@ -141,6 +153,14 @@ export default class TuyaOpenMQ {
 
     const msg = cipher.update(data_buffer);
     return msg.toString('utf8');
+  }
+
+  _decodeMQMessage(data: string, password: string, t: number) {
+    if (this.type === '2.0') {
+      return this._decodeMQMessage_2_0(data, password, t);
+    } else {
+      this._decodeMQMessage_1_0(data, password);
+    }
   }
 
   addMessageListener(listener: CallableFunction) {
