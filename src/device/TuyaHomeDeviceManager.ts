@@ -1,5 +1,5 @@
 import { TuyaMQTTProtocol } from '../core/TuyaOpenMQ';
-import TuyaDevice, { TuyaDeviceFunction } from './TuyaDevice';
+import TuyaDevice, { TuyaDeviceFunction, TuyaDeviceStatus } from './TuyaDevice';
 import TuyaDeviceManager, { Events } from './TuyaDeviceManager';
 
 export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
@@ -33,6 +33,10 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
   async updateDevice(deviceID: string) {
 
     const device: TuyaDevice = await this.getDeviceInfo(deviceID);
+    if (!device) {
+      throw new Error('getDeviceInfo failed');
+    }
+
     const functions = await this.getDeviceFunctions(deviceID);
     if (functions) {
       device.functions = functions['functions'];
@@ -59,8 +63,8 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
     return res.result;
   }
 
-  async sendCommand(deviceID: string, params) {
-    const res = await this.api.post(`/v1.0/devices/${deviceID}/commands`, params);
+  async sendCommands(deviceID: string, commands: TuyaDeviceStatus[]) {
+    const res = await this.api.post(`/v1.0/devices/${deviceID}/commands`, { commands });
     return res.result;
   }
 
@@ -129,6 +133,8 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
       case TuyaMQTTProtocol.DEVICE_INFO_UPDATE: {
         const { bizCode, bizData, devId } = message;
         if (bizCode === 'bindUser') {
+          // TODO failed if request to quickly
+          await new Promise(resolve => setTimeout(resolve, 3000));
           const device = await this.updateDevice(devId);
           this.emit(Events.DEVICE_ADD, device);
         } else if (bizCode === 'nameUpdate') {

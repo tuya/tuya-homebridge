@@ -3,7 +3,7 @@
 import EventEmitter from 'events';
 import TuyaOpenAPI from '../core/TuyaOpenAPI';
 import TuyaOpenMQ, { TuyaMQTTProtocol } from '../core/TuyaOpenMQ';
-import TuyaDevice from './TuyaDevice';
+import TuyaDevice, { TuyaDeviceStatus } from './TuyaDevice';
 
 export enum Events {
   DEVICE_ADD = 'DEVICE_ADD',
@@ -43,7 +43,7 @@ export default class TuyaDeviceManager extends EventEmitter {
 
   }
 
-  async sendCommand(deviceID: string, params) {
+  async sendCommands(deviceID: string, commands: TuyaDeviceStatus[]) {
 
   }
 

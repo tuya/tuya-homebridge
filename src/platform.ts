@@ -159,6 +159,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       this.accessoryHandlers.push(handler);
 
       // link the accessory to your platform
+      this.log.debug('device:', device, 'accessory:', accessory);
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     }
   }

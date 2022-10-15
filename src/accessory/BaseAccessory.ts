@@ -1,7 +1,6 @@
-import { PlatformAccessory } from 'homebridge';
+import { PlatformAccessory, Service, Characteristic } from 'homebridge';
 
-import TuyaDevice from '../device/TuyaDevice';
-import TuyaDeviceManager from '../device/TuyaDeviceManager';
+import TuyaDevice, { TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 
 const DEFAULT_APP_SCHEMA = 'tuyaSmart';
@@ -24,37 +23,45 @@ const APP_INFO = {
  * Each accessory may expose multiple services of different service types.
  */
 export class BaseAccessory {
+  public readonly Service: typeof Service = this.platform.api.hap.Service;
+  public readonly Characteristic: typeof Characteristic = this.platform.api.hap.Characteristic;
 
-  public deviceManager: TuyaDeviceManager;
-  public device: TuyaDevice;
+  public deviceManager = this.platform.deviceManager!;
+  public device = this.deviceManager.getDevice(this.accessory.context.deviceID)!;
   public log = this.platform.log;
 
   constructor(
     public readonly platform: TuyaPlatform,
     public readonly accessory: PlatformAccessory,
   ) {
+    this.initServices();
+  }
 
-    this.deviceManager = platform.deviceManager!;
-    this.device = this.deviceManager.getDevice(accessory.context.deviceID)!;
+  initServices() {
 
-    const { appId, manufacturer } = APP_INFO[platform.config.options.appSchema || DEFAULT_APP_SCHEMA];
+    const { appId, manufacturer } = APP_INFO[this.platform.config.options.appSchema || DEFAULT_APP_SCHEMA];
 
     // set accessory information
-    this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, manufacturer)
-      .setCharacteristic(this.platform.Characteristic.AppMatchingIdentifier, appId)
-      .setCharacteristic(this.platform.Characteristic.Model, this.device.product_id)
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, this.device.uuid);
+    this.accessory.getService(this.Service.AccessoryInformation) || this.accessory.addService(this.Service.AccessoryInformation)
+      .setCharacteristic(this.Characteristic.Manufacturer, manufacturer)
+      .setCharacteristic(this.Characteristic.AppMatchingIdentifier, appId)
+      .setCharacteristic(this.Characteristic.Model, this.device.product_id)
+      .setCharacteristic(this.Characteristic.SerialNumber, this.device.uuid);
 
+  }
+
+  async sendCommands(commands: TuyaDeviceStatus[]) {
+    this.log.debug(`sendCommands ${commands}`);
+    await this.deviceManager.sendCommands(this.device.id, commands);
   }
 
   onDeviceInfoUpdate(device: TuyaDevice, info) {
     // name, online, ...
-    this.log.debug(`onDeviceInfoUpdate devId=${device.id}, info=${info}`);
+    this.log.debug(`onDeviceInfoUpdate devId=${device.id}, info=${JSON.stringify(info)}`);
   }
 
-  onDeviceStatusUpdate(device: TuyaDevice, status: []) {
-    this.log.debug(`onDeviceInfoUpdate devId=${device.id}, status=${status}`);
+  onDeviceStatusUpdate(device: TuyaDevice, status: TuyaDeviceStatus[]) {
+    this.log.debug(`onDeviceInfoUpdate devId=${device.id}, status=${JSON.stringify(status)}`);
   }
 
 }

@@ -1,4 +1,4 @@
-import TuyaDevice from './TuyaDevice';
+import TuyaDevice, { TuyaDeviceStatus } from './TuyaDevice';
 import TuyaDeviceManager, { Events } from './TuyaDeviceManager';
 
 export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
@@ -52,8 +52,8 @@ export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
     return device;
   }
 
-  async sendCommand(deviceID: string, params) {
-    const res = await this.api.post(`/v1.0/iot-03/devices/${deviceID}/commands`, params);
+  async sendCommands(deviceID: string, commands: TuyaDeviceStatus[]) {
+    const res = await this.api.post(`/v1.0/iot-03/devices/${deviceID}/commands`, { commands });
     return res.result;
   }
 

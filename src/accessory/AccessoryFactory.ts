@@ -2,6 +2,7 @@ import { PlatformAccessory } from 'homebridge';
 import TuyaDevice from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import { BaseAccessory } from './BaseAccessory';
+import SwitchAccessory from './SwitchAccessory';
 
 export default class AccessoryFactory {
   static createAccessory(
@@ -9,7 +10,8 @@ export default class AccessoryFactory {
     accessory: PlatformAccessory,
     device: TuyaDevice,
   ) {
-    let handler: BaseAccessory;
+
+    let handler;
     switch (device.category) {
       case 'kj':
         // TODO AirPurifierAccessory
@@ -29,7 +31,7 @@ export default class AccessoryFactory {
         break;
       case 'kg':
       case 'tdq':
-        // TODO SwitchAccessory
+        handler = new SwitchAccessory(platform, accessory);
         break;
       case 'fs':
       case 'fskg':
@@ -55,6 +57,12 @@ export default class AccessoryFactory {
         // TODO LeakSensorAccessory
         break;
     }
-    return handler! || new BaseAccessory(platform, accessory);
+
+    if (!handler) {
+      platform.log.warn(`Unsupported device: ${device.name}. Using BaseAccessory instead.`);
+      handler = new BaseAccessory(platform, accessory);
+    }
+
+    return handler as BaseAccessory;
   }
 }
