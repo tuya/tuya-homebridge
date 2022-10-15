@@ -22,12 +22,19 @@ interface TuyaMQTTConfig {
   sink_topic: object;
 }
 
+type TuyaMQTTCallback = (topic: string, protocol: number, data) => void;
+
+export enum TuyaMQTTProtocol {
+  DEVICE_STATUS_UPDATE = 4,
+  DEVICE_INFO_UPDATE = 20,
+}
+
 export default class TuyaOpenMQ {
 
   public running = false;
   public client?: mqtt.MqttClient;
   public config?: TuyaMQTTConfig;
-  public messageListeners = new Set<CallableFunction>();
+  public messageListeners = new Set<TuyaMQTTCallback>();
   public linkId = uuid_v4();
 
   public timer?: NodeJS.Timer;
@@ -115,14 +122,12 @@ export default class TuyaOpenMQ {
   }
 
   _onMessage(topic: string, payload: Buffer) {
-    const message = JSON.parse(payload.toString());
-    message.data = this._decodeMQMessage(message.data, this.config!.password, message.t);
-    this.log.debug(`TuyaOpenMQ onMessage: topic = ${topic}, message = ${JSON.stringify(message)}`);
-    this.messageListeners.forEach(listener => {
-      if (this.config!.source_topic.device === topic) {
-        listener(message.data);
-      }
-    });
+    const { protocol, data, t } = JSON.parse(payload.toString());
+    const message = this._decodeMQMessage(data, this.config!.password, t);
+    this.log.debug(`TuyaOpenMQ onMessage: topic = ${topic}, protocol = ${protocol}, message = ${message}`);
+    for (const listener of this.messageListeners) {
+      listener(topic, protocol, JSON.parse(message));
+    }
   }
 
   _decodeMQMessage_1_0(b64msg: string, password: string) {
@@ -159,15 +164,15 @@ export default class TuyaOpenMQ {
     if (this.type === '2.0') {
       return this._decodeMQMessage_2_0(data, password, t);
     } else {
-      this._decodeMQMessage_1_0(data, password);
+      return this._decodeMQMessage_1_0(data, password);
     }
   }
 
-  addMessageListener(listener: CallableFunction) {
+  addMessageListener(listener: TuyaMQTTCallback) {
     this.messageListeners.add(listener);
   }
 
-  removeMessageListener(listener: CallableFunction) {
+  removeMessageListener(listener: TuyaMQTTCallback) {
     this.messageListeners.delete(listener);
   }
 

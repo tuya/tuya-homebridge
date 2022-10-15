@@ -121,12 +121,12 @@ export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
         this.emit(Events.DEVICE_DELETE, message.devId);
       } else if (bizCode === 'bindUser') {
         const device = this.updateDevice(bizData.devId);
-        this.emit(Events.DEVICE_BIND, device);
+        this.emit(Events.DEVICE_ADD, device);
       }
     } else {
       const device = this.getDevice(message.devId);
-      if (device && device.id === message.devId) {
-        this.emit(Events.DEVICE_UPDATE, message.devId);
+      if (device) {
+        this.emit(Events.DEVICE_INFO_UPDATE, device);
       }
     }
   }

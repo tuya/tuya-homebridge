@@ -4,6 +4,7 @@ import TuyaDevice from '../device/TuyaDevice';
 import TuyaDeviceManager from '../device/TuyaDeviceManager';
 import { TuyaPlatform } from '../platform';
 
+const DEFAULT_APP_SCHEMA = 'tuyaSmart';
 const APP_INFO = {
   'tuyaSmart': {
     'appId': 1586116399,
@@ -26,16 +27,17 @@ export class BaseAccessory {
 
   public deviceManager: TuyaDeviceManager;
   public device: TuyaDevice;
+  public log = this.platform.log;
 
   constructor(
-    private readonly platform: TuyaPlatform,
-    private readonly accessory: PlatformAccessory,
+    public readonly platform: TuyaPlatform,
+    public readonly accessory: PlatformAccessory,
   ) {
 
     this.deviceManager = platform.deviceManager!;
     this.device = this.deviceManager.getDevice(accessory.context.deviceID)!;
 
-    const { appId, manufacturer } = APP_INFO[platform.config.options.appSchema];
+    const { appId, manufacturer } = APP_INFO[platform.config.options.appSchema || DEFAULT_APP_SCHEMA];
 
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
@@ -44,6 +46,11 @@ export class BaseAccessory {
       .setCharacteristic(this.platform.Characteristic.Model, this.device.product_id)
       .setCharacteristic(this.platform.Characteristic.SerialNumber, this.device.uuid);
 
+  }
+
+  onDeviceUpdate(device: TuyaDevice) {
+    // name, online, status
+    this.log.debug(`onDeviceUpdate device=${JSON.stringify(device)}`);
   }
 
 }

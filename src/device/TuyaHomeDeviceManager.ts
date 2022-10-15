@@ -1,3 +1,4 @@
+import { TuyaMQTTProtocol } from '../core/TuyaOpenMQ';
 import TuyaDevice, { TuyaDeviceFunction } from './TuyaDevice';
 import TuyaDeviceManager, { Events } from './TuyaDeviceManager';
 
@@ -105,22 +106,49 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
     return res.result;
   }
 
+  async onMQTTMessage(topic: string, protocol: TuyaMQTTProtocol, message) {
+    switch(protocol) {
+      case TuyaMQTTProtocol.DEVICE_STATUS_UPDATE: {
+        const { devId, status } = message;
+        const device = this.getDevice(devId);
+        if (!device) {
+          return;
+        }
 
-  async onMQTTMessage(message) {
-    const { bizCode, bizData } = message;
-    if (bizCode) {
-      if (bizCode === Events.DEVICE_DELETE) {
-        this.devices.delete(message.devId);
-        this.emit(Events.DEVICE_DELETE, message.devId);
-      } else if (bizCode === 'bindUser') {
-        const device = this.updateDevice(bizData.devId);
-        this.emit(Events.DEVICE_BIND, device);
+        for (const item of device.status) {
+          const _item = status.find(_item => _item.code === item.code);
+          if (!_item) {
+            continue;
+          }
+          item.value = _item.value;
+        }
+
+        this.emit(Events.DEVICE_STATUS_UPDATE, device);
+        break;
       }
-    } else {
-      const device = this.getDevice(message.devId);
-      if (device && device.id === message.devId) {
-        this.emit(Events.DEVICE_UPDATE, message.devId);
+      case TuyaMQTTProtocol.DEVICE_INFO_UPDATE: {
+        const { bizCode, bizData, devId } = message;
+        if (bizCode === 'bindUser') {
+          const device = await this.updateDevice(devId);
+          this.emit(Events.DEVICE_ADD, device);
+        } else if (bizCode === 'nameUpdate') {
+          const { name } = bizData;
+          const device = this.getDevice(devId);
+          if (!device) {
+            return;
+          }
+          device.name = name;
+          this.emit(Events.DEVICE_INFO_UPDATE, device);
+        } else if (bizCode === 'delete') {
+          this.emit(Events.DEVICE_DELETE, devId);
+        } else {
+          this.log.warn(`Unhandled mqtt message: bizCode=${bizCode}, bizData=${JSON.stringify(bizData)}`);
+        }
+        break;
       }
+      default:
+        this.log.warn(`Unhandled mqtt message: protocol=${protocol}, message=${JSON.stringify(message)}`);
+        break;
     }
   }
 

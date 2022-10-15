@@ -9,6 +9,7 @@ import TuyaDeviceManager, { Events } from './device/TuyaDeviceManager';
 import TuyaCustomDeviceManager from './device/TuyaCustomDeviceManager';
 import TuyaHomeDeviceManager from './device/TuyaHomeDeviceManager';
 import AccessoryFactory from './accessory/AccessoryFactory';
+import { BaseAccessory } from './accessory/BaseAccessory';
 
 /**
  * HomebridgePlatform
@@ -20,10 +21,10 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
 
   // this is used to track restored cached accessories
-  public readonly accessories: PlatformAccessory[] = [];
+  public cachedAccessories: PlatformAccessory[] = [];
 
   public deviceManager?: TuyaDeviceManager;
-  public accessoryHandlers = [];
+  public accessoryHandlers: BaseAccessory[] = [];
 
   constructor(
     public readonly log: Logger,
@@ -51,7 +52,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     this.log.info('Loading accessory from cache:', accessory.displayName);
 
     // add the restored accessory to the accessories cache so we can track if it has already been registered
-    this.accessories.push(accessory);
+    this.cachedAccessories.push(accessory);
   }
 
   /**
@@ -110,38 +111,52 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       return;
     }
 
+    // add accessories
     for (const device of devices) {
       this.addAccessory(device);
     }
 
+    // remove unused accessories
+    for (const cachedAccessory of this.cachedAccessories) {
+      this.log.warn('Removing unused accessory from cache:', cachedAccessory.displayName);
+      this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [cachedAccessory]);
+    }
+    this.cachedAccessories = [];
+
     this.deviceManager.on(Events.DEVICE_DELETE, this.removeAccessory.bind(this));
-    this.deviceManager.on(Events.DEVICE_BIND, this.addAccessory.bind(this));
-    this.deviceManager.on(Events.DEVICE_UPDATE, this.updateAccessory.bind(this));
+    this.deviceManager.on(Events.DEVICE_ADD, this.addAccessory.bind(this));
+    this.deviceManager.on(Events.DEVICE_STATUS_UPDATE, this.updateAccessory.bind(this));
+    this.deviceManager.on(Events.DEVICE_INFO_UPDATE, this.updateAccessory.bind(this));
 
   }
 
   addAccessory(device: TuyaDevice) {
 
-    const existingAccessory = this.getAccessory(device.id);
+    const uuid = this.api.hap.uuid.generate(device.id);
+    const existingAccessory = this.cachedAccessories.find(accessory => accessory.UUID === uuid);
     if (existingAccessory) {
       this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
 
       // create the accessory handler for the restored accessory
       const handler = AccessoryFactory.createAccessory(this, existingAccessory, device);
-      // this.accessoryHandlers.push(handler);
+      this.accessoryHandlers.push(handler);
+
+      const index = this.cachedAccessories.indexOf(existingAccessory);
+      if (index >= 0) {
+        this.cachedAccessories.splice(index, 1);
+      }
 
     } else {
       // the accessory does not yet exist, so we need to create it
       this.log.info('Adding new accessory:', device.name);
 
       // create a new accessory
-      const uuid = this.api.hap.uuid.generate(device.id);
       const accessory = new this.api.platformAccessory(device.name, uuid);
       accessory.context.deviceID = device.id;
 
       // create the accessory handler for the newly create accessory
       const handler = AccessoryFactory.createAccessory(this, accessory, device);
-      // this.accessoryHandlers.push(handler);
+      this.accessoryHandlers.push(handler);
 
       // link the accessory to your platform
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
@@ -149,32 +164,31 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
   }
 
   updateAccessory(device: TuyaDevice) {
-    const accessory = this.getAccessory(device.id);
-    if (!accessory) {
+    const handler = this.getAccessoryHandler(device.id);
+    if (!handler) {
       return;
     }
 
-    accessory.displayName = device.name;
+    handler.onDeviceUpdate(device);
   }
 
   removeAccessory(deviceID: string) {
-    const accessory = this.getAccessory(deviceID);
-    if (!accessory) {
+    const handler = this.getAccessoryHandler(deviceID);
+    if (!handler) {
       return;
     }
 
-    const index = this.accessories.indexOf(accessory);
+    const index = this.accessoryHandlers.indexOf(handler);
     if (index >= 0) {
-      this.accessories.splice(index, 1);
+      this.accessoryHandlers.splice(index, 1);
     }
 
-    this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
-    this.log.info('Removing existing accessory from cache:', accessory.displayName);
+    this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [handler.accessory]);
+    this.log.info('Removing existing accessory from cache:', handler.accessory.displayName);
   }
 
-  getAccessory(deviceID: string) {
-    const uuid = this.api.hap.uuid.generate(deviceID);
-    return this.accessories.find(accessory => accessory.UUID === uuid);
+  getAccessoryHandler(deviceID: string) {
+    return this.accessoryHandlers.find(handler => handler.device.id === deviceID);
   }
 
 }

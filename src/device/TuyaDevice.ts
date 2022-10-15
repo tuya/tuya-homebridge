@@ -9,7 +9,7 @@ export interface TuyaDeviceFunction {
 
 export interface TuyaDeviceStatus {
   code: string;
-  status: string | number | boolean;
+  value: string | number | boolean;
 }
 
 export default interface TuyaDevice {
