@@ -6,12 +6,12 @@ import { TuyaPlatform } from '../platform';
 const DEFAULT_APP_SCHEMA = 'tuyaSmart';
 const APP_INFO = {
   'tuyaSmart': {
-    'appId': 1586116399,
+    'appId': '1586116399',
     'bundleId': 'com.tuya.smartiot',
     'manufacturer': 'Tuya Inc.',
   },
   'smartlife': {
-    'appId': 1586125720,
+    'appId': '1586125720',
     'bundleId': 'com.tuya.smartlifeiot',
     'manufacturer': 'Volcano Technology Limited',
   },
@@ -39,19 +39,24 @@ export class BaseAccessory {
 
   initServices() {
 
-    const { appId, manufacturer } = APP_INFO[this.platform.config.options.appSchema || DEFAULT_APP_SCHEMA];
+    const { appId, bundleId, manufacturer } = APP_INFO[this.platform.config.options.appSchema || DEFAULT_APP_SCHEMA];
 
     // set accessory information
-    this.accessory.getService(this.Service.AccessoryInformation) || this.accessory.addService(this.Service.AccessoryInformation)
+    const service = this.accessory.getService(this.Service.AccessoryInformation)
+    || this.accessory.addService(this.Service.AccessoryInformation);
+
+    service
       .setCharacteristic(this.Characteristic.Manufacturer, manufacturer)
-      .setCharacteristic(this.Characteristic.AppMatchingIdentifier, appId)
       .setCharacteristic(this.Characteristic.Model, this.device.product_id)
-      .setCharacteristic(this.Characteristic.SerialNumber, this.device.uuid);
+      .setCharacteristic(this.Characteristic.Name, this.device.name)
+      .setCharacteristic(this.Characteristic.SerialNumber, this.device.uuid)
+      .setCharacteristic(this.Characteristic.AppMatchingIdentifier, bundleId)
+    ;
 
   }
 
   async sendCommands(commands: TuyaDeviceStatus[]) {
-    this.log.debug(`sendCommands ${commands}`);
+    this.log.debug(`sendCommands ${JSON.stringify(commands)}`);
     await this.deviceManager.sendCommands(this.device.id, commands);
   }
 

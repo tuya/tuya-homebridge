@@ -11,6 +11,8 @@ export default class SwitchAccessory extends BaseAccessory {
       const service = this.accessory.getService(switchFunction.code)
         || this.accessory.addService(this.Service.Switch, switchFunction.name, switchFunction.code);
 
+      service.setCharacteristic(this.Characteristic.Name, switchFunction.name);
+
       service.getCharacteristic(this.Characteristic.On)
         .onSet(async (value) => {
           await this.sendCommands([{
@@ -18,6 +20,7 @@ export default class SwitchAccessory extends BaseAccessory {
             value: value as boolean,
           }]);
         });
+
     }
   }
 
