@@ -11,11 +11,50 @@ export default class AccessoryFactory {
   ) {
     let handler: BaseAccessory;
     switch (device.category) {
-      // TODO
-      default:
-        handler = new BaseAccessory(platform, accessory);
+      case 'kj':
+        // TODO AirPurifierAccessory
+        break;
+      case 'dj':
+      case 'dd':
+      case 'fwd':
+      case 'tgq':
+      case 'xdd':
+      case 'dc':
+      case 'tgkg':
+        // TODO LightAccessory
+        break;
+      case 'cz':
+      case 'pc':
+        // TODO OutletAccessory
+        break;
+      case 'kg':
+      case 'tdq':
+        // TODO SwitchAccessory
+        break;
+      case 'fs':
+      case 'fskg':
+        // TODO Fanv2Accessory
+        break;
+      case 'ywbj':
+        // TODO SmokeSensorAccessory
+        break;
+      case 'qn':
+        // TODO HeaterAccessory
+        break;
+      case 'ckmkzq':
+        // TODO GarageDoorAccessory
+        break;
+      case 'cl':
+        // TODO WindowCoveringAccessory
+        break;
+      case 'mcs':
+        // TODO ContactSensorAccessory
+        break;
+      case 'rqbj':
+      case 'jwbj':
+        // TODO LeakSensorAccessory
         break;
     }
-    return handler;
+    return handler! || new BaseAccessory(platform, accessory);
   }
 }

@@ -123,10 +123,10 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     }
     this.cachedAccessories = [];
 
-    this.deviceManager.on(Events.DEVICE_DELETE, this.removeAccessory.bind(this));
     this.deviceManager.on(Events.DEVICE_ADD, this.addAccessory.bind(this));
-    this.deviceManager.on(Events.DEVICE_STATUS_UPDATE, this.updateAccessory.bind(this));
-    this.deviceManager.on(Events.DEVICE_INFO_UPDATE, this.updateAccessory.bind(this));
+    this.deviceManager.on(Events.DEVICE_INFO_UPDATE, this.updateAccessoryInfo.bind(this));
+    this.deviceManager.on(Events.DEVICE_STATUS_UPDATE, this.updateAccessoryStatus.bind(this));
+    this.deviceManager.on(Events.DEVICE_DELETE, this.removeAccessory.bind(this));
 
   }
 
@@ -163,13 +163,22 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  updateAccessory(device: TuyaDevice) {
+  updateAccessoryInfo(device: TuyaDevice, info) {
     const handler = this.getAccessoryHandler(device.id);
     if (!handler) {
       return;
     }
 
-    handler.onDeviceUpdate(device);
+    handler.onDeviceInfoUpdate(device, info);
+  }
+
+  updateAccessoryStatus(device: TuyaDevice, status: []) {
+    const handler = this.getAccessoryHandler(device.id);
+    if (!handler) {
+      return;
+    }
+
+    handler.onDeviceStatusUpdate(device, status);
   }
 
   removeAccessory(deviceID: string) {

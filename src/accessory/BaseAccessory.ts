@@ -48,9 +48,13 @@ export class BaseAccessory {
 
   }
 
-  onDeviceUpdate(device: TuyaDevice) {
-    // name, online, status
-    this.log.debug(`onDeviceUpdate device=${JSON.stringify(device)}`);
+  onDeviceInfoUpdate(device: TuyaDevice, info) {
+    // name, online, ...
+    this.log.debug(`onDeviceInfoUpdate devId=${device.id}, info=${info}`);
+  }
+
+  onDeviceStatusUpdate(device: TuyaDevice, status: []) {
+    this.log.debug(`onDeviceInfoUpdate devId=${device.id}, status=${status}`);
   }
 
 }

@@ -123,7 +123,7 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
           item.value = _item.value;
         }
 
-        this.emit(Events.DEVICE_STATUS_UPDATE, device);
+        this.emit(Events.DEVICE_STATUS_UPDATE, device, status);
         break;
       }
       case TuyaMQTTProtocol.DEVICE_INFO_UPDATE: {
@@ -138,7 +138,7 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
             return;
           }
           device.name = name;
-          this.emit(Events.DEVICE_INFO_UPDATE, device);
+          this.emit(Events.DEVICE_INFO_UPDATE, device, bizData);
         } else if (bizCode === 'delete') {
           this.emit(Events.DEVICE_DELETE, devId);
         } else {
