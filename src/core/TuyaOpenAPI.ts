@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { Method } from 'axios';
 import Crypto from 'crypto-js';
 import { v4 as uuidv4 } from 'uuid';
@@ -48,7 +50,7 @@ export default class TuyaOpenAPI {
   }
 
   async _refreshAccessTokenIfNeed(path: string) {
-    //
+
   }
 
   async request(method: Method, path: string, params?, body?) {

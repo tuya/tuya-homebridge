@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import EventEmitter from 'events';
 import TuyaOpenAPI from '../core/TuyaOpenAPI';
 import TuyaOpenMQ, { TuyaMQTTProtocol } from '../core/TuyaOpenMQ';
@@ -38,15 +40,15 @@ export default class TuyaDeviceManager extends EventEmitter {
   }
 
   async removeDevice(deviceID: string) {
-    //
+
   }
 
   async sendCommand(deviceID: string, params) {
-    //
+
   }
 
   async onMQTTMessage(topic: string, protocol: TuyaMQTTProtocol, message) {
-    //
+
   }
 
 }
