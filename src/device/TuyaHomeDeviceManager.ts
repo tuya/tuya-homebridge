@@ -83,7 +83,9 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
     const results: object[] = [];
     while(index < devIds.length) {
       const res = await this.api.get('/v1.0/devices/functions', { 'device_ids': devIds.slice(index, index += PAGE_COUNT).join(',') });
-      results.push(...res.result);
+      if (res.result) {
+        results.push(...res.result);
+      }
     }
 
     return results;

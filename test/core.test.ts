@@ -1,19 +1,26 @@
 /* eslint-disable no-console */
+import fs from 'fs';
 import { describe, expect, test } from '@jest/globals';
+import { PLATFORM_NAME } from '../src/settings';
 import TuyaHomeOpenAPI from '../src/core/TuyaHomeOpenAPI';
 import TuyaOpenMQ from '../src/core/TuyaOpenMQ';
 import TuyaDevice from '../src/device/TuyaDevice';
 import TuyaHomeDeviceManager from '../src/device/TuyaHomeDeviceManager';
-import { HomeConfig } from './env';
 
+const file = fs.readFileSync(`${process.env.HOME}/.homebridge-dev/config.json`);
+const { platforms } = JSON.parse(file.toString());
+const config = platforms.find(platform => platform.platform === PLATFORM_NAME);
+const { options } = config;
 
-const homeAPI = new TuyaHomeOpenAPI(TuyaHomeOpenAPI.Endpoints.CHINA, HomeConfig.accessId, HomeConfig.accessKey);
+const homeAPI = new TuyaHomeOpenAPI(TuyaHomeOpenAPI.Endpoints.CHINA, options.accessId, options.accessKey);
 const homeMQ = new TuyaOpenMQ(homeAPI, '1.0');
 const homeDeviceManager = new TuyaHomeDeviceManager(homeAPI, homeMQ);
 
 
 function expectDevice(device: TuyaDevice) {
   // console.debug(JSON.stringify(device));
+
+  expect(device).not.toBeUndefined();
 
   expect(device.id.length).toBeGreaterThan(0);
   expect(device.uuid.length).toBeGreaterThan(0);
@@ -29,7 +36,7 @@ function expectDevice(device: TuyaDevice) {
 
 describe('TuyaHomeOpenAPI', () => {
   test('login()', async () => {
-    await homeAPI.login(HomeConfig.countryCode, HomeConfig.username, HomeConfig.password, HomeConfig.appSchema);
+    await homeAPI.login(options.countryCode, options.username, options.password, options.appSchema);
   });
 });
 
@@ -41,10 +48,11 @@ describe('TuyaHomeDeviceManager', () => {
     for (const device of devices) {
       expectDevice(device);
     }
-  });
+  }, 10 * 1000);
 
   test('updateDevice()', async () => {
     let device = Array.from(homeDeviceManager.devices)[0];
+    expectDevice(device);
     device = await homeDeviceManager.updateDevice(device.id);
     expectDevice(device);
   });
