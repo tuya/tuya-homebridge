@@ -1,6 +1,5 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
-import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import TuyaCustomOpenAPI from './core/TuyaCustomOpenAPI';
 import TuyaHomeOpenAPI from './core/TuyaHomeOpenAPI';
 import TuyaOpenMQ from './core/TuyaOpenMQ';
@@ -8,8 +7,12 @@ import TuyaDevice from './device/TuyaDevice';
 import TuyaDeviceManager, { Events } from './device/TuyaDeviceManager';
 import TuyaCustomDeviceManager from './device/TuyaCustomDeviceManager';
 import TuyaHomeDeviceManager from './device/TuyaHomeDeviceManager';
+
+import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
+import { TuyaPlatformConfigOptions, validate } from './config';
 import AccessoryFactory from './accessory/AccessoryFactory';
 import BaseAccessory from './accessory/BaseAccessory';
+import { Endpoints } from './core/TuyaOpenAPI';
 
 /**
  * HomebridgePlatform
@@ -19,6 +22,8 @@ import BaseAccessory from './accessory/BaseAccessory';
 export class TuyaPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
+
+  public options = this.config.options as TuyaPlatformConfigOptions;
 
   // this is used to track restored cached accessories
   public cachedAccessories: PlatformAccessory[] = [];
@@ -31,6 +36,9 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
+
+    validate(this.options);
+
     this.log.debug('Finished initializing platform');
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.
@@ -71,12 +79,12 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       username,
       password,
       appSchema,
-    } = this.config.options;
+    } = this.options;
 
     let devices: Set<TuyaDevice>;
     if (projectType === '1') {
 
-      const api = new TuyaCustomOpenAPI(endpoint, accessId, accessKey, this.log);
+      const api = new TuyaCustomOpenAPI(endpoint! as Endpoints, accessId, accessKey, this.log);
       await api.login(username, password);
 
       const mq = new TuyaOpenMQ(api, '2.0', this.log);
@@ -92,8 +100,8 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
     } else if (projectType === '2') {
 
-      const api = new TuyaHomeOpenAPI(endpoint || TuyaHomeOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
-      await api.login(countryCode, username, password, appSchema);
+      const api = new TuyaHomeOpenAPI(endpoint! as Endpoints || TuyaHomeOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
+      await api.login(countryCode!, username, password, appSchema!);
 
       const mq = new TuyaOpenMQ(api, '1.0', this.log);
       mq.start();

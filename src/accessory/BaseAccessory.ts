@@ -42,7 +42,7 @@ export default class BaseAccessory {
   }
 
   async sendCommands(commands: TuyaDeviceStatus[]) {
-    this.log.debug(`sendCommands ${JSON.stringify(commands)}`);
+    this.log.debug(`sendCommands devId=${this.device.id}, commands=${JSON.stringify(commands)}`);
     await this.deviceManager.sendCommands(this.device.id, commands);
   }
 

@@ -102,7 +102,7 @@ export default class TuyaOpenAPI {
   }
 
   _getSign(accessId: string, accessKey: string, accessToken = '', timestamp = 0, nonce: string, stringToSign: string) {
-    const message = `${accessId}${accessToken}${timestamp}${nonce}${stringToSign}`;
+    const message = [accessId, accessToken, timestamp, nonce, stringToSign].join('');
     const hash = Crypto.HmacSHA256(message, accessKey);
     const sign = hash.toString().toUpperCase();
     return sign;
@@ -110,15 +110,11 @@ export default class TuyaOpenAPI {
 
   _getStringToSign(method: Method, path: string, params, body) {
     const httpMethod = method.toUpperCase();
-    let bodyStream = '';
-    if (body) {
-      bodyStream = JSON.stringify(body);
-    }
-
+    const bodyStream = body ? JSON.stringify(body) : '';
     const contentSHA256 = Crypto.SHA256(bodyStream);
     const headers = `client_id:${this.accessId}\n`;
     const url = this._getSignUrl(path, params);
-    const result = `${httpMethod}\n${contentSHA256}\n${headers}\n${url}`;
+    const result = [httpMethod, contentSHA256, headers, url].join('\n');
     return result;
   }
 

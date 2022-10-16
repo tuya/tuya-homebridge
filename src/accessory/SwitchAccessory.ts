@@ -18,6 +18,10 @@ export default class SwitchAccessory extends BaseAccessory {
       service.setCharacteristic(this.Characteristic.Name, switchFunction.name);
 
       service.getCharacteristic(this.Characteristic.On)
+        .onGet(async () => {
+          const status = this.device.status.find(status => status.code === switchFunction.code);
+          return !!status && status!.value;
+        })
         .onSet(async (value) => {
           await this.sendCommands([{
             code: switchFunction.code,

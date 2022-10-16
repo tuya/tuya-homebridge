@@ -12,15 +12,23 @@
 				"type": "object",
 				"required": true,
 				"properties": {
-					"username": {
-						"title": "Username",
+					"projectType": {
+						"title": "Project Type",
 						"type": "string",
+						"default": "form",
+						"oneOf": [{
+							"title": "Custom",
+							"enum": ["1"]
+						}, {
+							"title": "PaaS",
+							"enum": ["2"]
+						}],
 						"required": true
 					},
-					"password": {
-						"title": "Password",
+					"endpoint": {
+						"title": "Endpoint",
 						"type": "string",
-						"required": true
+						"required": false
 					},
 					"accessId": {
 						"title": "Access ID",
@@ -32,30 +40,25 @@
 						"type": "string",
 						"required": true
 					},
-					"lang": {
-						"title": "Language Code",
-						"type": "string",
-						"default": "en",
-						"description": "ISO 639-1 Code",
-						"required": false
+					"countryCode": {
+						"title": "Country Code",
+						"type": "number",
+						"default": "",
+						"description": "Country Code for Phone",
+						"required": true
 					},
-					"projectType": {
-						"title": "Project Type",
+					"username": {
+						"title": "Username",
 						"type": "string",
-						"default": "form",
-						"oneOf": [{
-								"title": "PaaS",
-								"enum": ["2"]
-							},
-							{
-								"title": "Custom",
-								"enum": ["1"]
-							}
-						],
+						"required": true
+					},
+					"password": {
+						"title": "Password",
+						"type": "string",
 						"required": true
 					},
 					"appSchema": {
-						"title": "PaaS Platform",
+						"title": "App",
 						"type": "string",
 						"default": "form",
 						"oneOf": [{
@@ -67,13 +70,6 @@
 								"enum": ["smartlife"]
 							}
 						],
-						"required": true
-					},
-					"countryCode": {
-						"title": "Country Code",
-						"type": "number",
-						"default": "",
-						"description": "ISO 3166-1 Code",
 						"required": true
 					}
 				}
