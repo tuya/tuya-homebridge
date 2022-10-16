@@ -1,9 +1,18 @@
 
+export enum TuyaDeviceFunctionType {
+  Boolean = 'Boolean',
+  Integer = 'Integer',
+  Enum = 'Enum',
+  String = 'String',
+  Json = 'Json',
+  Raw = 'Raw',
+}
+
 export interface TuyaDeviceFunction {
   code: string;
   name: string;
   desc: string;
-  type: string;
+  type: TuyaDeviceFunctionType;
   values: string;
 }
 
