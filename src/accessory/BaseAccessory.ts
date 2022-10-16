@@ -11,7 +11,7 @@ const MANUFACTURER = 'Tuya Inc.';
  * Tuya Standard Instruction Set Documentation:
  *   https://developer.tuya.com/en/docs/iot/standarddescription?id=K9i5ql6waswzq
  */
-export class BaseAccessory {
+export default class BaseAccessory {
   public readonly Service: typeof Service = this.platform.api.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.platform.api.hap.Characteristic;
 

@@ -9,7 +9,7 @@ import TuyaDeviceManager, { Events } from './device/TuyaDeviceManager';
 import TuyaCustomDeviceManager from './device/TuyaCustomDeviceManager';
 import TuyaHomeDeviceManager from './device/TuyaHomeDeviceManager';
 import AccessoryFactory from './accessory/AccessoryFactory';
-import { BaseAccessory } from './accessory/BaseAccessory';
+import BaseAccessory from './accessory/BaseAccessory';
 
 /**
  * HomebridgePlatform

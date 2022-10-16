@@ -1,7 +1,11 @@
 import TuyaDevice, { TuyaDeviceFunctionType, TuyaDeviceStatus } from '../device/TuyaDevice';
-import { BaseAccessory } from './BaseAccessory';
+import BaseAccessory from './BaseAccessory';
 
 export default class SwitchAccessory extends BaseAccessory {
+
+  mainService() {
+    return this.Service.Switch;
+  }
 
   initServices() {
     super.initServices();
@@ -9,7 +13,7 @@ export default class SwitchAccessory extends BaseAccessory {
     const switchFunctions = this.device.functions.filter(_function => _function.type === TuyaDeviceFunctionType.Boolean);
     for (const switchFunction of switchFunctions) {
       const service = this.accessory.getService(switchFunction.code)
-        || this.accessory.addService(this.Service.Switch, switchFunction.name, switchFunction.code);
+        || this.accessory.addService(this.mainService(), switchFunction.name, switchFunction.code);
 
       service.setCharacteristic(this.Characteristic.Name, switchFunction.name);
 

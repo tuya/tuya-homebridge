@@ -1,7 +1,8 @@
 import { PlatformAccessory } from 'homebridge';
 import TuyaDevice from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
-import { BaseAccessory } from './BaseAccessory';
+import BaseAccessory from './BaseAccessory';
+import OutletAccessory from './OutletAccessory';
 import SwitchAccessory from './SwitchAccessory';
 
 export default class AccessoryFactory {
@@ -27,7 +28,7 @@ export default class AccessoryFactory {
         break;
       case 'cz':
       case 'pc':
-        // TODO OutletAccessory
+        handler = new OutletAccessory(platform, accessory);
         break;
       case 'kg':
       case 'tdq':
