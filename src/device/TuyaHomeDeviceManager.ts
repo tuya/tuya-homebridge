@@ -7,7 +7,7 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
   async updateDevices() {
 
     const res = await this.api.get('/v1.0/iot-01/associated-users/devices', { 'size': 100 });
-    const devices = new Set<TuyaDevice>(res.result.devices);
+    const devices = (res.result.devices as []).map(obj => new TuyaDevice(obj));
 
     const devIds: string[] = [];
     for (const device of devices) {
@@ -32,10 +32,11 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
 
   async updateDevice(deviceID: string) {
 
-    const device: TuyaDevice = await this.getDeviceInfo(deviceID);
-    if (!device) {
+    const result = await this.getDeviceInfo(deviceID);
+    if (!result) {
       throw new Error('getDeviceInfo failed');
     }
+    const device = new TuyaDevice(result);
 
     const functions = await this.getDeviceFunctions(deviceID);
     if (functions) {
@@ -46,10 +47,10 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
 
     const oldDevice = this.getDevice(deviceID);
     if (oldDevice) {
-      this.devices.delete(oldDevice);
+      this.devices.splice(this.devices.indexOf(oldDevice), 1);
     }
 
-    this.devices.add(device);
+    this.devices.push(device);
 
     return device;
   }
@@ -58,7 +59,7 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
     const res = await this.api.delete(`/v1.0/devices/${deviceID}`);
     const device = this.getDevice(deviceID);
     if (device) {
-      this.devices.delete(device);
+      this.devices.splice(this.devices.indexOf(device), 1);
     }
     return res.result;
   }

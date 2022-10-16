@@ -81,7 +81,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       appSchema,
     } = this.options;
 
-    let devices: Set<TuyaDevice>;
+    let devices: TuyaDevice[];
     if (projectType === '1') {
 
       const api = new TuyaCustomOpenAPI(endpoint! as Endpoints, accessId, accessKey, this.log);

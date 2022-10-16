@@ -16,7 +16,7 @@ export default class TuyaDeviceManager extends EventEmitter {
 
   static readonly Events = Events;
 
-  public devices = new Set<TuyaDevice>();
+  public devices: TuyaDevice[] = [];
   public log = this.api.log;
 
   constructor(
@@ -32,11 +32,11 @@ export default class TuyaDeviceManager extends EventEmitter {
   }
 
   async updateDevices() {
-    return new Set<TuyaDevice>();
+    return [] as TuyaDevice[];
   }
 
   async updateDevice(deviceID: string) {
-    return <TuyaDevice>{};
+    return {} as TuyaDevice;
   }
 
   async removeDevice(deviceID: string) {

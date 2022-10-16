@@ -1,3 +1,4 @@
+import { TuyaMQTTProtocol } from '../core/TuyaOpenMQ';
 import TuyaDevice, { TuyaDeviceStatus } from './TuyaDevice';
 import TuyaDeviceManager, { Events } from './TuyaDeviceManager';
 
@@ -5,7 +6,7 @@ export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
 
   async updateDevices() {
 
-    const devices = new Set<TuyaDevice>();
+    const devices: TuyaDevice[] = [];
     const assets = await this.getAssets();
 
     let deviceDataArr = [];
@@ -27,8 +28,10 @@ export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
       const deviceInfo = devicesInfoArr[i];
       const functions = await this.getDeviceFunctions(deviceInfo.id);
       const status = devicesStatusArr.find((j) => j.id === deviceInfo.id);
-      const device: TuyaDevice = Object.assign({}, deviceInfo, functions, status);
-      devices.add(device);
+      const device = new TuyaDevice(deviceInfo);
+      device.functions = functions;
+      device.status = status;
+      devices.push(device);
     }
 
     this.devices = devices;
@@ -43,11 +46,12 @@ export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
 
     const oldDevice = this.getDevice(deviceID);
     if (oldDevice) {
-      this.devices.delete(oldDevice);
+      this.devices.splice(this.devices.indexOf(oldDevice), 1);
     }
 
-    const device = Object.assign({}, deviceInfo, functions);
-    this.devices.add(device);
+    const device = new TuyaDevice(deviceInfo);
+    device.functions = functions;
+    this.devices.push(device);
 
     return device;
   }
@@ -112,23 +116,8 @@ export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
   }
 
 
-  async onMQTTMessage(message) {
+  async onMQTTMessage(topic: string, protocol: TuyaMQTTProtocol, message) {
     // TODO test
-    const { bizCode, bizData } = message;
-    if (bizCode) {
-      if (bizCode === Events.DEVICE_DELETE) {
-        this.devices.delete(message.devId);
-        this.emit(Events.DEVICE_DELETE, message.devId);
-      } else if (bizCode === 'bindUser') {
-        const device = this.updateDevice(bizData.devId);
-        this.emit(Events.DEVICE_ADD, device);
-      }
-    } else {
-      const device = this.getDevice(message.devId);
-      if (device) {
-        this.emit(Events.DEVICE_INFO_UPDATE, device);
-      }
-    }
   }
 
 }
