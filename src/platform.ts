@@ -9,7 +9,7 @@ import TuyaCustomDeviceManager from './device/TuyaCustomDeviceManager';
 import TuyaHomeDeviceManager from './device/TuyaHomeDeviceManager';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { TuyaPlatformConfigOptions, validate } from './config';
+import { TuyaPlatformConfig, TuyaPlatformConfigOptions, validate } from './config';
 import AccessoryFactory from './accessory/AccessoryFactory';
 import BaseAccessory from './accessory/BaseAccessory';
 import { Endpoints } from './core/TuyaOpenAPI';
@@ -37,7 +37,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     public readonly api: API,
   ) {
 
-    validate(this.options);
+    validate(config as TuyaPlatformConfig);
 
     this.log.debug('Finished initializing platform');
 
@@ -70,21 +70,11 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
    */
   async initDevices() {
 
-    const {
-      endpoint,
-      accessId,
-      accessKey,
-      projectType,
-      countryCode,
-      username,
-      password,
-      appSchema,
-    } = this.options;
-
     let devices: TuyaDevice[];
-    if (projectType === '1') {
+    if (this.options.projectType === '1') {
+      const { endpoint, accessId, accessKey, username, password } = this.options;
 
-      const api = new TuyaCustomOpenAPI(endpoint! as Endpoints, accessId, accessKey, this.log);
+      const api = new TuyaCustomOpenAPI(endpoint as Endpoints, accessId, accessKey, this.log);
       await api.login(username, password);
 
       const mq = new TuyaOpenMQ(api, '2.0', this.log);
@@ -98,9 +88,10 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
         return;
       }
 
-    } else if (projectType === '2') {
+    } else if (this.options.projectType === '2') {
+      const { accessId, accessKey, countryCode, username, password, appSchema } = this.options;
 
-      const api = new TuyaHomeOpenAPI(endpoint! as Endpoints || TuyaHomeOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
+      const api = new TuyaHomeOpenAPI(TuyaHomeOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
       await api.login(countryCode!, username, password, appSchema!);
 
       const mq = new TuyaOpenMQ(api, '1.0', this.log);
@@ -115,7 +106,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       }
 
     } else {
-      this.log.warn(`Unsupported projectType: ${projectType}, stop device discovery.`);
+      this.log.warn(`Unsupported projectType: ${this.config.options.projectType}, stop device discovery.`);
       return;
     }
 

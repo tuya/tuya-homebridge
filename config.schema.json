@@ -15,7 +15,7 @@
 					"projectType": {
 						"title": "Project Type",
 						"type": "string",
-						"default": "form",
+						"default": "2",
 						"oneOf": [{
 							"title": "Custom",
 							"enum": ["1"]
@@ -28,7 +28,10 @@
 					"endpoint": {
 						"title": "Endpoint",
 						"type": "string",
-						"required": false
+						"format": "url",
+						"condition": {
+							"functionBody": "return model.options.projectType === '1';"
+						}
 					},
 					"accessId": {
 						"title": "Access ID",
@@ -42,10 +45,12 @@
 					},
 					"countryCode": {
 						"title": "Country Code",
-						"type": "number",
-						"default": "",
+						"type": "integer",
+						"minimum": 1,
 						"description": "Country Code for Phone",
-						"required": true
+						"condition": {
+							"functionBody": "return model.options.projectType === '2';"
+						}
 					},
 					"username": {
 						"title": "Username",
@@ -60,7 +65,7 @@
 					"appSchema": {
 						"title": "App",
 						"type": "string",
-						"default": "form",
+						"default": "tuyaSmart",
 						"oneOf": [{
 								"title": "Tuya Smart",
 								"enum": ["tuyaSmart"]
@@ -70,9 +75,18 @@
 								"enum": ["smartlife"]
 							}
 						],
-						"required": true
+						"condition": {
+							"functionBody": "return model.options.projectType === '2';"
+						}
 					}
-				}
+				},
+				"anyOf": [{
+					"properties": { "projectType": { "const": "1" } },
+					"required": ["endpoint", "accessId", "accessKey", "username", "password"]
+				}, {
+					"properties": { "projectType": { "const": "2" } },
+					"required": ["accessId", "accessKey", "countryCode", "username", "password", "appSchema"]
+				}]
 			}
 		}
   }

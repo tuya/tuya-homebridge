@@ -28,16 +28,15 @@
   "dependencies": {
     "axios": "^0.21.1",
     "crypto-js": "^4.0.0",
+    "jsonschema": "^1.4.1",
     "mqtt": "^4.2.6",
-    "uuid": "^8.3.2",
-    "validator": "^13.7.0"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.1.2",
     "@types/node": "^16.10.9",
     "@types/uuid": "^8.3.4",
-    "@types/validator": "^13.7.8",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",
