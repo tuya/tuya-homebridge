@@ -10,7 +10,7 @@ export default class AccessoryFactory {
     platform: TuyaPlatform,
     accessory: PlatformAccessory,
     device: TuyaDevice,
-  ) {
+  ): BaseAccessory {
 
     let handler;
     switch (device.category) {
@@ -64,6 +64,6 @@ export default class AccessoryFactory {
       handler = new BaseAccessory(platform, accessory);
     }
 
-    return handler as BaseAccessory;
+    return handler;
   }
 }

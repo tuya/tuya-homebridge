@@ -3,7 +3,7 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, 
 import TuyaCustomOpenAPI from './core/TuyaCustomOpenAPI';
 import TuyaHomeOpenAPI from './core/TuyaHomeOpenAPI';
 import TuyaOpenMQ from './core/TuyaOpenMQ';
-import TuyaDevice from './device/TuyaDevice';
+import TuyaDevice, { TuyaDeviceStatus } from './device/TuyaDevice';
 import TuyaDeviceManager, { Events } from './device/TuyaDeviceManager';
 import TuyaCustomDeviceManager from './device/TuyaCustomDeviceManager';
 import TuyaHomeDeviceManager from './device/TuyaHomeDeviceManager';
@@ -158,7 +158,6 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       this.accessoryHandlers.push(handler);
 
       // link the accessory to your platform
-      // this.log.debug('device:', device, 'accessory:', accessory);
       this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     }
   }
@@ -169,16 +168,18 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    handler.onDeviceInfoUpdate(device, info);
+    this.log.debug(`onDeviceInfoUpdate devId=${device.id}, info=${JSON.stringify(info)}`);
+    handler.onDeviceInfoUpdate(info);
   }
 
-  updateAccessoryStatus(device: TuyaDevice, status: []) {
+  updateAccessoryStatus(device: TuyaDevice, status: TuyaDeviceStatus[]) {
     const handler = this.getAccessoryHandler(device.id);
     if (!handler) {
       return;
     }
 
-    handler.onDeviceStatusUpdate(device, status);
+    this.log.debug(`onDeviceStatusUpdate devId=${device.id}, status=${JSON.stringify(status)}`);
+    handler.onDeviceStatusUpdate(status);
   }
 
   removeAccessory(deviceID: string) {

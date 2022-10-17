@@ -8,18 +8,36 @@ export enum TuyaDeviceFunctionType {
   Raw = 'Raw',
 }
 
-export interface TuyaDeviceFunction {
+export type TuyaDeviceFunctionIntegerProperty = {
+  min: number;
+  max: number;
+  scale: number;
+  step: number;
+  unit: string;
+};
+
+export type TuyaDeviceFunctionEnumProperty = {
+  range: string[];
+};
+
+export type TuyaDeviceFunctionJSONProperty = object;
+
+export type TuyaDeviceFunctionProperty = TuyaDeviceFunctionIntegerProperty
+  | TuyaDeviceFunctionEnumProperty
+  | TuyaDeviceFunctionJSONProperty;
+
+export type TuyaDeviceFunction = {
   code: string;
   name: string;
   desc: string;
   type: TuyaDeviceFunctionType;
   values: string;
-}
+};
 
-export interface TuyaDeviceStatus {
+export type TuyaDeviceStatus = {
   code: string;
   value: string | number | boolean;
-}
+};
 
 export default class TuyaDevice {
 
@@ -58,6 +76,14 @@ export default class TuyaDevice {
 
   getDeviceFunction(code: string) {
     return this.functions.find(_function => _function.code === code);
+  }
+
+  getDeviceFunctionProperty(code: string) {
+    const deviceFunction = this.getDeviceFunction(code);
+    if (!deviceFunction) {
+      return;
+    }
+    return JSON.parse(deviceFunction.values) as TuyaDeviceFunctionProperty;
   }
 
   getDeviceStatus(code: string) {

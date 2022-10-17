@@ -1,48 +1,49 @@
-import TuyaDevice, { TuyaDeviceFunctionType, TuyaDeviceStatus } from '../device/TuyaDevice';
+import { TuyaDeviceFunction, TuyaDeviceFunctionType, TuyaDeviceStatus } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
 
 export default class SwitchAccessory extends BaseAccessory {
 
   public mainService = this.Service.Switch;
 
-  initServices() {
-    super.initServices();
-
-    const switchFunctions = this.device.functions.filter(_function => _function.type === TuyaDeviceFunctionType.Boolean);
-    for (const switchFunction of switchFunctions) {
-      const service = this.accessory.getService(switchFunction.code)
-        || this.accessory.addService(this.mainService, switchFunction.name, switchFunction.code);
-
-      service.setCharacteristic(this.Characteristic.Name, switchFunction.name);
-
-      service.getCharacteristic(this.Characteristic.On)
-        .onGet(async () => {
-          const status = this.device.getDeviceStatus(switchFunction.code);
-          return !!status && status!.value;
-        })
-        .onSet(async (value) => {
-          await this.sendCommands([{
-            code: switchFunction.code,
-            value: value as boolean,
-          }]);
-        });
-
+  configureService(deviceFunction: TuyaDeviceFunction) {
+    if (deviceFunction.type !== TuyaDeviceFunctionType.Boolean) {
+      return;
     }
+
+    const service = this.accessory.getService(deviceFunction.code)
+      || this.accessory.addService(this.mainService, deviceFunction.name, deviceFunction.code);
+
+    service.setCharacteristic(this.Characteristic.Name, deviceFunction.name);
+
+    service.getCharacteristic(this.Characteristic.On)
+      .onGet(async () => {
+        const status = this.device.getDeviceStatus(deviceFunction.code);
+        return status!.value as boolean;
+      })
+      .onSet(async (value) => {
+        await this.deviceManager.sendCommands(this.device.id, [{
+          code: deviceFunction.code,
+          value: value as boolean,
+        }]);
+      });
   }
 
-  onDeviceStatusUpdate(device: TuyaDevice, status: TuyaDeviceStatus[]): void {
-    for (const _status of status) {
-      const _function = this.device.getDeviceFunction(_status.code);
-      if (!_function) {
+  onDeviceStatusUpdate(status: TuyaDeviceStatus[]): void {
+    for (const deviceStatus of status) {
+      const deviceFunction = this.device.getDeviceFunction(deviceStatus.code);
+      if (!deviceFunction) {
         continue;
       }
 
-      if (_function.type !== TuyaDeviceFunctionType.Boolean) {
+      if (deviceFunction.type !== TuyaDeviceFunctionType.Boolean) {
         continue;
       }
 
-      const service = this.accessory.getService(_function.code)!;
-      service.updateCharacteristic(this.Characteristic.On, _status.value);
+      const service = this.accessory.getService(deviceFunction.code);
+      if (!service) {
+        continue;
+      }
+      service.updateCharacteristic(this.Characteristic.On, deviceStatus.value);
     }
   }
 

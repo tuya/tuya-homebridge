@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PlatformAccessory, Service, Characteristic } from 'homebridge';
 
-import TuyaDevice, { TuyaDeviceStatus } from '../device/TuyaDevice';
+import { TuyaDeviceFunction, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 
 const MANUFACTURER = 'Tuya Inc.';
@@ -23,12 +25,7 @@ export default class BaseAccessory {
     public readonly platform: TuyaPlatform,
     public readonly accessory: PlatformAccessory,
   ) {
-    this.initServices();
-  }
 
-  initServices() {
-
-    // set accessory information
     const service = this.accessory.getService(this.Service.AccessoryInformation)
     || this.accessory.addService(this.Service.AccessoryInformation);
 
@@ -39,20 +36,27 @@ export default class BaseAccessory {
       .setCharacteristic(this.Characteristic.SerialNumber, this.device.uuid)
     ;
 
+    for (const deviceFunction of this.device.functions) {
+      const status = this.device.getDeviceStatus(deviceFunction.code);
+      if (status) {
+        this.configureService(deviceFunction);
+      }
+    }
+
+    this.onDeviceStatusUpdate(this.device.status);
+
   }
 
-  async sendCommands(commands: TuyaDeviceStatus[]) {
-    this.log.debug(`sendCommands devId=${this.device.id}, commands=${JSON.stringify(commands)}`);
-    await this.deviceManager.sendCommands(this.device.id, commands);
+  configureService(deviceFunction: TuyaDeviceFunction) {
+
   }
 
-  onDeviceInfoUpdate(device: TuyaDevice, info) {
+  onDeviceInfoUpdate(info) {
     // name, online, ...
-    this.log.debug(`onDeviceInfoUpdate devId=${device.id}, info=${JSON.stringify(info)}`);
   }
 
-  onDeviceStatusUpdate(device: TuyaDevice, status: TuyaDeviceStatus[]) {
-    this.log.debug(`onDeviceInfoUpdate devId=${device.id}, status=${JSON.stringify(status)}`);
+  onDeviceStatusUpdate(status: TuyaDeviceStatus[]) {
+    // TODO trigger related characteristic to update their value
   }
 
 }

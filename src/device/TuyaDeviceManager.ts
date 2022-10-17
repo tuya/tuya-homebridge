@@ -31,12 +31,12 @@ export default class TuyaDeviceManager extends EventEmitter {
     return Array.from(this.devices).find(device => device.id === deviceID);
   }
 
-  async updateDevices() {
-    return [] as TuyaDevice[];
+  async updateDevices(): Promise<TuyaDevice[]> {
+    return [];
   }
 
-  async updateDevice(deviceID: string) {
-    return {} as TuyaDevice;
+  async updateDevice(deviceID: string): Promise<TuyaDevice | null> {
+    return null;
   }
 
   async removeDevice(deviceID: string) {
