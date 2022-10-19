@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { TuyaMQTTProtocol } from '../core/TuyaOpenMQ';
 import TuyaDevice, { TuyaDeviceStatus } from './TuyaDevice';
 import TuyaDeviceManager, { Events } from './TuyaDeviceManager';

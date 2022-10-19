@@ -159,7 +159,7 @@ export default class LightAccessory extends BaseAccessory {
   configureBrightness() {
     const service = this.getMainService();
     const brightFunction = this.getBrightnessDeviceFunction()!;
-    const { min, max, scale, step } = this.device.getDeviceFunctionProperty(brightFunction.code) as TuyaDeviceFunctionIntegerProperty;
+    const { max } = this.device.getDeviceFunctionProperty(brightFunction.code) as TuyaDeviceFunctionIntegerProperty;
 
     service.getCharacteristic(this.Characteristic.Brightness)
       .onGet(() => {
@@ -177,7 +177,7 @@ export default class LightAccessory extends BaseAccessory {
   configureColourTemperature() {
     const service = this.getMainService();
     const tempFunction = this.getColorTemperatureDeviceFunction()!;
-    const { min, max, scale, step } = this.device.getDeviceFunctionProperty(tempFunction.code) as TuyaDeviceFunctionIntegerProperty;
+    const { min, max } = this.device.getDeviceFunctionProperty(tempFunction.code) as TuyaDeviceFunctionIntegerProperty;
 
     service.getCharacteristic(this.Characteristic.ColorTemperature)
       .onGet(() => {
@@ -201,7 +201,7 @@ export default class LightAccessory extends BaseAccessory {
   configureHue() {
     const service = this.getMainService();
     const colorFunction = this.getColorDeviceFunction()!;
-    const { min, max, scale, step } = this.getColorProperty().h;
+    const { min, max } = this.getColorProperty().h;
     service.getCharacteristic(this.Characteristic.Hue)
       .onGet(() => {
         let hue = Math.floor(360 * (this.getColorValue().h - min) / (max - min));
@@ -223,7 +223,7 @@ export default class LightAccessory extends BaseAccessory {
   configureSaturation() {
     const service = this.getMainService();
     const colorFunction = this.getColorDeviceFunction()!;
-    const { min, max, scale, step } = this.getColorProperty().s;
+    const { min, max } = this.getColorProperty().s;
     service.getCharacteristic(this.Characteristic.Saturation)
       .onGet(() => {
         let saturation = Math.floor(100 * (this.getColorValue().s - min) / (max - min));
