@@ -1,7 +1,7 @@
 {
   "name": "@0x5e/homebridge-tuya-platform",
   "version": "1.5.0",
-  "description": "Official Homebridge plugin for Tuya Open API, maintained by the Tuya Developer Team.",
+  "description": "Tuya plugin for Hombridge, maintained by @0x5e, former employee of Tuya.",
   "license": "MIT",
   "repository": {
     "type": "git",
