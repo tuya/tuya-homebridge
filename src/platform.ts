@@ -139,6 +139,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
       // Update context
       if (!existingAccessory.context || !existingAccessory.context.deviceID) {
+        this.log.info('Update accessory context:', existingAccessory.displayName);
         existingAccessory.context.deviceID = device.id;
         this.api.updatePlatformAccessories([existingAccessory]);
       }
