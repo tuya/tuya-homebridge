@@ -1,5 +1,5 @@
 
-Version 1.58
+Version 1.59
 
 rewrite smart boiler \ timer switch to support double (and more) switches.
 
