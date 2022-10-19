@@ -64,13 +64,16 @@ For details, please see https://github.com/homebridge/homebridge-plugin-template
 
 PRs and issues are welcome.
 
-### Supporting new accessory type
+### Adding new accessory type
 
 **notice: API not stable yet, may changed in the future.**
 
 1. Create a class extend from `src/accessory/BaseAccessory.ts`.
 2. Implement `configureService` method, add `Service` and `Characteristic` depends to the device's `functions` and `status`.
+
 For every `Characteristic` related to the device's state, implement `onGet` and `onSet` handlers.
+
 Get latest device state from `XXXAccessory.device.status`, and send commands using `XXXAccessory.deviceManager.sendCommands(deviceID, commands);`.
+
 3. Add `XXXAccessory` into `src/accessory/AccessoryFactory.ts`.
 4. All done. `BaseAccessory` will handle mqtt update automatically.
