@@ -74,12 +74,15 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     if (this.options.projectType === '1') {
       const { endpoint, accessId, accessKey, username, password } = this.options;
 
+      this.log.info('Log in to Tuya Cloud.');
       const api = new TuyaCustomOpenAPI(endpoint as Endpoints, accessId, accessKey, this.log);
       await api.login(username, password);
 
+      this.log.info('Start MQTT connection.');
       const mq = new TuyaOpenMQ(api, '2.0', this.log);
       mq.start();
 
+      this.log.info('Fetching device list.');
       this.deviceManager = new TuyaCustomDeviceManager(api, mq);
       try {
         devices = await this.deviceManager.updateDevices();
@@ -91,19 +94,17 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     } else if (this.options.projectType === '2') {
       const { accessId, accessKey, countryCode, username, password, appSchema } = this.options;
 
+      this.log.info('Log in to Tuya Cloud.');
       const api = new TuyaHomeOpenAPI(TuyaHomeOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
       await api.login(countryCode!, username, password, appSchema!);
 
+      this.log.info('Start MQTT connection.');
       const mq = new TuyaOpenMQ(api, '1.0', this.log);
       mq.start();
 
+      this.log.info('Fetching device list.');
       this.deviceManager = new TuyaHomeDeviceManager(api, mq);
-      try {
-        devices = await this.deviceManager.updateDevices();
-      } catch (e) {
-        this.log.warn('Failed to get device information. Please check if the config.json is correct.');
-        return;
-      }
+      devices = await this.deviceManager.updateDevices();
 
     } else {
       this.log.warn(`Unsupported projectType: ${this.config.options.projectType}, stop device discovery.`);

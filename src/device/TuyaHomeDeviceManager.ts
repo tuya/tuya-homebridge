@@ -4,10 +4,28 @@ import TuyaDeviceManager, { Events } from './TuyaDeviceManager';
 
 export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
 
+  async getHomeList() {
+    const res = await this.api.get(`/v1.0/users/${this.api.tokenInfo.uid}/homes`);
+    return res;
+  }
+
+  async getHomeDeviceList(homeID: number) {
+    const res = await this.api.get(`/v1.0/homes/${homeID}/devices`);
+    return res;
+  }
+
   async updateDevices() {
 
-    const res = await this.api.get('/v1.0/iot-01/associated-users/devices', { 'size': 100 });
-    const devices = (res.result.devices as []).map(obj => new TuyaDevice(obj));
+    const res = await this.getHomeList();
+    if (!res.success) {
+      return [];
+    }
+
+    let devices: TuyaDevice[] = [];
+    for (const { home_id } of res.result) {
+      const res = await this.getHomeDeviceList(home_id);
+      devices = devices.concat((res.result as []).map(obj => new TuyaDevice(obj)));
+    }
 
     const devIds: string[] = [];
     for (const device of devices) {
