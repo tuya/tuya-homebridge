@@ -16,15 +16,7 @@ If all things looks fine, I will let my colleague merge into the official repo.
 
 ## Changes from tuya/tuya-homebridge
 
-- Rewritten in TypeScript, brings benefits of type checking, smart code hints, etc.
-- Rewrite device info list polling logic, no more 1106 permission errors.
-- Rewrite accessory classes. (old accessory class still compatible to use, but not recommended)
-    - Reduce about 50% code amount at present.
-    - Add debounce on LightAccessory send commands, more stable during frequent operations.
-- Add device manufactor, serial number (device id) and model displayed in HomeKit.
-- Add config validation.
-- Remove `debug` and `lang` option. For debugging, please start homebridge in debug mode: `homebridge -D`
-- Update unit test.
+See [CHANGELOG.md](./CHANGELOG.md)
 
 ## Todo list before merge
 
@@ -42,7 +34,7 @@ If all things looks fine, I will let my colleague merge into the official repo.
     - Smoke Sensor
     - Window Covering
 - Test on `Custom` project type.
-- Plugin upgrade compatibility test.
+- ~~Plugin upgrade compatibility test.~~
 
 ## Todo list after merge
 
@@ -50,6 +42,7 @@ If all things looks fine, I will let my colleague merge into the official repo.
     - Display specific home's device list
     - Switch to show/hidden additional device functions, such as Child Lock, Backlight, Scene, Fan Level.
 - Detail documentation for accessory category develop and usage.
+- `productId` specific accessory
 
 ## How to contribute
 
