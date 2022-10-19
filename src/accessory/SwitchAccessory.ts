@@ -1,4 +1,4 @@
-import { TuyaDeviceFunction, TuyaDeviceFunctionType, TuyaDeviceStatus } from '../device/TuyaDevice';
+import { TuyaDeviceFunction, TuyaDeviceFunctionType } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
 
 export default class SwitchAccessory extends BaseAccessory {
@@ -26,25 +26,6 @@ export default class SwitchAccessory extends BaseAccessory {
           value: value as boolean,
         }]);
       });
-  }
-
-  onDeviceStatusUpdate(status: TuyaDeviceStatus[]): void {
-    for (const deviceStatus of status) {
-      const deviceFunction = this.device.getDeviceFunction(deviceStatus.code);
-      if (!deviceFunction) {
-        continue;
-      }
-
-      if (deviceFunction.type !== TuyaDeviceFunctionType.Boolean) {
-        continue;
-      }
-
-      const service = this.accessory.getService(deviceFunction.code);
-      if (!service) {
-        continue;
-      }
-      service.updateCharacteristic(this.Characteristic.On, deviceStatus.value);
-    }
   }
 
 }

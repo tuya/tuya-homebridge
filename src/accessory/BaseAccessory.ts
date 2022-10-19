@@ -55,8 +55,18 @@ export default class BaseAccessory {
     // name, online, ...
   }
 
-  onDeviceStatusUpdate(status: TuyaDeviceStatus[]) {
-    // TODO trigger related characteristic to update their value
+  async onDeviceStatusUpdate(status: TuyaDeviceStatus[]) {
+    for (const service of this.accessory.services) {
+      for (const characteristic of service.characteristics) {
+        const getHandler = characteristic['getHandler'];
+        const newValue = getHandler ? (await getHandler()) : characteristic.value;
+        if (characteristic.value !== newValue) {
+          // eslint-disable-next-line max-len
+          this.log.debug(`Update value ${characteristic.value} => ${newValue} for devId=${this.device.id} service=${service.UUID}, subtype=${service.subtype}, characteristic=${characteristic.UUID}`);
+          characteristic.updateValue(newValue);
+        }
+      }
+    }
   }
 
 }
