@@ -38,6 +38,11 @@ describe('TuyaHomeOpenAPI', () => {
   test('login()', async () => {
     await homeAPI.login(options.countryCode, options.username, options.password, options.appSchema);
   });
+
+  test('_refreshAccessTokenIfNeed()', async () => {
+    homeAPI.tokenInfo.expire = 0;
+    await homeAPI._refreshAccessTokenIfNeed('');
+  });
 });
 
 describe('TuyaHomeDeviceManager', () => {

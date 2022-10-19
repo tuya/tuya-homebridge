@@ -16,21 +16,6 @@ export default class TuyaHomeOpenAPI extends TuyaOpenAPI {
   public password?: string;
   public appSchema?: string;
 
-  async _refreshAccessTokenIfNeed(path: string) {
-
-    if (!this.isTokenExpired()) {
-      return;
-    }
-
-    if (path.startsWith('/v1.0/iot-01/associated-users/actions/authorized-login')) {
-      return;
-    }
-
-    // login after expired
-    await this.login(this.countryCode!, this.username!, this.password!, this.appSchema!);
-
-  }
-
   async login(countryCode: number, username: string, password: string, appSchema: string) {
 
     for (const _endpoint of Object.keys(DEFAULT_ENDPOINTS)) {

@@ -50,7 +50,29 @@ export default class TuyaOpenAPI {
   }
 
   async _refreshAccessTokenIfNeed(path: string) {
+    if (!this.isLogin()) {
+      return;
+    }
 
+    if (!this.isTokenExpired()) {
+      return;
+    }
+
+    if (path.startsWith('/v1.0/token')) {
+      return;
+    }
+
+    this.tokenInfo.access_token = '';
+    const res = await this.get(`/v1.0/token/${this.tokenInfo.refresh_token}`);
+    const { access_token, refresh_token, uid, expire } = res.result;
+    this.tokenInfo = {
+      access_token: access_token,
+      refresh_token: refresh_token,
+      uid: uid,
+      expire: expire * 1000 + new Date().getTime(),
+    };
+
+    return;
   }
 
   async request(method: Method, path: string, params?, body?) {
