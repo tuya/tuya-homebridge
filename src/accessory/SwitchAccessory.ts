@@ -3,7 +3,9 @@ import BaseAccessory from './BaseAccessory';
 
 export default class SwitchAccessory extends BaseAccessory {
 
-  public mainService = this.Service.Switch;
+  mainService() {
+    return this.Service.Switch;
+  }
 
   configureService(deviceFunction: TuyaDeviceFunction) {
     if (deviceFunction.type !== TuyaDeviceFunctionType.Boolean) {
@@ -11,7 +13,7 @@ export default class SwitchAccessory extends BaseAccessory {
     }
 
     const service = this.accessory.getService(deviceFunction.code)
-      || this.accessory.addService(this.mainService, deviceFunction.name, deviceFunction.code);
+      || this.accessory.addService(this.mainService(), deviceFunction.name, deviceFunction.code);
 
     service.setCharacteristic(this.Characteristic.Name, deviceFunction.name);
 
