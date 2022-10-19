@@ -137,6 +137,12 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     if (existingAccessory) {
       this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
 
+      // Update context
+      if (!existingAccessory.context || !existingAccessory.context.deviceID) {
+        existingAccessory.context.deviceID = device.id;
+        this.api.updatePlatformAccessories([existingAccessory]);
+      }
+
       // create the accessory handler for the restored accessory
       const handler = AccessoryFactory.createAccessory(this, existingAccessory, device);
       this.accessoryHandlers.push(handler);

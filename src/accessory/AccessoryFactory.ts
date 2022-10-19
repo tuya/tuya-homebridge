@@ -6,6 +6,8 @@ import LightAccessory from './LightAccessory';
 import OutletAccessory from './OutletAccessory';
 import SwitchAccessory from './SwitchAccessory';
 
+import LegacyAccessoryFactory from './LegacyAccessoryFactory';
+
 export default class AccessoryFactory {
   static createAccessory(
     platform: TuyaPlatform,
@@ -61,7 +63,12 @@ export default class AccessoryFactory {
     }
 
     if (!handler) {
-      platform.log.warn(`Unsupported device: ${device.name}. Using BaseAccessory instead.`);
+      platform.log.warn(`Create accessory using legacy mode: ${device.name}.`);
+      handler = LegacyAccessoryFactory.createAccessory(platform, accessory, device);
+    }
+
+    if (!handler) {
+      platform.log.warn(`Unsupported device: ${device.name}.`);
       handler = new BaseAccessory(platform, accessory);
     }
 

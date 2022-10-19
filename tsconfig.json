@@ -16,7 +16,8 @@
     "strict": true,
     "esModuleInterop": true,
     "noImplicitAny": false,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "allowJs": true
   },
   "include": [
     "src/"
