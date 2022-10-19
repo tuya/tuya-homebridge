@@ -17,29 +17,30 @@ If all things looks fine, I will let my colleague merge into the official repo.
 ## Changes from tuya/tuya-homebridge
 
 - Rewritten in TypeScript, brings benefits of type checking, smart code hints, etc.
-- Rewrite device info list polling logic, less permission error.
-- Rewrite accessory logic.
+- Rewrite device info list polling logic, no more 1106 permission errors.
+- Rewrite accessory classes. (old accessory class still compatible to use, but not recommended)
     - Reduce about 50% code amount at present.
     - Add debounce on LightAccessory send commands, more stable during frequent operations.
 - Add device manufactor, serial number (device id) and model displayed in HomeKit.
 - Add config validation.
 - Remove `debug` and `lang` option. For debugging, please start homebridge in debug mode: `homebridge -D`
+- Update unit test.
 
 ## Todo list before merge
 
-- Translate existing accessory code (or try to be compatible with them) and test.
-    - [x] Base
-    - [x] Switch
-    - [x] Outlet
-    - [x] Light
-    - [ ] Air Purifier
-    - [ ] Fan
-    - [ ] Contact Sensor
-    - [ ] Garage Door
-    - [ ] Heater
-    - [ ] Leak Sensor
-    - [ ] Smoke Sensor
-    - [ ] Window Covering
+- Re-write legacy accessory class and test.
+    - ~~Base~~
+    - ~~Switch~~
+    - ~~Outlet~~
+    - ~~Light~~
+    - Air Purifier
+    - Fan
+    - Contact Sensor
+    - Garage Door
+    - Heater
+    - Leak Sensor
+    - Smoke Sensor
+    - Window Covering
 - Test on `Custom` project type.
 - Plugin upgrade compatibility test.
 
@@ -62,3 +63,14 @@ If all things looks fine, I will let my colleague merge into the official repo.
 For details, please see https://github.com/homebridge/homebridge-plugin-template
 
 PRs and issues are welcome.
+
+### Supporting new accessory type
+
+**notice: API not stable yet, may changed in the future.**
+
+1. Create a class extend from `src/accessory/BaseAccessory.ts`.
+2. Implement `configureService` method, add `Service` and `Characteristic` depends to the device's `functions` and `status`.
+For every `Characteristic` related to the device's state, implement `onGet` and `onSet` handlers.
+Get latest device state from `XXXAccessory.device.status`, and send commands using `XXXAccessory.deviceManager.sendCommands(deviceID, commands);`.
+3. Add `XXXAccessory` into `src/accessory/AccessoryFactory.ts`.
+4. All done. `BaseAccessory` will handle mqtt update automatically.
