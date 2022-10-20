@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import EventEmitter from 'events';
 import TuyaOpenAPI from '../core/TuyaOpenAPI';
 import TuyaOpenMQ, { TuyaMQTTProtocol } from '../core/TuyaOpenMQ';
@@ -35,20 +33,109 @@ export default class TuyaDeviceManager extends EventEmitter {
     return [];
   }
 
-  async updateDevice(deviceID: string): Promise<TuyaDevice | null> {
-    return null;
+  async updateDevice(deviceID: string) {
+
+    let res = await this.getDeviceInfo(deviceID);
+    if (!res.success) {
+      return null;
+    }
+    const device = new TuyaDevice(res.result);
+
+    res = await this.getDeviceFunctions(deviceID);
+    device.functions = res.success ? res.result['functions'] : [];
+
+    const oldDevice = this.getDevice(deviceID);
+    if (oldDevice) {
+      this.devices.splice(this.devices.indexOf(oldDevice), 1);
+    }
+
+    this.devices.push(device);
+
+    return device;
   }
 
-  async removeDevice(deviceID: string) {
+  async getDeviceInfo(deviceID: string) {
+    const res = await this.api.get(`/v1.0/devices/${deviceID}`);
+    return res;
+  }
 
+  async getDeviceListInfo(devIds: string[] = []) {
+    const res = await this.api.get('/v1.0/devices', { 'device_ids': devIds.join(',') });
+    return res;
+  }
+
+  async getDeviceFunctions(deviceID: string) {
+    const res = await this.api.get(`/v1.0/devices/${deviceID}/functions`);
+    return res;
+  }
+
+  async getDeviceListFunctions(devIds: string[] = []) {
+    const PAGE_COUNT = 20;
+
+    let index = 0;
+    const results: object[] = [];
+    while(index < devIds.length) {
+      const res = await this.api.get('/v1.0/devices/functions', { 'device_ids': devIds.slice(index, index += PAGE_COUNT).join(',') });
+      if (res.result) {
+        results.push(...res.result);
+      }
+    }
+
+    return results;
   }
 
   async sendCommands(deviceID: string, commands: TuyaDeviceStatus[]) {
-
+    const res = await this.api.post(`/v1.0/devices/${deviceID}/commands`, { commands });
+    return res.result;
   }
 
-  async onMQTTMessage(topic: string, protocol: TuyaMQTTProtocol, message) {
 
+  async onMQTTMessage(topic: string, protocol: TuyaMQTTProtocol, message) {
+    switch(protocol) {
+      case TuyaMQTTProtocol.DEVICE_STATUS_UPDATE: {
+        const { devId, status } = message;
+        const device = this.getDevice(devId);
+        if (!device) {
+          return;
+        }
+
+        for (const item of device.status) {
+          const _item = status.find(_item => _item.code === item.code);
+          if (!_item) {
+            continue;
+          }
+          item.value = _item.value;
+        }
+
+        this.emit(Events.DEVICE_STATUS_UPDATE, device, status);
+        break;
+      }
+      case TuyaMQTTProtocol.DEVICE_INFO_UPDATE: {
+        const { bizCode, bizData, devId } = message;
+        if (bizCode === 'bindUser') {
+          // TODO failed if request to quickly
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          const device = await this.updateDevice(devId);
+          this.emit(Events.DEVICE_ADD, device);
+        } else if (bizCode === 'nameUpdate') {
+          const { name } = bizData;
+          const device = this.getDevice(devId);
+          if (!device) {
+            return;
+          }
+          device.name = name;
+          this.emit(Events.DEVICE_INFO_UPDATE, device, bizData);
+        } else if (bizCode === 'delete') {
+          this.emit(Events.DEVICE_DELETE, devId);
+        } else {
+          this.log.warn(`Unhandled mqtt message: bizCode=${bizCode}, bizData=${JSON.stringify(bizData)}`);
+        }
+        break;
+      }
+      default:
+        this.log.warn(`Unhandled mqtt message: protocol=${protocol}, message=${JSON.stringify(message)}`);
+        break;
+    }
   }
 
 }

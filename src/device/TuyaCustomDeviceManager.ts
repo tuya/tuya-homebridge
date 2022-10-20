@@ -1,123 +1,64 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { TuyaMQTTProtocol } from '../core/TuyaOpenMQ';
-import TuyaDevice, { TuyaDeviceStatus } from './TuyaDevice';
-import TuyaDeviceManager, { Events } from './TuyaDeviceManager';
+import TuyaDevice, { TuyaDeviceFunction } from './TuyaDevice';
+import TuyaDeviceManager from './TuyaDeviceManager';
 
 export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
 
-  async updateDevices() {
-
-    const devices: TuyaDevice[] = [];
-    const assets = await this.getAssets();
-
-    let deviceDataArr = [];
-    const deviceIdArr = [];
-    for (const asset of assets) {
-      const res = await this.getDeviceIDList(asset.asset_id);
-      deviceDataArr = deviceDataArr.concat(res);
-    }
-
-    for (const deviceData of deviceDataArr) {
-      const { device_id } = deviceData;
-      deviceIdArr.push(device_id);
-    }
-
-    const devicesInfoArr = await this.getDeviceListInfo(deviceIdArr);
-    const devicesStatusArr = await this.getDeviceListStatus(deviceIdArr);
-
-    for (let i = 0; i < devicesInfoArr.length; i++) {
-      const deviceInfo = devicesInfoArr[i];
-      const functions = await this.getDeviceFunctions(deviceInfo.id);
-      const status = devicesStatusArr.find((j) => j.id === deviceInfo.id);
-      const device = new TuyaDevice(deviceInfo);
-      device.functions = functions;
-      device.status = status;
-      devices.push(device);
-    }
-
-    this.devices = devices;
-    return devices;
-  }
-
-  async updateDevice(deviceID: string) {
-
-    const deviceInfo = await this.getDeviceInfo(deviceID);
-    const functions = await this.getDeviceFunctions(deviceID);
-    // TODO status?
-
-    const oldDevice = this.getDevice(deviceID);
-    if (oldDevice) {
-      this.devices.splice(this.devices.indexOf(oldDevice), 1);
-    }
-
-    const device = new TuyaDevice(deviceInfo);
-    device.functions = functions;
-    this.devices.push(device);
-
-    return device;
-  }
-
-  async sendCommands(deviceID: string, commands: TuyaDeviceStatus[]) {
-    const res = await this.api.post(`/v1.0/iot-03/devices/${deviceID}/commands`, { commands });
-    return res.result;
-  }
-
-
-
-  // Gets a list of human-actionable assets
-  async getAssets() {
+  async getAssetList() {
     const res = await this.api.get('/v1.0/iot-03/users/assets', {
       'page_no': 0,
       'page_size': 100,
     });
-    return res.result.assets;
+    return res;
   }
 
-  // Query the list of device IDs under the asset
-  async getDeviceIDList(assetID: string) {
-    const res = await this.api.get(`/v1.0/iot-02/assets/${assetID}/devices`);
-    return res.result.list;
+  async getAssetDeviceIDList(assetID: string) {
+    let deviceIDs: string[] = [];
+    const params = {
+      page_size: 50,
+    };
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      const res = await this.api.get(`/v1.0/iot-02/assets/${assetID}/devices`, params);
+      deviceIDs = deviceIDs.concat((res.result.list as []).map(item => item['device_id']));
+      params['last_row_key'] = res.result.last_row_key;
+      if (!res.result.has_next) {
+        break;
+      }
+    }
+
+    return deviceIDs;
   }
 
-  // Gets the device instruction set
-  async getDeviceFunctions(deviceID: string) {
-    const res = await this.api.get(`/v1.0/iot-03/devices/${deviceID}/functions`);
-    return res.result;
-  }
+  async updateDevices() {
 
-  // Get individual device information
-  async getDeviceInfo(deviceID: string) {
-    const res = await this.api.get(`/v1.0/iot-03/devices/${deviceID}`);
-    return res.result;
-  }
+    let res;
 
-  // Batch access to device information
-  async getDeviceListInfo(devIds: string[] = []) {
-    if (devIds.length === 0) {
+    res = await this.getAssetList();
+    if (!res.success) {
       return [];
     }
-    const res = await this.api.get('/v1.0/iot-03/devices', { 'device_ids': devIds.join(',') });
-    return res.result.list;
-  }
 
-  // Gets the individual device state
-  async getDeviceStatus(deviceID: string) {
-    const res = await this.api.get(`/v1.0/iot-03/devices/${deviceID}/status`);
-    return res.result;
-  }
-
-  // Batch access to device status
-  async getDeviceListStatus(devIds: string[] = []) {
-    if (devIds.length === 0) {
-      return [];
+    let deviceIDs: string[] = [];
+    for (const asset of res.result.assets) {
+      deviceIDs = deviceIDs.concat(await this.getAssetDeviceIDList(asset.asset_id));
     }
-    const res = await this.api.get('/v1.0/iot-03/devices/status', { 'device_ids': devIds.join(',') });
-    return res.result;
-  }
 
+    res = await this.getDeviceListInfo(deviceIDs);
+    const devices = (res.result.devices as []).map(obj => new TuyaDevice(obj));
+    const functions = await this.getDeviceListFunctions(deviceIDs);
 
-  async onMQTTMessage(topic: string, protocol: TuyaMQTTProtocol, message) {
-    // TODO test
+    for (const device of devices) {
+      for (const item of functions) {
+        if (device.product_id === item['product_id']) {
+          device.functions = item['functions'] as TuyaDeviceFunction[];
+          break;
+        }
+      }
+      device.functions = device.functions || [];
+    }
+
+    this.devices = devices;
+    return devices;
   }
 
 }
