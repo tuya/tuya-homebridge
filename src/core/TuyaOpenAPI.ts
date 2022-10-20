@@ -19,6 +19,8 @@ export enum Endpoints {
   INDIA = 'https://openapi.tuyain.com',
 }
 
+const API_SIGN_INVALID_ERROR_CODE = 1004;
+const API_SIGN_INVALID_ERROR = 'Sign invalid. Please submit issue with logs at https://github.com/tuya/tuya-homebridge .';
 const API_NOT_AUTHORIZED_ERROR_CODES = [1106, 28841105];
 const API_NOT_AUTHORIZED_ERROR = `
 API not authorized. Please go to "Tuya IoT Platform -> Cloud -> Development -> Project -> Service API",
@@ -139,7 +141,9 @@ export default class TuyaOpenAPI {
     });
 
     this.log.debug(`TuyaOpenAPI response: path = ${path}, data = ${JSON.stringify(res.data)}`);
-    if (res.data && API_NOT_AUTHORIZED_ERROR_CODES.includes(res.data.code)) {
+    if (res.data.code === API_SIGN_INVALID_ERROR_CODE) {
+      this.log.error(API_SIGN_INVALID_ERROR);
+    } else if (API_NOT_AUTHORIZED_ERROR_CODES.includes(res.data.code)) {
       this.log.error(API_NOT_AUTHORIZED_ERROR);
     }
 
@@ -178,13 +182,18 @@ export default class TuyaOpenAPI {
   _getSignUrl(path: string, params) {
     if (!params) {
       return path;
-    } else {
-      let url = '';
-      for (const k in params) {
-        url += `&${k}=${params[k]}`;
-      }
-      return `${path}?${url.substr(1)}`;
     }
+
+    const sortedKeys = Object.keys(params).sort();
+    const kv: string[] = [];
+    for (const key of sortedKeys) {
+      if (params[key] !== null && params[key] !== undefined) {
+        kv.push(`${key}=${params[key]}`);
+      }
+    }
+    const url = `${path}?${kv.join('&')}`;
+
+    return url;
   }
 
 }
