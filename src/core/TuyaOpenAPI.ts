@@ -12,10 +12,41 @@ import Logger from '../util/Logger';
 
 export enum Endpoints {
   AMERICA = 'https://openapi.tuyaus.com',
+  AMERICA_EAST = 'https://openapi-ueaz.tuyaus.com',
   CHINA = 'https://openapi.tuyacn.com',
   EUROPE = 'https://openapi.tuyaeu.com',
+  EUROPE_WEST = 'https://openapi-weaz.tuyaeu.com',
   INDIA = 'https://openapi.tuyain.com',
 }
+
+const API_NOT_AUTHORIZED_ERROR_CODES = [1106, 28841105];
+const API_NOT_AUTHORIZED_ERROR = `
+API not authorized. Please go to "Tuya IoT Platform -> Cloud -> Development -> Project -> Service API",
+and Authorize the following APIs before using:
+- Authorization Token Management
+- Device Status Notification
+- IoT Core
+- Industry Project Client Service (for Custom Project)
+`;
+
+type TuyaOpenAPIResponseSuccess = {
+  success: true;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  result: any;
+  t: number;
+  tid: string;
+};
+
+type TuyaOpenAPIResponseError = {
+  success: false;
+  result: unknown;
+  code: number;
+  msg: string;
+  t: number;
+  tid: string;
+};
+
+export type TuyaOpenAPIResponse = TuyaOpenAPIResponseSuccess | TuyaOpenAPIResponseError;
 
 export default class TuyaOpenAPI {
 
@@ -108,7 +139,11 @@ export default class TuyaOpenAPI {
     });
 
     this.log.debug(`TuyaOpenAPI response: path = ${path}, data = ${JSON.stringify(res.data)}`);
-    return res.data;
+    if (res.data && API_NOT_AUTHORIZED_ERROR_CODES.includes(res.data.code)) {
+      this.log.error(API_NOT_AUTHORIZED_ERROR);
+    }
+
+    return res.data as TuyaOpenAPIResponse;
   }
 
   async get(path: string, params?) {
