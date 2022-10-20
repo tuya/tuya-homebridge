@@ -1,7 +1,5 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
-import TuyaCustomOpenAPI from './core/TuyaCustomOpenAPI';
-import TuyaHomeOpenAPI from './core/TuyaHomeOpenAPI';
 import TuyaOpenMQ from './core/TuyaOpenMQ';
 import TuyaDevice, { TuyaDeviceStatus } from './device/TuyaDevice';
 import TuyaDeviceManager, { Events } from './device/TuyaDeviceManager';
@@ -12,7 +10,7 @@ import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { TuyaPlatformConfig, TuyaPlatformConfigOptions, validate } from './config';
 import AccessoryFactory from './accessory/AccessoryFactory';
 import BaseAccessory from './accessory/BaseAccessory';
-import { Endpoints } from './core/TuyaOpenAPI';
+import TuyaOpenAPI, { Endpoints } from './core/TuyaOpenAPI';
 
 /**
  * HomebridgePlatform
@@ -75,8 +73,8 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       const { endpoint, accessId, accessKey, username, password } = this.options;
 
       this.log.info('Log in to Tuya Cloud.');
-      const api = new TuyaCustomOpenAPI(endpoint as Endpoints, accessId, accessKey, this.log);
-      await api.login(username, password);
+      const api = new TuyaOpenAPI(endpoint as Endpoints, accessId, accessKey, this.log);
+      await api.customLogin(username, password);
 
       this.log.info('Start MQTT connection.');
       const mq = new TuyaOpenMQ(api, '2.0', this.log);
@@ -95,8 +93,8 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       const { accessId, accessKey, countryCode, username, password, appSchema } = this.options;
 
       this.log.info('Log in to Tuya Cloud.');
-      const api = new TuyaHomeOpenAPI(TuyaHomeOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
-      await api.login(countryCode!, username, password, appSchema!);
+      const api = new TuyaOpenAPI(TuyaOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
+      await api.homeLogin(countryCode, username, password, appSchema);
 
       this.log.info('Start MQTT connection.');
       const mq = new TuyaOpenMQ(api, '1.0', this.log);

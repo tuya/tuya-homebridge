@@ -67,7 +67,6 @@ export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
   // Gets a list of human-actionable assets
   async getAssets() {
     const res = await this.api.get('/v1.0/iot-03/users/assets', {
-      'parent_asset_id': null,
       'page_no': 0,
       'page_size': 100,
     });

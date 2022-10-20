@@ -2,19 +2,20 @@
 import fs from 'fs';
 import { describe, expect, test } from '@jest/globals';
 import { PLATFORM_NAME } from '../src/settings';
-import TuyaHomeOpenAPI from '../src/core/TuyaHomeOpenAPI';
+import { TuyaPlatformConfig } from '../src/config';
+
+import TuyaOpenAPI, { Endpoints } from '../src/core/TuyaOpenAPI';
 import TuyaOpenMQ from '../src/core/TuyaOpenMQ';
 import TuyaDevice from '../src/device/TuyaDevice';
+
 import TuyaHomeDeviceManager from '../src/device/TuyaHomeDeviceManager';
+import TuyaCustomDeviceManager from '../src/device/TuyaCustomDeviceManager';
+
 
 const file = fs.readFileSync(`${process.env.HOME}/.homebridge-dev/config.json`);
 const { platforms } = JSON.parse(file.toString());
-const config = platforms.find(platform => platform.platform === PLATFORM_NAME);
+const config: TuyaPlatformConfig = platforms.find(platform => platform.platform === PLATFORM_NAME);
 const { options } = config;
-
-const homeAPI = new TuyaHomeOpenAPI(TuyaHomeOpenAPI.Endpoints.CHINA, options.accessId, options.accessKey);
-const homeMQ = new TuyaOpenMQ(homeAPI, '1.0');
-const homeDeviceManager = new TuyaHomeDeviceManager(homeAPI, homeMQ);
 
 
 function expectDevice(device: TuyaDevice) {
@@ -33,55 +34,92 @@ function expectDevice(device: TuyaDevice) {
   expect(device.status).toBeDefined();
 }
 
+let api: TuyaOpenAPI;
+let mq: TuyaOpenMQ;
+if (options.projectType === '1') {
+  api = new TuyaOpenAPI(options.endpoint as Endpoints, options.accessId, options.accessKey);
+  mq = new TuyaOpenMQ(api, '2.0');
+  const customDeviceManager = new TuyaCustomDeviceManager(api, mq);
 
-describe('TuyaHomeOpenAPI', () => {
-  test('login()', async () => {
-    await homeAPI.login(options.countryCode, options.username, options.password, options.appSchema);
-  });
+  describe('TuyaOpenAPI', () => {
+    test('customLogin()', async () => {
+      await api.customLogin(options.username, options.password);
+    });
 
-  test('_refreshAccessTokenIfNeed()', async () => {
-    homeAPI.tokenInfo.expire = 0;
-    await homeAPI._refreshAccessTokenIfNeed('');
-  });
-});
-
-describe('TuyaHomeDeviceManager', () => {
-
-  test('updateDevices()', async () => {
-    const devices = await homeDeviceManager.updateDevices();
-    expect(devices).not.toBeNull();
-    for (const device of devices) {
-      expectDevice(device);
-    }
-  }, 10 * 1000);
-
-  test('updateDevice()', async () => {
-    let device = Array.from(homeDeviceManager.devices)[0];
-    expectDevice(device);
-    device = await homeDeviceManager.updateDevice(device.id);
-    expectDevice(device);
-  });
-
-});
-
-describe('TuyaOpenMQ', () => {
-
-  test('start()', async () => {
-    await new Promise((resolve, reject) => {
-      homeMQ._onConnect = () => {
-        console.log('TuyaOpenMQ connected');
-        resolve(null);
-      };
-      homeMQ._onError = (err) => {
-        console.log('TuyaOpenMQ error:', err);
-        reject(err);
-      };
-      homeMQ.start();
+    test('_refreshAccessTokenIfNeed()', async () => {
+      api.tokenInfo.expire = 0;
+      await api._refreshAccessTokenIfNeed('');
     });
   });
 
-  test('stop()', async () => {
-    homeMQ.stop();
+  describe('TuyaCustomDeviceManager', () => {
+    test('updateDevices()', async () => {
+      const devices = await customDeviceManager.updateDevices();
+      expect(devices).not.toBeNull();
+      for (const device of devices) {
+        expectDevice(device);
+      }
+    }, 10 * 1000);
   });
 
-});
+} else if (options.projectType === '2') {
+  api = new TuyaOpenAPI(TuyaOpenAPI.Endpoints.CHINA, options.accessId, options.accessKey);
+  mq = new TuyaOpenMQ(api, '1.0');
+  const homeDeviceManager = new TuyaHomeDeviceManager(api, mq);
+
+  describe('TuyaOpenAPI', () => {
+    test('homeLogin()', async () => {
+      await api.homeLogin(options.countryCode, options.username, options.password, options.appSchema);
+    });
+
+    test('_refreshAccessTokenIfNeed()', async () => {
+      api.tokenInfo.expire = 0;
+      await api._refreshAccessTokenIfNeed('');
+    });
+  });
+
+  describe('TuyaHomeDeviceManager', () => {
+
+    test('updateDevices()', async () => {
+      const devices = await homeDeviceManager.updateDevices();
+      expect(devices).not.toBeNull();
+      for (const device of devices) {
+        expectDevice(device);
+      }
+    }, 10 * 1000);
+
+    test('updateDevice()', async () => {
+      let device = Array.from(homeDeviceManager.devices)[0];
+      expectDevice(device);
+      device = await homeDeviceManager.updateDevice(device.id);
+      expectDevice(device);
+    });
+
+  });
+} else {
+  mq = null!;
+}
+
+if (mq) {
+  describe('TuyaOpenMQ', () => {
+
+    test('start()', async () => {
+      await new Promise((resolve, reject) => {
+        mq._onConnect = () => {
+          console.log('TuyaOpenMQ connected');
+          resolve(null);
+        };
+        mq._onError = (err) => {
+          console.log('TuyaOpenMQ error:', err);
+          reject(err);
+        };
+        mq.start();
+      });
+    });
+
+    test('stop()', async () => {
+      mq.stop();
+    });
+
+  });
+}
