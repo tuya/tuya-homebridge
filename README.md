@@ -33,7 +33,7 @@ See [CHANGELOG.md](./CHANGELOG.md)
     - Leak Sensor
     - Smoke Sensor
     - Window Covering
-- Test on `Custom` project type.
+- ~~Test on `Custom` project type.~~
 - ~~Plugin upgrade compatibility test.~~
 
 ## Todo list after merge
