@@ -10,7 +10,8 @@ import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { TuyaPlatformConfig, TuyaPlatformConfigOptions, validate } from './config';
 import AccessoryFactory from './accessory/AccessoryFactory';
 import BaseAccessory from './accessory/BaseAccessory';
-import TuyaOpenAPI, { Endpoints } from './core/TuyaOpenAPI';
+import TuyaOpenAPI, { Endpoints, LOGIN_ERROR_MESSAGES } from './core/TuyaOpenAPI';
+
 
 /**
  * HomebridgePlatform
@@ -74,7 +75,14 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
       this.log.info('Log in to Tuya Cloud.');
       const api = new TuyaOpenAPI(endpoint as Endpoints, accessId, accessKey, this.log);
-      await api.customLogin(username, password);
+      const res = await api.customLogin(username, password);
+      if (res.success === false) {
+        this.log.error(`Login failed. code=${res.code}, msg=${res.msg}`);
+        if (LOGIN_ERROR_MESSAGES[res.code]) {
+          this.log.error(LOGIN_ERROR_MESSAGES[res.code]);
+        }
+        return;
+      }
 
       this.log.info('Start MQTT connection.');
       const mq = new TuyaOpenMQ(api, '2.0', this.log);
@@ -89,7 +97,14 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
       this.log.info('Log in to Tuya Cloud.');
       const api = new TuyaOpenAPI(TuyaOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
-      await api.homeLogin(countryCode, username, password, appSchema);
+      const res = await api.homeLogin(countryCode, username, password, appSchema);
+      if (res.success === false) {
+        this.log.error(`Login failed. code=${res.code}, msg=${res.msg}`);
+        if (LOGIN_ERROR_MESSAGES[res.code]) {
+          this.log.error(LOGIN_ERROR_MESSAGES[res.code]);
+        }
+        return;
+      }
 
       this.log.info('Start MQTT connection.');
       const mq = new TuyaOpenMQ(api, '1.0', this.log);

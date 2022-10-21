@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 // eslint-disable-next-line
 // @ts-ignore
-import { version, bugs } from '../../package.json';
+import { version } from '../../package.json';
 
 import Logger from '../util/Logger';
 
@@ -27,9 +27,15 @@ export const DEFAULT_ENDPOINTS = {
   [Endpoints.INDIA.toString()]: [91],
 };
 
-const API_ERROR_MESSAGES = {
-  1004: `Sign invalid. Please submit issue with logs at ${bugs.url}`,
-  1106: `Permission denied. Please submit issue with logs at ${bugs.url}`,
+export const LOGIN_ERROR_MESSAGES = {
+  1004: 'Please make sure your endpoint, accessId, accessKey is right.',
+  1104: 'Please make sure your endpoint, accessId, accessKey is right.',
+  1106: 'Please make sure your countryCode, username, password, appSchema is correct, and app account is linked with cloud project.',
+  2401: 'Username or password is wrong.',
+  2406: 'Please make sure your cloud project is created after May 25, 2021.',
+};
+
+export const API_ERROR_MESSAGES = {
   28841002: 'API subscription expired. Please renew the API subscription at Tuya IoT Platform.',
   28841105: `
 API not authorized. Please go to "Tuya IoT Platform -> Cloud -> Development -> Project -> Service API",
@@ -85,7 +91,7 @@ export default class TuyaOpenAPI {
   }
 
   isLogin() {
-    return this.tokenInfo && this.tokenInfo.access_token && this.tokenInfo.access_token.length > 0;
+    return this.tokenInfo.access_token.length > 0;
   }
 
   isTokenExpired() {
@@ -107,13 +113,15 @@ export default class TuyaOpenAPI {
 
     this.tokenInfo.access_token = '';
     const res = await this.get(`/v1.0/token/${this.tokenInfo.refresh_token}`);
-    const { access_token, refresh_token, uid, expire } = res.result;
-    this.tokenInfo = {
-      access_token: access_token,
-      refresh_token: refresh_token,
-      uid: uid,
-      expire: expire * 1000 + new Date().getTime(),
-    };
+    if (res.success) {
+      const { access_token, refresh_token, uid, expire } = res.result;
+      this.tokenInfo = {
+        access_token: access_token,
+        refresh_token: refresh_token,
+        uid: uid,
+        expire: expire * 1000 + new Date().getTime(),
+      };
+    }
 
     return;
   }
@@ -135,17 +143,19 @@ export default class TuyaOpenAPI {
       'password': Crypto.MD5(password).toString(),
       'schema': appSchema,
     });
-    const { access_token, refresh_token, uid, expire_time, platform_url } = res.result;
-    this.endpoint = platform_url || this.endpoint;
 
-    this.tokenInfo = {
-      access_token: access_token,
-      refresh_token: refresh_token,
-      uid: uid,
-      expire: expire_time * 1000 + new Date().getTime(),
-    };
+    if (res.success) {
+      const { access_token, refresh_token, uid, expire_time, platform_url } = res.result;
+      this.endpoint = platform_url || this.endpoint;
+      this.tokenInfo = {
+        access_token: access_token,
+        refresh_token: refresh_token,
+        uid: uid,
+        expire: expire_time * 1000 + new Date().getTime(),
+      };
+    }
 
-    return res.result;
+    return res;
   }
 
   async customLogin(username: string, password: string) {
@@ -153,16 +163,18 @@ export default class TuyaOpenAPI {
       'username': username,
       'password': Crypto.SHA256(password).toString().toLowerCase(),
     });
-    const { access_token, refresh_token, uid, expire } = res.result;
 
-    this.tokenInfo = {
-      access_token: access_token,
-      refresh_token: refresh_token,
-      uid: uid,
-      expire: expire * 1000 + new Date().getTime(),
-    };
+    if (res.success) {
+      const { access_token, refresh_token, uid, expire } = res.result;
+      this.tokenInfo = {
+        access_token: access_token,
+        refresh_token: refresh_token,
+        uid: uid,
+        expire: expire * 1000 + new Date().getTime(),
+      };
+    }
 
-    return res.result;
+    return res;
   }
 
   async request(method: Method, path: string, params?, body?) {

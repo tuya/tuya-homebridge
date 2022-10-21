@@ -18,6 +18,7 @@ if (options.projectType === '1') {
   describe('TuyaOpenAPI', () => {
     test('customLogin()', async () => {
       await api.customLogin(options.username, options.password);
+      expect(api.isLogin()).toBeTruthy();
     });
 
     test('_refreshAccessTokenIfNeed()', async () => {

@@ -18,6 +18,7 @@ if (options.projectType === '2') {
   describe('TuyaOpenAPI', () => {
     test('homeLogin()', async () => {
       await api.homeLogin(options.countryCode, options.username, options.password, options.appSchema);
+      expect(api.isLogin()).toBeTruthy();
     });
 
     test('_refreshAccessTokenIfNeed()', async () => {
