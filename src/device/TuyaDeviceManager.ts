@@ -1,13 +1,18 @@
 import EventEmitter from 'events';
 import TuyaOpenAPI from '../core/TuyaOpenAPI';
-import TuyaOpenMQ, { TuyaMQTTProtocol } from '../core/TuyaOpenMQ';
+import TuyaOpenMQ from '../core/TuyaOpenMQ';
 import TuyaDevice, { TuyaDeviceStatus } from './TuyaDevice';
 
-export enum Events {
+enum Events {
   DEVICE_ADD = 'DEVICE_ADD',
   DEVICE_INFO_UPDATE = 'DEVICE_INFO_UPDATE',
   DEVICE_STATUS_UPDATE = 'DEVICE_STATUS_UPDATE',
   DEVICE_DELETE = 'DEVICE_DELETE',
+}
+
+enum TuyaMQTTProtocol {
+  DEVICE_STATUS_UPDATE = 4,
+  DEVICE_INFO_UPDATE = 20,
 }
 
 export default class TuyaDeviceManager extends EventEmitter {

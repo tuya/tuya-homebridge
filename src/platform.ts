@@ -2,7 +2,7 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, 
 
 import TuyaOpenMQ from './core/TuyaOpenMQ';
 import TuyaDevice, { TuyaDeviceStatus } from './device/TuyaDevice';
-import TuyaDeviceManager, { Events } from './device/TuyaDeviceManager';
+import TuyaDeviceManager from './device/TuyaDeviceManager';
 import TuyaCustomDeviceManager from './device/TuyaCustomDeviceManager';
 import TuyaHomeDeviceManager from './device/TuyaHomeDeviceManager';
 
@@ -10,7 +10,7 @@ import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { TuyaPlatformConfig, TuyaPlatformConfigOptions, validate } from './config';
 import AccessoryFactory from './accessory/AccessoryFactory';
 import BaseAccessory from './accessory/BaseAccessory';
-import TuyaOpenAPI, { Endpoints, LOGIN_ERROR_MESSAGES } from './core/TuyaOpenAPI';
+import TuyaOpenAPI, { LOGIN_ERROR_MESSAGES } from './core/TuyaOpenAPI';
 
 
 /**
@@ -74,7 +74,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       const { endpoint, accessId, accessKey, username, password } = this.options;
 
       this.log.info('Log in to Tuya Cloud.');
-      const api = new TuyaOpenAPI(endpoint as Endpoints, accessId, accessKey, this.log);
+      const api = new TuyaOpenAPI(endpoint, accessId, accessKey, this.log);
       const res = await api.customLogin(username, password);
       if (res.success === false) {
         this.log.error(`Login failed. code=${res.code}, msg=${res.msg}`);
@@ -131,10 +131,10 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     }
     this.cachedAccessories = [];
 
-    this.deviceManager.on(Events.DEVICE_ADD, this.addAccessory.bind(this));
-    this.deviceManager.on(Events.DEVICE_INFO_UPDATE, this.updateAccessoryInfo.bind(this));
-    this.deviceManager.on(Events.DEVICE_STATUS_UPDATE, this.updateAccessoryStatus.bind(this));
-    this.deviceManager.on(Events.DEVICE_DELETE, this.removeAccessory.bind(this));
+    this.deviceManager.on(TuyaDeviceManager.Events.DEVICE_ADD, this.addAccessory.bind(this));
+    this.deviceManager.on(TuyaDeviceManager.Events.DEVICE_INFO_UPDATE, this.updateAccessoryInfo.bind(this));
+    this.deviceManager.on(TuyaDeviceManager.Events.DEVICE_STATUS_UPDATE, this.updateAccessoryStatus.bind(this));
+    this.deviceManager.on(TuyaDeviceManager.Events.DEVICE_DELETE, this.removeAccessory.bind(this));
 
   }
 

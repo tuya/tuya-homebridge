@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { describe, expect, test } from '@jest/globals';
 
-import TuyaOpenAPI, { Endpoints } from '../src/core/TuyaOpenAPI';
+import TuyaOpenAPI from '../src/core/TuyaOpenAPI';
 import TuyaOpenMQ from '../src/core/TuyaOpenMQ';
 import TuyaDevice from '../src/device/TuyaDevice';
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { describe, expect, test } from '@jest/globals';
 
-import TuyaOpenAPI, { Endpoints } from '../src/core/TuyaOpenAPI';
+import TuyaOpenAPI from '../src/core/TuyaOpenAPI';
 import TuyaOpenMQ from '../src/core/TuyaOpenMQ';
 import TuyaDevice from '../src/device/TuyaDevice';
 
@@ -11,7 +11,7 @@ import { config, expectDevice } from './util';
 
 const { options } = config;
 if (options.projectType === '1') {
-  const api = new TuyaOpenAPI(options.endpoint as Endpoints, options.accessId, options.accessKey);
+  const api = new TuyaOpenAPI(options.endpoint, options.accessId, options.accessKey);
   const mq = new TuyaOpenMQ(api, '2.0');
   const customDeviceManager = new TuyaCustomDeviceManager(api, mq);
 

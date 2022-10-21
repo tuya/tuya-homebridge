@@ -24,11 +24,6 @@ interface TuyaMQTTConfig {
 
 type TuyaMQTTCallback = (topic: string, protocol: number, data) => void;
 
-export enum TuyaMQTTProtocol {
-  DEVICE_STATUS_UPDATE = 4,
-  DEVICE_INFO_UPDATE = 20,
-}
-
 export default class TuyaOpenMQ {
 
   public running = false;
