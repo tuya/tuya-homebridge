@@ -1,4 +1,8 @@
-# 0x5e/homebridge-tuya-platform (beta)
+# 0x5e/homebridge-tuya-platform
+
+[![npm](https://badgen.net/npm/v/@0x5e/homebridge-tuya-platform)](https://npmjs.com/package/@0x5e/homebridge-tuya-platform)
+[![npm](https://badgen.net/npm/dt/@0x5e/homebridge-tuya-platform)](https://npmjs.com/package/@0x5e/homebridge-tuya-platform)
+[![mit-license](https://badgen.net/npm/license/@0x5e/homebridge-tuya-platform)](https://github.com/0x5e/homebridge-tuya-platform/blob/main/LICENSE)
 
 Tuya plugin for Hombridge, maintained by @0x5e, former employee of Tuya.
 
@@ -8,9 +12,9 @@ The main goal of this fork is to:
 - Improve code readability and maintainability.
 - Improve stability.
 - Remove duplicate code.
-- Reduce development costs for categroies.
+- Reduce development costs for accessory categroies.
 
-Will be published to `@0x5e/homebridge-tuya-platform` as the beta version, Have a try :)
+Published as [@0x5e/homebridge-tuya-platform](https://npmjs.com/package/@0x5e/homebridge-tuya-platform), Have a try :)
 
 If all things looks fine, I will let my colleague merge into the official repo.
 

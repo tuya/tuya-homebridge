@@ -14,7 +14,7 @@ export interface TuyaPlatformCustomConfigOptions {
   password: string;
 }
 
-export interface TuyaPlatformPaaSConfigOptions {
+export interface TuyaPlatformHomeConfigOptions {
   projectType: '2';
   accessId: string;
   accessKey: string;
@@ -24,7 +24,7 @@ export interface TuyaPlatformPaaSConfigOptions {
   appSchema: string;
 }
 
-export type TuyaPlatformConfigOptions = TuyaPlatformCustomConfigOptions | TuyaPlatformPaaSConfigOptions;
+export type TuyaPlatformConfigOptions = TuyaPlatformCustomConfigOptions | TuyaPlatformHomeConfigOptions;
 
 export interface TuyaPlatformConfig extends PlatformConfig {
   options: TuyaPlatformConfigOptions;

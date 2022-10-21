@@ -2,31 +2,31 @@
 	"pluginAlias": "TuyaPlatform",
 	"pluginType": "platform",
 	"singular": true,
-	"headerDisplay": "Official Tuya Homebridge plugin, supported by Tuya Developers.",
+	"headerDisplay": "",
 	"footerDisplay": "",
 	"schema": {
 		"type": "object",
 		"properties": {
 			"options": {
-				"title": "",
+				"title": "Project Info",
 				"type": "object",
 				"required": true,
 				"properties": {
 					"projectType": {
-						"title": "Project Type",
+						"title": "Project Type (Development Method)",
 						"type": "string",
 						"default": "2",
 						"oneOf": [{
 							"title": "Custom",
 							"enum": ["1"]
 						}, {
-							"title": "PaaS",
+							"title": "Smart Home",
 							"enum": ["2"]
 						}],
 						"required": true
 					},
 					"endpoint": {
-						"title": "Endpoint",
+						"title": "Endpoint URL",
 						"type": "string",
 						"format": "url",
 						"condition": {
@@ -39,7 +39,7 @@
 						"required": true
 					},
 					"accessKey": {
-						"title": "Access Key",
+						"title": "Access Secret",
 						"type": "string",
 						"required": true
 					},
@@ -47,7 +47,6 @@
 						"title": "Country Code",
 						"type": "integer",
 						"minimum": 1,
-						"description": "Country Code for Phone",
 						"condition": {
 							"functionBody": "return model.options.projectType === '2';"
 						}

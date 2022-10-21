@@ -5,10 +5,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tuya/tuya-homebridge.git"
+    "url": "https://github.com/0x5e/homebridge-tuya-platform"
   },
   "bugs": {
-    "url": "https://github.com/tuya/tuya-homebridge/issues"
+    "url": "https://github.com/0x5e/homebridge-tuya-platform/issues"
   },
   "engines": {
     "node": ">=14.18.1",

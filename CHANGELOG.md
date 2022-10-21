@@ -8,16 +8,18 @@
 - Update device info list polling logic. Less errors.
 - Add `AMERICA_EAST` and `EUROPE_WEST` endpoints.
 - Add config validation on plugin start.
-- Add device manufactor, serial number (device id) and model displayed in HomeKit.
+- Add `device manufactor`, `serial number` (device id) and `model` displayed in HomeKit.
 - Add GitHub action `Build and Lint`.
 - Add instruction log when API failed with 1106 permission errors.
 - Remove `debug` option. Silence logs for users. For debugging, please start homebridge in debug mode: `homebridge -D`
 - Remove `lang` option.
 - Update unit test.
+- For `Custom` project type, some API has switched to the same as `Smart Home`.
 
 ### Fixed
 - 1004 signature error when url query has more than 2 elements.
 - 1106 permission error when polling device info list.
+- 1100, 2017 errors when login. (via config validation)
 - Fix access_token undefined error. (https://github.com/tuya/tuya-homebridge/issues/298#issuecomment-1278238870 by @Azukovskij )
 
 ### Accessory category specific
