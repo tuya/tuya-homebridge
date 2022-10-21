@@ -36,7 +36,6 @@ If you cannot login successfully, please update to v1.5.0 as the previous versio
 
 [![Youtube](https://img.youtube.com/vi/YH6d-2VJMaU/0.jpg)](https://www.youtube.com/watch?v=YH6d-2VJMaU)
 
-
 ## Preparation
   1. [Tuya IoT Platform Configuration](https://github.com/tuya/tuya-homebridge/wiki/Tuya-IoT-Platform-Configuration-Guide-Using-Smart-Home-PaaS?_source=d8fba44feeef4757f7f22a14c2295f3f)
   2. [Use the Tuya Homebridge Plugin](https://github.com/tuya/tuya-homebridge/wiki/How-to-Use-Tuya-Homebridge-Plugin?_source=6a2b624bdb6dce83dd246e014ccd0bcf)
@@ -75,6 +74,10 @@ If you are a smart home geek and have a bundle of devices from different platfor
 ## Feedback
 
 You can use the **GitHub Issue** or [**tickets**](https://service.console.tuya.com/8/2/list?_source=c5965e0f53c87ba9d0eb99af0f4b124f) to provide feedback on any problems you encounter.
+
+## Beta version
+Tuya plugin for Hombridge, maintained by @0x5e, former employee of Tuya.
+- https://github.com/0x5e/homebridge-tuya-platform/releases
 
 ## LICENSE
 
