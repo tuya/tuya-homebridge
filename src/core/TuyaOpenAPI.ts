@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 // eslint-disable-next-line
 // @ts-ignore
-import { version } from '../../package.json';
+import { version, bugs } from '../../package.json';
 
 import Logger from '../util/Logger';
 
@@ -27,17 +27,19 @@ export const DEFAULT_ENDPOINTS = {
   [Endpoints.INDIA.toString()]: [91],
 };
 
-const API_SIGN_INVALID_ERROR_CODE = 1004;
-const API_SIGN_INVALID_ERROR = 'Sign invalid. Please submit issue with logs at https://github.com/tuya/tuya-homebridge .';
-const API_NOT_AUTHORIZED_ERROR_CODES = [1106, 28841105];
-const API_NOT_AUTHORIZED_ERROR = `
+const API_ERROR_MESSAGES = {
+  1004: `Sign invalid. Please submit issue with logs at ${bugs.url}`,
+  1106: `Permission denied. Please submit issue with logs at ${bugs.url}`,
+  28841002: 'API subscription expired. Please renew the API subscription at Tuya IoT Platform.',
+  28841105: `
 API not authorized. Please go to "Tuya IoT Platform -> Cloud -> Development -> Project -> Service API",
 and Authorize the following APIs before using:
 - Authorization Token Management
 - Device Status Notification
 - IoT Core
-- Industry Project Client Service (for Custom Project)
-`;
+- Industry Project Client Service (for "Custom" project type)
+`,
+};
 
 type TuyaOpenAPIResponseSuccess = {
   success: true;
@@ -196,10 +198,8 @@ export default class TuyaOpenAPI {
     });
 
     this.log.debug(`TuyaOpenAPI response: path = ${path}, data = ${JSON.stringify(res.data)}`);
-    if (res.data.code === API_SIGN_INVALID_ERROR_CODE) {
-      this.log.error(API_SIGN_INVALID_ERROR);
-    } else if (API_NOT_AUTHORIZED_ERROR_CODES.includes(res.data.code)) {
-      this.log.error(API_NOT_AUTHORIZED_ERROR);
+    if (res.data && API_ERROR_MESSAGES[res.data.code]) {
+      this.log.error(API_ERROR_MESSAGES[res.data.code]);
     }
 
     return res.data as TuyaOpenAPIResponse;

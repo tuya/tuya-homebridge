@@ -82,12 +82,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
       this.log.info('Fetching device list.');
       this.deviceManager = new TuyaCustomDeviceManager(api, mq);
-      try {
-        devices = await this.deviceManager.updateDevices();
-      } catch (e) {
-        this.log.warn('Failed to get device information. Please check if the config.json is correct.');
-        return;
-      }
+      devices = await this.deviceManager.updateDevices();
 
     } else if (this.options.projectType === '2') {
       const { accessId, accessKey, countryCode, username, password, appSchema } = this.options;
