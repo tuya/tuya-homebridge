@@ -9,9 +9,9 @@
 - Add `AMERICA_EAST` and `EUROPE_WEST` endpoints.
 - Add config validation on plugin start.
 - Add `device manufactor`, `serial number` (device id) and `model` displayed in HomeKit.
+- All devices will be shown in HomeKit by default. (Including unsupported device)
 - Add GitHub action `Build and Lint`.
-- Add instruction log when API failed with 1106 permission errors.
-- Remove `debug` option. Silence logs for users. For debugging, please start homebridge in debug mode: `homebridge -D`
+- Remove `debug` option. Silence logs for users. For developers who wants to debugging, please start homebridge in debug mode: `homebridge -D`
 - Remove `lang` option.
 - Update unit test.
 - For `Custom` project type, some API has switched to the same as `Smart Home`.
@@ -23,11 +23,11 @@
 - Fix access_token undefined error. (https://github.com/tuya/tuya-homebridge/issues/298#issuecomment-1278238870 by @Azukovskij )
 
 ### Accessory category specific
-- Rewrite `BaseAccessory`, `SwitchAccessory`, `OutletAccessory`, `LightAccessory`, reduce about 50% code size. Now writing a `BaseAccessory` child class is much more simple.
-- Add `debounce` and command send queue for `LightAccessory`, more stable during frequent operations on different characteristics.
+- Rewrite `BaseAccessory`, `SwitchAccessory`, `OutletAccessory`, `LightAccessory`, reduce about 50% code size. Now writing a accessory class is much more simple.
 - Legacy accessory codes moved to `src/accessory/legacy/` folder.
-- Fix wrong color temperature map. (https://github.com/tuya/tuya-homebridge/issues/136 by @XiaoTonyLuo and https://github.com/tuya/tuya-homebridge/pull/135 by @levidhuyvetter)
+- [Light] Add `debounce` and command send queue, more stable during frequent operations on different characteristics.
+- [Light] Fix wrong color temperature map. (https://github.com/tuya/tuya-homebridge/issues/136 by @XiaoTonyLuo and https://github.com/tuya/tuya-homebridge/pull/135 by @levidhuyvetter)
 
 ### Known issue
-- `LightAccessory` may not work properly, espasially on work mode change. need more test and info.
+- `LightAccessory` may not work properly, espasially on work mode change. need more test and feedbacks.
 - Sometimes mqtt not respond quickly, will influence the accessory status update. still addressing the issue.

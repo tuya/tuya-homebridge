@@ -6,41 +6,46 @@
 
 Tuya plugin for Hombridge, maintained by @0x5e, former employee of Tuya.
 
-## Intruduction
+Published as [@0x5e/homebridge-tuya-platform](https://npmjs.com/package/@0x5e/homebridge-tuya-platform), currently in beta version.
 
-The main goal of this fork is to:
-- Improve code readability and maintainability.
-- Improve stability.
-- Remove duplicate code.
-- Reduce development costs for accessory categroies.
+If beta version works fine for a while, it will be merged into the upstream repo.
 
-Published as [@0x5e/homebridge-tuya-platform](https://npmjs.com/package/@0x5e/homebridge-tuya-platform), Have a try :)
+## Features
 
-If all things looks fine, I will let my colleague merge into the official repo.
+- Optimized code, improved code readability and maintainability.
+- Improved stability.
+- Less duplicate code.
+- Less API errors.
+- Less development costs for new accessory categroies.
+- More supported devices.
 
-## Changes from tuya/tuya-homebridge
+## Supported Tuya Devices
+
+See [Supported Tuya Devices](./SUPPORTED_DEVICES.md)
+
+
+## Changelogs
 
 See [CHANGELOG.md](./CHANGELOG.md)
 
-## Todo list before merge
 
-- Re-write legacy accessory class and test.
-    - ~~Base~~
-    - ~~Switch~~
-    - ~~Outlet~~
-    - ~~Light~~
-    - Air Purifier
-    - Fan
-    - Contact Sensor
-    - Garage Door
-    - Heater
-    - Leak Sensor
-    - Smoke Sensor
-    - Window Covering
-- ~~Test on `Custom` project type.~~
-- ~~Plugin upgrade compatibility test.~~
+## Installation
 
-## Todo list after merge
+Before use, please uninstall `homebridge-tuya-platform` first. They can't run together. (But the config is compatible, no need to delete.)
+
+### For Homebridge UI users
+
+Go to plugin page, search `@0x5e/homebridge-tuya-platform` and install.
+
+
+### For Homebridge users
+
+```
+npm install @0x5e/homebridge-tuya-platform
+```
+
+
+## Todos
 
 - Advanced config options
     - Display specific home's device list
