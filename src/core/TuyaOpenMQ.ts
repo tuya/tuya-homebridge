@@ -116,12 +116,24 @@ export default class TuyaOpenMQ {
     this.log.debug('TuyaOpenMQ end');
   }
 
+  private lastPayload?;
   _onMessage(topic: string, payload: Buffer) {
     const { protocol, data, t } = JSON.parse(payload.toString());
-    const message = this._decodeMQMessage(data, this.config!.password, t);
+    let message = this._decodeMQMessage(data, this.config!.password, t);
     this.log.debug(`TuyaOpenMQ onMessage: topic = ${topic}, protocol = ${protocol}, message = ${message}`);
+    message = JSON.parse(message);
+
+    // Check message order
+    const currentPayload = { protocol, message, t };
+    if (this.lastPayload && t < this.lastPayload.t) {
+      this.log.warn(`TuyaOpenMQ warning: message received with wrong order.
+lastMessage: dataId=${this.lastPayload.message['dataId']}, t=${this.lastPayload.t}, ${new Date(this.lastPayload.t).toISOString()}
+currentMessage: dataId=${message['dataId']}, t=${t}, ${new Date(t).toISOString()}`);
+    }
+    this.lastPayload = currentPayload;
+
     for (const listener of this.messageListeners) {
-      listener(topic, protocol, JSON.parse(message));
+      listener(topic, protocol, message);
     }
   }
 
