@@ -9,8 +9,6 @@ import SmokeSensorAccessory from './legacy/smokesensor_accessory';
 import HeaterAccessory from './legacy/heater_accessory';
 import GarageDoorAccessory from './legacy/garagedoor_accessory';
 import WindowCoveringAccessory from './legacy/window_covering_accessory';
-import ContactSensorAccessory from './legacy/contactsensor_accessory';
-import LeakSensorAccessory from './legacy/leak_sensor_accessory';
 
 class LegacyAccessoryWrapper {
 
@@ -60,13 +58,6 @@ export default class LegacyAccessoryFactory {
         break;
       case 'cl':
         handler = new WindowCoveringAccessory(platform, accessory, device);
-        break;
-      case 'mcs':
-        handler = new ContactSensorAccessory(platform, accessory, device);
-        break;
-      case 'rqbj':
-      case 'jwbj':
-        handler = new LeakSensorAccessory(platform, accessory, device);
         break;
     }
 

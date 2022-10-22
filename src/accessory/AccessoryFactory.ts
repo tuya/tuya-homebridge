@@ -5,6 +5,8 @@ import BaseAccessory from './BaseAccessory';
 import LightAccessory from './LightAccessory';
 import OutletAccessory from './OutletAccessory';
 import SwitchAccessory from './SwitchAccessory';
+import ContactSensorAccessory from './ContactSensorAccessory';
+import LeakSensorAccessory from './LeakSensorAccessory';
 
 import LegacyAccessoryFactory from './LegacyAccessoryFactory';
 
@@ -54,11 +56,12 @@ export default class AccessoryFactory {
         // TODO WindowCoveringAccessory
         break;
       case 'mcs':
-        // TODO ContactSensorAccessory
+        handler = new ContactSensorAccessory(platform, accessory);
         break;
       case 'rqbj':
+      case 'cobj':
       case 'jwbj':
-        // TODO LeakSensorAccessory
+        handler = new LeakSensorAccessory(platform, accessory);
         break;
     }
 

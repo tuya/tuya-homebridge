@@ -23,10 +23,11 @@
 - Fix access_token undefined error. (https://github.com/tuya/tuya-homebridge/issues/298#issuecomment-1278238870 by @Azukovskij )
 
 ### Accessory category specific
-- Rewrite `BaseAccessory`, `SwitchAccessory`, `OutletAccessory`, `LightAccessory`, reduce about 50% code size. Now writing a accessory class is much more simple.
+- Rewrite `BaseAccessory`, `SwitchAccessory`, `OutletAccessory`, `LightAccessory`, `ContactSensorAccessory`, `LeakSensorAccessory` reduce about 50% code size. Now writing a accessory class is much more simple.
 - Legacy accessory codes moved to `src/accessory/legacy/` folder.
 - [Light] Add `debounce` and command send queue, more stable during frequent operations on different characteristics.
 - [Light] Fix wrong color temperature map. (https://github.com/tuya/tuya-homebridge/issues/136 by @XiaoTonyLuo and https://github.com/tuya/tuya-homebridge/pull/135 by @levidhuyvetter)
+- [LeakSensor] Add CO Detector support (`cobj`).
 
 ### Known issue
 - `LightAccessory` may not work properly, espasially on work mode change. need more test and feedbacks.

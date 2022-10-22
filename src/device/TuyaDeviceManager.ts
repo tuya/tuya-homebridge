@@ -47,7 +47,12 @@ export default class TuyaDeviceManager extends EventEmitter {
     const device = new TuyaDevice(res.result);
 
     res = await this.getDeviceFunctions(deviceID);
-    device.functions = res.success ? res.result['functions'] : [];
+    if (res.success) {
+      device.functions = res.result['functions'];
+    } else {
+      this.log.warn(`Get device functions failed. code=${res.code}, msg=${res.msg}`);
+      device.functions = [];
+    }
 
     const oldDevice = this.getDevice(deviceID);
     if (oldDevice) {
