@@ -78,14 +78,7 @@
 							"functionBody": "return model.options.projectType === '2';"
 						}
 					}
-				},
-				"anyOf": [{
-					"properties": { "projectType": { "const": "1" } },
-					"required": ["endpoint", "accessId", "accessKey", "username", "password"]
-				}, {
-					"properties": { "projectType": { "const": "2" } },
-					"required": ["accessId", "accessKey", "countryCode", "username", "password", "appSchema"]
-				}]
+				}
 			}
 		}
   }

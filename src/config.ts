@@ -1,9 +1,4 @@
 import { PlatformConfig } from 'homebridge';
-import { Validator } from 'jsonschema';
-
-// eslint-disable-next-line
-// @ts-ignore
-import { schema } from '../config.schema.json';
 
 export interface TuyaPlatformCustomConfigOptions {
   projectType: '1';
@@ -30,11 +25,23 @@ export interface TuyaPlatformConfig extends PlatformConfig {
   options: TuyaPlatformConfigOptions;
 }
 
-export function validate(config: TuyaPlatformConfig) {
-  const result = new Validator().validate(config, schema);
-  if (result.errors) {
-    for (const error of result.errors) {
-      throw new Error(error.message);
-    }
-  }
-}
+export const customOptionsSchema = {
+  properties: {
+    endpoint: { type: 'string', format: 'url', required: true },
+    accessId: { type: 'string', required: true },
+    accessKey: { type: 'string', required: true },
+    username: { type: 'string', required: true },
+    password: { type: 'string', required: true },
+  },
+};
+
+export const homeOptionsSchema = {
+  properties: {
+    accessId: { type: 'string', required: true },
+    accessKey: { type: 'string', required: true },
+    countryCode: { 'type': 'integer', 'minimum': 1 },
+    username: { type: 'string', required: true },
+    password: { type: 'string', required: true },
+    appSchema: { 'type': 'string', required: true },
+  },
+};

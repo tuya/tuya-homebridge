@@ -1,4 +1,5 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
+import { Validator } from 'jsonschema';
 
 import TuyaOpenMQ from './core/TuyaOpenMQ';
 import TuyaDevice, { TuyaDeviceStatus } from './device/TuyaDevice';
@@ -7,7 +8,7 @@ import TuyaCustomDeviceManager from './device/TuyaCustomDeviceManager';
 import TuyaHomeDeviceManager from './device/TuyaHomeDeviceManager';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { TuyaPlatformConfig, TuyaPlatformConfigOptions, validate } from './config';
+import { TuyaPlatformConfigOptions, customOptionsSchema, homeOptionsSchema } from './config';
 import AccessoryFactory from './accessory/AccessoryFactory';
 import BaseAccessory from './accessory/BaseAccessory';
 import TuyaOpenAPI, { LOGIN_ERROR_MESSAGES } from './core/TuyaOpenAPI';
@@ -30,13 +31,32 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
   public deviceManager?: TuyaDeviceManager;
   public accessoryHandlers: BaseAccessory[] = [];
 
+  validate(config) {
+    let result;
+    if (!config.options) {
+      this.log.warn('Not configured, exit.');
+      return false;
+    } else if (config.options.projectType === '1') {
+      result = new Validator().validate(config.options, customOptionsSchema);
+    } else if (config.options.projectType === '2') {
+      result = new Validator().validate(config.options, homeOptionsSchema);
+    } else {
+      this.log.warn(`Unsupported projectType: ${config.options.projectType}, exit.`);
+      return false;
+    }
+    result.errors.forEach(error => this.log.error(error.stack));
+    return result.errors.length === 0;
+  }
+
   constructor(
     public readonly log: Logger,
     public readonly config: PlatformConfig,
     public readonly api: API,
   ) {
 
-    validate(config as TuyaPlatformConfig);
+    if (!this.validate(config)) {
+      return;
+    }
 
     this.log.debug('Finished initializing platform');
 
