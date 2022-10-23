@@ -30,13 +30,14 @@ If beta version works fine for a while, it will be merged into the upstream repo
     - Switch
     - Outlet
     - Lightbulb
+    - Garage Door Opener
     - Smoke Sensor
     - Contact Sensor
     - Leak Sensor
 
 ## Supported Tuya Devices
 
-See [Supported Tuya Devices](./SUPPORTED_DEVICES.md)
+See [SUPPORTED_DEVICES.md](./SUPPORTED_DEVICES.md)
 
 
 ## Changelogs
