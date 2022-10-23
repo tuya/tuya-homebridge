@@ -6,7 +6,6 @@ import BaseAccessory from './BaseAccessory';
 import AirPurifierAccessory from './legacy/air_purifier_accessory';
 import Fanv2Accessory from './legacy/fanv2_accessory';
 import HeaterAccessory from './legacy/heater_accessory';
-import WindowCoveringAccessory from './legacy/window_covering_accessory';
 
 class LegacyAccessoryWrapper {
 
@@ -47,9 +46,6 @@ export default class LegacyAccessoryFactory {
         break;
       case 'qn':
         handler = new HeaterAccessory(platform, accessory, device);
-        break;
-      case 'cl':
-        handler = new WindowCoveringAccessory(platform, accessory, device);
         break;
     }
 

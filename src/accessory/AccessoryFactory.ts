@@ -7,6 +7,7 @@ import LightAccessory from './LightAccessory';
 import OutletAccessory from './OutletAccessory';
 import SwitchAccessory from './SwitchAccessory';
 import GarageDoorAccessory from './GarageDoorAccessory';
+import WindowCoveringAccessory from './WindowCoveringAccessory';
 import ContactSensorAccessory from './ContactSensorAccessory';
 import LeakSensorAccessory from './LeakSensorAccessory';
 import CarbonMonoxideSensorAccessory from './CarbonMonoxideSensorAccessory';
@@ -55,14 +56,14 @@ export default class AccessoryFactory {
       case 'ckmkzq':
         handler = new GarageDoorAccessory(platform, accessory);
         break;
+      case 'cl':
+        handler = new WindowCoveringAccessory(platform, accessory);
+        break;
       case 'ywbj':
         handler = new SmokeSensorAccessory(platform, accessory);
         break;
       case 'qn':
         // TODO HeaterAccessory
-        break;
-      case 'cl':
-        // TODO WindowCoveringAccessory
         break;
       case 'mcs':
         handler = new ContactSensorAccessory(platform, accessory);
