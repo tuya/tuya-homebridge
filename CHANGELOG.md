@@ -28,6 +28,7 @@
 - [Light] Add `debounce` and command send queue, more stable during frequent operations on different characteristics.
 - [Light] Fix wrong color temperature map. (https://github.com/tuya/tuya-homebridge/issues/136 by @XiaoTonyLuo and https://github.com/tuya/tuya-homebridge/pull/135 by @levidhuyvetter)
 - [LeakSensor] Add CO Detector support (`cobj`).
+- [TemperatureSensor/HumiditySensor] Add Temperature and Humidity Sensor support (`wsdcg`).
 
 ### Known issue
 - `LightAccessory` may not work properly, espasially on work mode change. need more test and feedbacks.

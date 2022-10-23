@@ -8,6 +8,7 @@ import SwitchAccessory from './SwitchAccessory';
 import ContactSensorAccessory from './ContactSensorAccessory';
 import LeakSensorAccessory from './LeakSensorAccessory';
 import SmokeSensorAccessory from './SmokeSensorAccessory';
+import TemperatureHumiditySensorAccessory from './TemperatureHumiditySensorAccessory';
 
 import LegacyAccessoryFactory from './LegacyAccessoryFactory';
 
@@ -63,6 +64,9 @@ export default class AccessoryFactory {
       case 'cobj':
       case 'jwbj':
         handler = new LeakSensorAccessory(platform, accessory);
+        break;
+      case 'wsdcg':
+        handler = new TemperatureHumiditySensorAccessory(platform, accessory);
         break;
     }
 

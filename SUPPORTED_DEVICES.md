@@ -109,7 +109,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Siren Alarm | 声光报警传感器 | sgbj | | |
 | Gas Alarm | 燃气报警传感器 | rqbj | Leak Sensor | ✅ |
 | Smoke Alarm | 烟雾报警传感器 | ywbj | Smoke Sensor | ✅ |
-| Temperature and Humidity Sensor | 温湿度传感器 | wsdcg | | |
+| Temperature and Humidity Sensor | 温湿度传感器 | wsdcg | Temperature Sensor, Humidity Sensor | ✅ |
 | Contact Sensor | 门磁传感器 | mcs | Contact Sensor | ✅ |
 | Vibration Sensor | 震动传感器 | zd | | |
 | Water Detector | 水浸传感器 | sj | | |

@@ -27,21 +27,6 @@ export default class LeakSensor extends BaseAccessory {
         }
       });
 
-    service.getCharacteristic(this.Characteristic.StatusLowBattery)
-      .onGet(() => {
-        const { BATTERY_LEVEL_LOW, BATTERY_LEVEL_NORMAL } = this.Characteristic.StatusLowBattery;
-        const status = this.device.getDeviceStatus('battery_state');
-        if (status) {
-          return (status.value === 'low') ? BATTERY_LEVEL_LOW : BATTERY_LEVEL_NORMAL;
-        }
-
-        const percent = this.device.getDeviceStatus('battery_percentage');
-        if (percent) {
-          return (percent.value <= 20) ? BATTERY_LEVEL_LOW : BATTERY_LEVEL_NORMAL;
-        }
-        return BATTERY_LEVEL_NORMAL;
-      });
-
   }
 
 }

@@ -26,15 +26,8 @@ export default class BaseAccessory {
     public readonly accessory: PlatformAccessory,
   ) {
 
-    const service = this.accessory.getService(this.Service.AccessoryInformation)
-    || this.accessory.addService(this.Service.AccessoryInformation);
-
-    service
-      .setCharacteristic(this.Characteristic.Manufacturer, MANUFACTURER)
-      .setCharacteristic(this.Characteristic.Model, this.device.product_id)
-      .setCharacteristic(this.Characteristic.Name, this.device.name)
-      .setCharacteristic(this.Characteristic.SerialNumber, this.device.uuid)
-    ;
+    this.addAccessoryInfoService();
+    this.addBatteryService();
 
     for (const deviceFunction of this.device.functions) {
       const status = this.device.getDeviceStatus(deviceFunction.code);
@@ -44,6 +37,63 @@ export default class BaseAccessory {
     }
 
     this.onDeviceStatusUpdate(this.device.status);
+
+  }
+
+  addAccessoryInfoService() {
+    const service = this.accessory.getService(this.Service.AccessoryInformation)
+    || this.accessory.addService(this.Service.AccessoryInformation);
+
+    service
+      .setCharacteristic(this.Characteristic.Manufacturer, MANUFACTURER)
+      .setCharacteristic(this.Characteristic.Model, this.device.product_id)
+      .setCharacteristic(this.Characteristic.Name, this.device.name)
+      .setCharacteristic(this.Characteristic.SerialNumber, this.device.uuid)
+    ;
+  }
+
+  addBatteryService() {
+    if (!this.device.getDeviceStatus('battery_percentage')) {
+      return;
+    }
+
+    const service = this.accessory.getService(this.Service.Battery)
+      || this.accessory.addService(this.Service.Battery);
+
+    if (this.device.getDeviceStatus('battery_state')
+      || this.device.getDeviceStatus('battery_percentage')) {
+
+      service.getCharacteristic(this.Characteristic.StatusLowBattery)
+        .onGet(() => {
+          let status = this.device.getDeviceStatus('battery_state');
+          if (status) {
+            return (status!.value === 'low') ?
+              this.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW :
+              this.Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL;
+          }
+
+          // fallback
+          status = this.device.getDeviceStatus('battery_percentage');
+          let percent = Math.max(0, status!.value as number);
+          percent = Math.min(100, percent);
+          return (percent <= 20) ?
+            this.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW :
+            this.Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL;
+
+        });
+    }
+
+    if (service.UUID === this.Service.Battery.UUID
+      && this.device.getDeviceStatus('battery_percentage')) {
+
+      service.getCharacteristic(this.Characteristic.BatteryLevel)
+        .onGet(() => {
+          const status = this.device.getDeviceStatus('battery_percentage');
+          let percent = Math.max(0, status!.value as number);
+          percent = Math.min(100, percent);
+          return percent;
+        });
+    }
 
   }
 
