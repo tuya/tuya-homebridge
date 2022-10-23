@@ -63,6 +63,7 @@ export default class AccessoryFactory {
       case 'rqbj':
       case 'cobj':
       case 'jwbj':
+      case 'sj':
         handler = new LeakSensorAccessory(platform, accessory);
         break;
       case 'wsdcg':
