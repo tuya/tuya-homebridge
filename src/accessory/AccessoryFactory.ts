@@ -11,6 +11,7 @@ import LeakSensorAccessory from './LeakSensorAccessory';
 import SmokeSensorAccessory from './SmokeSensorAccessory';
 import TemperatureHumiditySensorAccessory from './TemperatureHumiditySensorAccessory';
 import LightSensorAccessory from './LightSensorAccessory';
+import MotionSensorAccessory from './MotionSensorAccessory';
 
 import LegacyAccessoryFactory from './LegacyAccessoryFactory';
 
@@ -73,6 +74,9 @@ export default class AccessoryFactory {
         break;
       case 'ldcg':
         handler = new LightSensorAccessory(platform, accessory);
+        break;
+      case 'pir':
+        handler = new MotionSensorAccessory(platform, accessory);
         break;
     }
 
