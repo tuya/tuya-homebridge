@@ -89,53 +89,16 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
    */
   async initDevices() {
 
-    let devices: TuyaDevice[];
+    let devices;
     if (this.options.projectType === '1') {
-      const { endpoint, accessId, accessKey, username, password } = this.options;
-
-      this.log.info('Log in to Tuya Cloud.');
-      const api = new TuyaOpenAPI(endpoint, accessId, accessKey, this.log);
-      const res = await api.customLogin(username, password);
-      if (res.success === false) {
-        this.log.error(`Login failed. code=${res.code}, msg=${res.msg}`);
-        if (LOGIN_ERROR_MESSAGES[res.code]) {
-          this.log.error(LOGIN_ERROR_MESSAGES[res.code]);
-        }
-        return;
-      }
-
-      this.log.info('Start MQTT connection.');
-      const mq = new TuyaOpenMQ(api, '2.0', this.log);
-      mq.start();
-
-      this.log.info('Fetching device list.');
-      this.deviceManager = new TuyaCustomDeviceManager(api, mq);
-      devices = await this.deviceManager.updateDevices();
-
+      devices = await this.initCustomProject();
     } else if (this.options.projectType === '2') {
-      const { accessId, accessKey, countryCode, username, password, appSchema } = this.options;
-
-      this.log.info('Log in to Tuya Cloud.');
-      const api = new TuyaOpenAPI(TuyaOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
-      const res = await api.homeLogin(countryCode, username, password, appSchema);
-      if (res.success === false) {
-        this.log.error(`Login failed. code=${res.code}, msg=${res.msg}`);
-        if (LOGIN_ERROR_MESSAGES[res.code]) {
-          this.log.error(LOGIN_ERROR_MESSAGES[res.code]);
-        }
-        return;
-      }
-
-      this.log.info('Start MQTT connection.');
-      const mq = new TuyaOpenMQ(api, '1.0', this.log);
-      mq.start();
-
-      this.log.info('Fetching device list.');
-      this.deviceManager = new TuyaHomeDeviceManager(api, mq);
-      devices = await this.deviceManager.updateDevices();
-
+      devices = await this.initHomeProject();
     } else {
-      this.log.warn(`Unsupported projectType: ${this.config.options.projectType}, stop device discovery.`);
+      this.log.warn(`Unsupported projectType: ${this.config.options.projectType}.`);
+    }
+
+    if (!devices) {
       return;
     }
 
@@ -151,11 +114,108 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     }
     this.cachedAccessories = [];
 
-    this.deviceManager.on(TuyaDeviceManager.Events.DEVICE_ADD, this.addAccessory.bind(this));
-    this.deviceManager.on(TuyaDeviceManager.Events.DEVICE_INFO_UPDATE, this.updateAccessoryInfo.bind(this));
-    this.deviceManager.on(TuyaDeviceManager.Events.DEVICE_STATUS_UPDATE, this.updateAccessoryStatus.bind(this));
-    this.deviceManager.on(TuyaDeviceManager.Events.DEVICE_DELETE, this.removeAccessory.bind(this));
+    this.deviceManager!.on(TuyaDeviceManager.Events.DEVICE_ADD, this.addAccessory.bind(this));
+    this.deviceManager!.on(TuyaDeviceManager.Events.DEVICE_INFO_UPDATE, this.updateAccessoryInfo.bind(this));
+    this.deviceManager!.on(TuyaDeviceManager.Events.DEVICE_STATUS_UPDATE, this.updateAccessoryStatus.bind(this));
+    this.deviceManager!.on(TuyaDeviceManager.Events.DEVICE_DELETE, this.removeAccessory.bind(this));
 
+  }
+
+  async initCustomProject() {
+    if (this.options.projectType !== '1') {
+      return null;
+    }
+
+    let res;
+    const { endpoint, accessId, accessKey, username, password } = this.options;
+    const api = new TuyaOpenAPI(endpoint, accessId, accessKey, this.log);
+    const mq = new TuyaOpenMQ(api, '2.0', this.log);
+    const deviceManager = new TuyaCustomDeviceManager(api, mq);
+
+    this.log.info('Log in to Tuya Cloud.');
+    res = await api.customLogin(username, password);
+    if (res.success === false) {
+      this.log.error(`Login failed. code=${res.code}, msg=${res.msg}`);
+      if (LOGIN_ERROR_MESSAGES[res.code]) {
+        this.log.error(LOGIN_ERROR_MESSAGES[res.code]);
+      }
+      return null;
+    }
+
+    this.log.info('Start MQTT connection.');
+    mq.start();
+
+    this.log.info('Fetching asset list.');
+    res = await deviceManager.getAssetList();
+    if (res.success === false) {
+      this.log.error(`Fetching asset list failed. code=${res.code}, msg=${res.msg}`);
+      return null;
+    }
+    const assetIDList: string[] = [];
+    for (const { asset_id, asset_name } of res.result.assets) {
+      this.log.info(`Got asset_id=${asset_id}, asset_name=${asset_name}`);
+      assetIDList.push(asset_id);
+    }
+
+    if (assetIDList.length === 0) {
+      this.log.warn('Asset list is empty. exit.');
+      return null;
+    }
+
+    this.log.info('Fetching device list.');
+    const devices = await deviceManager.updateDevices(assetIDList);
+
+    this.deviceManager = deviceManager;
+    return devices;
+  }
+
+  async initHomeProject() {
+    if (this.options.projectType !== '2') {
+      return null;
+    }
+
+    let res;
+    const { accessId, accessKey, countryCode, username, password, appSchema } = this.options;
+    const api = new TuyaOpenAPI(TuyaOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
+    const mq = new TuyaOpenMQ(api, '1.0', this.log);
+    const deviceManager = new TuyaHomeDeviceManager(api, mq);
+
+    this.log.info('Log in to Tuya Cloud.');
+    res = await api.homeLogin(countryCode, username, password, appSchema);
+    if (res.success === false) {
+      this.log.error(`Login failed. code=${res.code}, msg=${res.msg}`);
+      if (LOGIN_ERROR_MESSAGES[res.code]) {
+        this.log.error(LOGIN_ERROR_MESSAGES[res.code]);
+      }
+      return null;
+    }
+
+    this.log.info('Start MQTT connection.');
+    mq.start();
+
+    this.log.info('Fetching home list.');
+    res = await deviceManager.getHomeList();
+    if (res.success === false) {
+      this.log.error(`Fetching home list failed. code=${res.code}, msg=${res.msg}`);
+      return null;
+    }
+
+    const homeIDList: number[] = [];
+    for (const { home_id, name } of res.result) {
+      this.log.info(`Got home_id=${home_id}, name=${name}`);
+      homeIDList.push(home_id);
+    }
+
+    if (homeIDList.length === 0) {
+      this.log.warn('Home list is empty. exit.');
+      return null;
+    }
+
+    this.log.info('Fetching device list.');
+    const devices = await deviceManager.updateDevices(homeIDList);
+
+    this.deviceManager = deviceManager;
+    return devices;
   }
 
   addAccessory(device: TuyaDevice) {

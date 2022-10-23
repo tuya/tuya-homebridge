@@ -29,24 +29,17 @@ export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
     return deviceIDs;
   }
 
-  async updateDevices() {
-
-    let res;
-
-    res = await this.getAssetList();
-    if (!res.success) {
-      return [];
-    }
+  async updateDevices(assetIDList: string[]) {
 
     let deviceIDs: string[] = [];
-    for (const asset of res.result.assets) {
-      deviceIDs = deviceIDs.concat(await this.getAssetDeviceIDList(asset.asset_id));
+    for (const assetID of assetIDList) {
+      deviceIDs = deviceIDs.concat(await this.getAssetDeviceIDList(assetID));
     }
     if (deviceIDs.length === 0) {
       return [];
     }
 
-    res = await this.getDeviceListInfo(deviceIDs);
+    const res = await this.getDeviceListInfo(deviceIDs);
     const devices = (res.result.devices as []).map(obj => new TuyaDevice(obj));
     const functions = await this.getDeviceListFunctions(deviceIDs);
 

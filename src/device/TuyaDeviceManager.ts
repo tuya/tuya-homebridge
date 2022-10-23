@@ -34,7 +34,8 @@ export default class TuyaDeviceManager extends EventEmitter {
     return Array.from(this.devices).find(device => device.id === deviceID);
   }
 
-  async updateDevices(): Promise<TuyaDevice[]> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async updateDevices(areaIDList: []): Promise<TuyaDevice[]> {
     return [];
   }
 

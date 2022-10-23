@@ -13,16 +13,11 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
     return res;
   }
 
-  async updateDevices() {
-
-    const res = await this.getHomeList();
-    if (!res.success) {
-      return [];
-    }
+  async updateDevices(homeIDList: number[]) {
 
     let devices: TuyaDevice[] = [];
-    for (const { home_id } of res.result) {
-      const res = await this.getHomeDeviceList(home_id);
+    for (const homeID of homeIDList) {
+      const res = await this.getHomeDeviceList(homeID);
       devices = devices.concat((res.result as []).map(obj => new TuyaDevice(obj)));
     }
     if (devices.length === 0) {
