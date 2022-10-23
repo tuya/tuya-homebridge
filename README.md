@@ -31,6 +31,7 @@ If beta version works fine for a while, it will be merged into the upstream repo
     - Outlet
     - Lightbulb
     - Garage Door Opener
+    - Window Covering
     - Smoke Sensor
     - Contact Sensor
     - Leak Sensor
