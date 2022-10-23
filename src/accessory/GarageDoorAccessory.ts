@@ -8,7 +8,7 @@ export default class GarageDoorAccessory extends BaseAccessory {
     super(platform, accessory);
 
     const service = this.accessory.getService(this.Service.GarageDoorOpener)
-    || this.accessory.addService(this.Service.GarageDoorOpener);
+      || this.accessory.addService(this.Service.GarageDoorOpener);
 
     service.getCharacteristic(this.Characteristic.CurrentDoorState)
       .onGet(() => {
