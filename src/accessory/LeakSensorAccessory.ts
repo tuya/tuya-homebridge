@@ -15,13 +15,10 @@ export default class LeakSensor extends BaseAccessory {
         const gas = this.device.getDeviceStatus('gas_sensor_status')
           || this.device.getDeviceStatus('gas_sensor_state');
         const ch4 = this.device.getDeviceStatus('ch4_sensor_state');
-        const co = this.device.getDeviceStatus('co_status')
-          || this.device.getDeviceStatus('co_state');
         const water = this.device.getDeviceStatus('watersensor_state');
 
         if ((gas && (gas.value === 'alarm' || gas.value === '1'))
           || (ch4 && ch4.value === 'alarm')
-          || (co && (co.value === 'alarm' || co.value === '1'))
           || (water && water.value === 'alarm')) {
           return this.Characteristic.LeakDetected.LEAK_DETECTED;
         } else {

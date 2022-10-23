@@ -27,7 +27,8 @@
 - Legacy accessory codes moved to `src/accessory/legacy/` folder.
 - [Light] Add `debounce` and command send queue, more stable during frequent operations on different characteristics.
 - [Light] Fix wrong color temperature map. (https://github.com/tuya/tuya-homebridge/issues/136 by @XiaoTonyLuo and https://github.com/tuya/tuya-homebridge/pull/135 by @levidhuyvetter)
-- [LeakSensor] Add CO Detector support (`cobj`).
+- [CarbonMonoxideSensor] Add CO Detector support (`cobj`).
+- [CarbonDioxideSensor] Add CO2 Detector support (`co2bj`).
 - [LeakSensor] Add Water Detector support (`sj`).
 - [TemperatureSensor/HumiditySensor] Add Temperature and Humidity Sensor support (`wsdcg`).
 - [LightSensor] Add Light Sensor support (`ldcg`).

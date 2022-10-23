@@ -117,8 +117,8 @@ Most category code is pinyin abbreviation of Chinese name.
 | Pressure Sensor | 压力传感器 | ylcg | | |
 | Emergency Button | 紧急按钮 | sos | | |
 | PM2.5 Detector | PM2.5传感器 | pm25 | | |
-| CO Detector | CO报警传感器 | cobj | Leak Sensor | ✅ |
-| CO2 Detector | CO2报警传感器 | co2bj | | |
+| CO Detector | CO报警传感器 | cobj | Carbon Monoxide Sensor | ✅ |
+| CO2 Detector | CO2报警传感器 | co2bj | Carbon Dioxide Sensor | ✅ |
 | Multi-functional Sensor | 多功能传感器 | dgnbj | | |
 | Methane Detector | 甲烷报警传感器 | jwbj | Leak Sensor | ✅ |
 | Human Motion Sensor | 人体运动传感器 | pir | Motion Sensor | ✅ |

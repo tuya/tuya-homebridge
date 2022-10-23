@@ -8,6 +8,8 @@ import OutletAccessory from './OutletAccessory';
 import SwitchAccessory from './SwitchAccessory';
 import ContactSensorAccessory from './ContactSensorAccessory';
 import LeakSensorAccessory from './LeakSensorAccessory';
+import CarbonMonoxideSensorAccessory from './CarbonMonoxideSensorAccessory';
+import CarbonDioxideSensorAccessory from './CarbonDioxideSensorAccessory';
 import SmokeSensorAccessory from './SmokeSensorAccessory';
 import TemperatureHumiditySensorAccessory from './TemperatureHumiditySensorAccessory';
 import LightSensorAccessory from './LightSensorAccessory';
@@ -64,10 +66,15 @@ export default class AccessoryFactory {
         handler = new ContactSensorAccessory(platform, accessory);
         break;
       case 'rqbj':
-      case 'cobj':
       case 'jwbj':
       case 'sj':
         handler = new LeakSensorAccessory(platform, accessory);
+        break;
+      case 'cobj':
+        handler = new CarbonMonoxideSensorAccessory(platform, accessory);
+        break;
+      case 'co2bj':
+        handler = new CarbonDioxideSensorAccessory(platform, accessory);
         break;
       case 'wsdcg':
         handler = new TemperatureHumiditySensorAccessory(platform, accessory);
