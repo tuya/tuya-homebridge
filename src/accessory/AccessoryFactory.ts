@@ -14,6 +14,7 @@ import SmokeSensorAccessory from './SmokeSensorAccessory';
 import TemperatureHumiditySensorAccessory from './TemperatureHumiditySensorAccessory';
 import LightSensorAccessory from './LightSensorAccessory';
 import MotionSensorAccessory from './MotionSensorAccessory';
+import AirQualitySensorAccessory from './AirQualitySensorAccessory';
 
 import LegacyAccessoryFactory from './LegacyAccessoryFactory';
 
@@ -84,6 +85,9 @@ export default class AccessoryFactory {
         break;
       case 'pir':
         handler = new MotionSensorAccessory(platform, accessory);
+        break;
+      case 'pm25':
+        handler = new AirQualitySensorAccessory(platform, accessory);
         break;
     }
 

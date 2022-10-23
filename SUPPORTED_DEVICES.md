@@ -116,7 +116,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Luminance Sensor | 亮度传感器 | ldcg | Light Sensor | ✅ |
 | Pressure Sensor | 压力传感器 | ylcg | | |
 | Emergency Button | 紧急按钮 | sos | | |
-| PM2.5 Detector | PM2.5传感器 | pm25 | | |
+| PM2.5 Detector | PM2.5传感器 | pm25 | Air Quality Sensor | ✅ |
 | CO Detector | CO报警传感器 | cobj | Carbon Monoxide Sensor | ✅ |
 | CO2 Detector | CO2报警传感器 | co2bj | Carbon Dioxide Sensor | ✅ |
 | Multi-functional Sensor | 多功能传感器 | dgnbj | | |

@@ -33,6 +33,7 @@
 - [TemperatureSensor/HumiditySensor] Add Temperature and Humidity Sensor support (`wsdcg`).
 - [LightSensor] Add Light Sensor support (`ldcg`).
 - [MotionSensor] Add Motion Sensor support (`pir`).
+- [AirQualitySensor] Add PM2.5 Detector support (`pm25`).
 
 ### Known issue
 - `LightAccessory` may not work properly, espasially on work mode change. need more test and feedbacks.
