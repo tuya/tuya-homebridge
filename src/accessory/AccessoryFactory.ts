@@ -7,6 +7,7 @@ import OutletAccessory from './OutletAccessory';
 import SwitchAccessory from './SwitchAccessory';
 import ContactSensorAccessory from './ContactSensorAccessory';
 import LeakSensorAccessory from './LeakSensorAccessory';
+import SmokeSensorAccessory from './SmokeSensorAccessory';
 
 import LegacyAccessoryFactory from './LegacyAccessoryFactory';
 
@@ -44,7 +45,7 @@ export default class AccessoryFactory {
         // TODO Fanv2Accessory
         break;
       case 'ywbj':
-        // TODO SmokeSensorAccessory
+        handler = new SmokeSensorAccessory(platform, accessory);
         break;
       case 'qn':
         // TODO HeaterAccessory

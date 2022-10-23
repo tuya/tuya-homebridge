@@ -5,7 +5,6 @@ import BaseAccessory from './BaseAccessory';
 
 import AirPurifierAccessory from './legacy/air_purifier_accessory';
 import Fanv2Accessory from './legacy/fanv2_accessory';
-import SmokeSensorAccessory from './legacy/smokesensor_accessory';
 import HeaterAccessory from './legacy/heater_accessory';
 import GarageDoorAccessory from './legacy/garagedoor_accessory';
 import WindowCoveringAccessory from './legacy/window_covering_accessory';
@@ -46,9 +45,6 @@ export default class LegacyAccessoryFactory {
       case 'fs':
       case 'fskg':
         handler = new Fanv2Accessory(platform, accessory, device);
-        break;
-      case 'ywbj':
-        handler = new SmokeSensorAccessory(platform, accessory, device);
         break;
       case 'qn':
         handler = new HeaterAccessory(platform, accessory, device);

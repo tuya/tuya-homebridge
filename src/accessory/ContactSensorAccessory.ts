@@ -18,15 +18,20 @@ export default class ContaceSensor extends BaseAccessory {
           this.Characteristic.ContactSensorState.CONTACT_DETECTED;
       });
 
-    if (this.device.getDeviceStatus('battery_percentage')) {
-      service.getCharacteristic(this.Characteristic.StatusLowBattery)
-        .onGet(() => {
-          const status = this.device.getDeviceStatus('battery_percentage');
-          return (status && status!.value <= 20) ?
-            this.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW :
-            this.Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL;
-        });
-    }
+    service.getCharacteristic(this.Characteristic.StatusLowBattery)
+      .onGet(() => {
+        const { BATTERY_LEVEL_LOW, BATTERY_LEVEL_NORMAL } = this.Characteristic.StatusLowBattery;
+        const status = this.device.getDeviceStatus('battery_state');
+        if (status) {
+          return (status.value === 'low') ? BATTERY_LEVEL_LOW : BATTERY_LEVEL_NORMAL;
+        }
+
+        const percent = this.device.getDeviceStatus('battery_percentage');
+        if (percent) {
+          return (percent.value <= 20) ? BATTERY_LEVEL_LOW : BATTERY_LEVEL_NORMAL;
+        }
+        return BATTERY_LEVEL_NORMAL;
+      });
 
   }
 
