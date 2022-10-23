@@ -1,6 +1,7 @@
 import { PlatformAccessory } from 'homebridge';
 import TuyaDevice from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
+
 import BaseAccessory from './BaseAccessory';
 import LightAccessory from './LightAccessory';
 import OutletAccessory from './OutletAccessory';
@@ -9,6 +10,7 @@ import ContactSensorAccessory from './ContactSensorAccessory';
 import LeakSensorAccessory from './LeakSensorAccessory';
 import SmokeSensorAccessory from './SmokeSensorAccessory';
 import TemperatureHumiditySensorAccessory from './TemperatureHumiditySensorAccessory';
+import LightSensorAccessory from './LightSensorAccessory';
 
 import LegacyAccessoryFactory from './LegacyAccessoryFactory';
 
@@ -68,6 +70,9 @@ export default class AccessoryFactory {
         break;
       case 'wsdcg':
         handler = new TemperatureHumiditySensorAccessory(platform, accessory);
+        break;
+      case 'ldcg':
+        handler = new LightSensorAccessory(platform, accessory);
         break;
     }
 

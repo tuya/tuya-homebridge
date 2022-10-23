@@ -113,7 +113,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Contact Sensor | 门磁传感器 | mcs | Contact Sensor | ✅ |
 | Vibration Sensor | 震动传感器 | zd | | |
 | Water Detector | 水浸传感器 | sj | Leak Sensor | ✅ |
-| Luminance Sensor | 亮度传感器 | ldcg | | |
+| Luminance Sensor | 亮度传感器 | ldcg | Light Sensor | ✅ |
 | Pressure Sensor | 压力传感器 | ylcg | | |
 | Emergency Button | 紧急按钮 | sos | | |
 | PM2.5 Detector | PM2.5传感器 | pm25 | | |

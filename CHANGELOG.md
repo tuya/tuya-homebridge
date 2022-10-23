@@ -30,6 +30,7 @@
 - [LeakSensor] Add CO Detector support (`cobj`).
 - [LeakSensor] Add Water Detector support (`sj`).
 - [TemperatureSensor/HumiditySensor] Add Temperature and Humidity Sensor support (`wsdcg`).
+- [LightSensor] Add Light Sensor support (`ldcg`).
 
 ### Known issue
 - `LightAccessory` may not work properly, espasially on work mode change. need more test and feedbacks.
