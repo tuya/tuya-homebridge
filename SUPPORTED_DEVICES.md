@@ -9,15 +9,15 @@ Most category code is pinyin abbreviation of Chinese name.
 
 | Name | Name (zh) | Code | Homebridge Service | Supported |
 | ---- | ---- | ---- | ---- | ---- |
-| Light | 光源 | dj | Light | ✅ |
-| Ceiling Light | 吸顶灯 | xdd | Light | ✅ |
-| Ambiance Light | 氛围灯 | fwd | Light | ✅ |
-| String Lights | 灯串 | dc | Light | ✅ |
-| Strip Lights | 灯带 | dd | Light | ✅ |
+| Light | 光源 | dj | Lightbulb | ✅ |
+| Ceiling Light | 吸顶灯 | xdd | Lightbulb | ✅ |
+| Ambiance Light | 氛围灯 | fwd | Lightbulb | ✅ |
+| String Lights | 灯串 | dc | Lightbulb | ✅ |
+| Strip Lights | 灯带 | dd | Lightbulb | ✅ |
 | Motion Sensor Light | 感应灯 | gyd | | |
 | Ceiling Fan Light | 风扇灯 | fsd | | |
 | Solar Light | 太阳能灯 | tyndj | | |
-| Dimmer | 调光器 | tgq | Light | ✅ |
+| Dimmer | 调光器 | tgq | Lightbulb | ✅ |
 | Remote Control | 遥控器 | ykq | | |
 | Spotlight | 射灯 | sxd | | |
 
@@ -33,7 +33,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Card Switch | 插卡取电开关 | ckqdkg | | |
 | Curtain Switch | 窗帘开关 | clkg | | |
 | Garage Door Opener | 车库门控制器 | ckmkzq | Garage Door Opener | ✅ |
-| Dimmer Switch | 调光开关 | tgkg | Light | ✅ |
+| Dimmer Switch | 调光开关 | tgkg | Lightbulb | ✅ |
 | Fan Switch | 风扇开关 | fskg | Fanv2 | ✅ |
 | Wireless Switch | 无线开关 | wxkg | | |
 
