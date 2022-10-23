@@ -50,6 +50,15 @@ export default class AirQualitySensorAccessory extends BaseAccessory {
         });
     }
 
+    if (this.device.getDeviceStatus('voc_value')) {
+      service.getCharacteristic(this.Characteristic.VOCDensity)
+        .onGet(() => {
+          const status = this.device.getDeviceStatus('voc_value');
+          let voc = Math.max(0, status?.value as number);
+          voc = Math.min(1000, voc);
+          return voc;
+        });
+    }
   }
 
 }
