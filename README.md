@@ -19,6 +19,20 @@ If beta version works fine for a while, it will be merged into the upstream repo
 - Less API errors.
 - Less development costs for new accessory categroies.
 - More supported devices.
+    - Air Quality Sensor
+    - Carbon Monoxide Sensor
+    - Carbon Dioxide Sensor
+    - Motion Sensor
+    - Light Sensor
+    - Water Detector
+    - Temperature and Humidity Sensor
+- Reimplemented accessory code. Some bug fixed.
+    - Switch
+    - Outlet
+    - Lightbulb
+    - Smoke Sensor
+    - Contact Sensor
+    - Leak Sensor
 
 ## Supported Tuya Devices
 
