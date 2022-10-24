@@ -74,9 +74,7 @@ export default class BaseAccessory {
 
           // fallback
           status = this.device.getDeviceStatus('battery_percentage');
-          let percent = Math.max(0, status!.value as number);
-          percent = Math.min(100, percent);
-          return (percent <= 20) ?
+          return (status!.value as number <= 20) ?
             this.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW :
             this.Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL;
 
