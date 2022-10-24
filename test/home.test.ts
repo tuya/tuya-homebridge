@@ -7,7 +7,7 @@ import TuyaDevice from '../src/device/TuyaDevice';
 
 import TuyaHomeDeviceManager from '../src/device/TuyaHomeDeviceManager';
 
-import { config, expectDevice } from './util';
+import { config, expectDevice, expectSuccessResponse } from './util';
 
 const { options } = config;
 if (options.projectType === '2') {
@@ -29,8 +29,17 @@ if (options.projectType === '2') {
 
   describe('TuyaHomeDeviceManager', () => {
 
+    const homeIDList: number[] = [];
+    test('getAssetList()', async () => {
+      const res = await homeDeviceManager.getHomeList();
+      expectSuccessResponse(res);
+      for (const { home_id } of res.result) {
+        homeIDList.push(home_id);
+      }
+    });
+
     test('updateDevices()', async () => {
-      const devices = await homeDeviceManager.updateDevices();
+      const devices = await homeDeviceManager.updateDevices(homeIDList);
       expect(devices).not.toBeNull();
       for (const device of devices) {
         expectDevice(device);
