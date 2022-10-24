@@ -31,7 +31,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Power Strip | 排插 | pc | Outlet | ✅ |
 | Scene Switch | 场景开关 | cjkg | | |
 | Card Switch | 插卡取电开关 | ckqdkg | | |
-| Curtain Switch | 窗帘开关 | clkg | | |
+| Curtain Switch | 窗帘开关 | clkg | Window Covering | ✅ |
 | Garage Door Opener | 车库门控制器 | ckmkzq | Garage Door Opener | ✅ |
 | Dimmer Switch | 调光开关 | tgkg | Lightbulb | ✅ |
 | Fan Switch | 风扇开关 | fskg | Fanv2 | ✅ |

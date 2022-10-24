@@ -35,6 +35,7 @@
 - [MotionSensor] Add Motion Sensor support (`pir`).
 - [AirQualitySensor] Add PM2.5 Detector support (`pm25`).
 - [Window] Add Door and Window Controller support (`mc`).
+- [Window] Add Curtain Switch support (`clkg`).
 
 ### Known issue
 - `LightAccessory` may not work properly, espasially on work mode change. need more test and feedbacks.

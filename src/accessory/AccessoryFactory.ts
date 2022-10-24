@@ -61,6 +61,7 @@ export default class AccessoryFactory {
         handler = new WindowAccessory(platform, accessory);
         break;
       case 'cl':
+      case 'clkg':
         handler = new WindowCoveringAccessory(platform, accessory);
         break;
       case 'ywbj':

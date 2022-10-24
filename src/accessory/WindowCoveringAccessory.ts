@@ -12,15 +12,12 @@ export default class WindowCoveringAccessory extends BaseAccessory {
   constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
     super(platform, accessory);
 
-    if (this.getCurrentPosition()) {
-      this.configureCurrentPosition();
-    }
-
     if (this.getWorkState()) {
       this.configurePositionState();
     }
 
     if (this.getTargetPosition()) {
+      this.configureCurrentPosition();
       this.configureTargetPosition();
     }
   }
@@ -28,7 +25,8 @@ export default class WindowCoveringAccessory extends BaseAccessory {
   configureCurrentPosition() {
     this.mainService().getCharacteristic(this.Characteristic.CurrentPosition)
       .onGet(() => {
-        const state = this.getCurrentPosition();
+        const state = this.getCurrentPosition()
+          || this.getTargetPosition();
         let value = Math.max(0, state?.value as number);
         value = Math.min(100, value);
         return value;
