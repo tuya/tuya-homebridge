@@ -34,6 +34,7 @@
 - [LightSensor] Add Light Sensor support (`ldcg`).
 - [MotionSensor] Add Motion Sensor support (`pir`).
 - [AirQualitySensor] Add PM2.5 Detector support (`pm25`).
+- [Window] Add Door and Window Controller support (`mc`).
 
 ### Known issue
 - `LightAccessory` may not work properly, espasially on work mode change. need more test and feedbacks.
