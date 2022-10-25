@@ -1,4 +1,4 @@
-# 0x5e/homebridge-tuya-platform
+# @0x5e/homebridge-tuya-platform
 
 [![npm](https://badgen.net/npm/v/@0x5e/homebridge-tuya-platform)](https://npmjs.com/package/@0x5e/homebridge-tuya-platform)
 [![npm](https://badgen.net/npm/dt/@0x5e/homebridge-tuya-platform)](https://npmjs.com/package/@0x5e/homebridge-tuya-platform)
@@ -40,62 +40,78 @@ If beta version works fine for a while, it will be merged into the upstream repo
 
 
 ## Supported Tuya Devices
-
 See [SUPPORTED_DEVICES.md](./SUPPORTED_DEVICES.md)
 
 
 ## Changelogs
-
 See [CHANGELOG.md](./CHANGELOG.md)
 
 
 ## Installation
-
 Before use, please uninstall `homebridge-tuya-platform` first. They can't run together. (But the config is compatible, no need to delete.)
 
-### For Homebridge UI users
-
+### For Homebridge Web UI Users
 Go to plugin page, search `@0x5e/homebridge-tuya-platform` and install.
 
 
-### For Homebridge users
+### For Homebridge Command Line Users
 
 ```
 npm install @0x5e/homebridge-tuya-platform
 ```
 
 
-## Todos
+## Configuration
 
-- Advanced config options
-    - Display specific home's device list
-    - Switch to show/hidden additional device functions, such as Child Lock, Backlight, Scene, Fan Level.
-- Detail documentation for accessory category develop and usage.
-- `productId` specific accessory
+There's two type of project: `Custom` and `Smart Home`.
+The differenct between them is:
+- `Custom` Project pull devices from project's asset.
+- `Smart Home` Project pull devices from Tuya App user's home.
 
-## How to contribute
+If you are personal user and don't know which to choose, please use `Smart Home`.
 
-- Clone the code.
-- Install Development Dependencies (`npm install`).
-- Link to Homebridge (`npm link`).
-- Update code.
-- Build (`npm run build`).
-- Start Homebridge (`homebridge -D`).
+Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
+- Create a cloud develop project.
+- Go to `Project Page` > `Devices Panel` > `Link Tuya App Account`, link your app account.
 
-For details, please see https://github.com/homebridge/homebridge-plugin-template
+## For `Custom` Project
+
+- `platform` - **required** : Must be 'TuyaPlatform'
+- `options.projectType` - **required** : Must be '1'
+- `options.endpoint` - **required** : Endpoint URL from [API Reference -> Endpoints](https://developer.tuya.com/en/docs/iot/api-request?id=Ka4a8uuo1j4t4#title-1-Endpoints) table.
+- `options.accessId` - **required** : Access ID from [Tuya IoT Platform -> Cloud Develop](https://iot.tuya.com/cloud)
+- `options.accessKey` - **required** : Access Secret from [Tuya IoT Platform -> Cloud Develop](https://iot.tuya.com/cloud)
+
+## For `Smart Home` Project
+
+- `platform` - **required** : Must be 'TuyaPlatform'
+- `options.projectType` - **required** : Must be '2'
+- `options.accessId` - **required** : Access ID from [Tuya IoT Platform -> Cloud Develop](https://iot.tuya.com/cloud)
+- `options.accessKey` - **required** : Access Secret from [Tuya IoT Platform -> Cloud Develop](https://iot.tuya.com/cloud)
+- `options.countryCode` - **required** : Country Code
+- `options.username` - **required** : Username
+- `options.password` - **required** : Password
+- `options.appSchema` - **required** : App schema. 'tuyaSmart' for Tuya Smart App, 'smartlife' for Smart Life App.
+
+
+## Troubleshooting
+
+### Enable Debug Mode
+
+For Homebridge Web UI users:
+- Go to the `Homebridge Setting` page
+- Turn on the `Homebridge Debug Mode -D` switch
+- Restart HomeBridge.
+
+For Homebridge Command Line Users:
+- Start Homebridge with `-D` flag: `homebridge -D`
+
+
+## Contributing
+
+Please see https://github.com/homebridge/homebridge-plugin-template
 
 PRs and issues are welcome.
 
-### Adding new accessory type
-
-**notice: API not stable yet, may changed in the future.**
-
-1. Create a class extend from `src/accessory/BaseAccessory.ts`.
-2. Implement `configureService` method, add `Service` and `Characteristic` depends to the device's `functions` and `status`.
-
-For every `Characteristic` related to the device's state, implement `onGet` and `onSet` handlers.
-
-Get latest device state from `XXXAccessory.device.status`, and send commands using `XXXAccessory.deviceManager.sendCommands(deviceID, commands);`.
-
-3. Add `XXXAccessory` into `src/accessory/AccessoryFactory.ts`.
-4. All done. `BaseAccessory` will handle mqtt update automatically.
+# 
+Thank you for spend time using the project. If it helps you, don't hesitate to give it a star 🌟:-)
