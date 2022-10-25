@@ -9,7 +9,7 @@ Tuya plugin for Hombridge, maintained by @0x5e, former employee of Tuya.
 
 Published as [@0x5e/homebridge-tuya-platform](https://npmjs.com/package/@0x5e/homebridge-tuya-platform), currently in beta version.
 
-If beta version works fine for a while, it will be merged into the upstream repo.
+If beta version works fine for a while, it will be merged into the upstream repo in the future.
 
 ## Features
 
@@ -50,11 +50,11 @@ See [CHANGELOG.md](./CHANGELOG.md)
 ## Installation
 Before use, please uninstall `homebridge-tuya-platform` first. They can't run together. (But the config is compatible, no need to delete.)
 
-### For Homebridge Web UI Users
+#### For Homebridge Web UI Users
 Go to plugin page, search `@0x5e/homebridge-tuya-platform` and install.
 
 
-### For Homebridge Command Line Users
+#### For Homebridge Command Line Users
 
 ```
 npm install @0x5e/homebridge-tuya-platform
@@ -74,7 +74,7 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - Create a cloud develop project.
 - Go to `Project Page` > `Devices Panel` > `Link Tuya App Account`, link your app account.
 
-## For `Custom` Project
+## For "Custom" Project
 
 - `platform` - **required** : Must be 'TuyaPlatform'
 - `options.projectType` - **required** : Must be '1'
@@ -82,7 +82,7 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - `options.accessId` - **required** : Access ID from [Tuya IoT Platform -> Cloud Develop](https://iot.tuya.com/cloud)
 - `options.accessKey` - **required** : Access Secret from [Tuya IoT Platform -> Cloud Develop](https://iot.tuya.com/cloud)
 
-## For `Smart Home` Project
+## For "Smart Home" Project
 
 - `platform` - **required** : Must be 'TuyaPlatform'
 - `options.projectType` - **required** : Must be '2'
@@ -96,7 +96,7 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 
 ## Troubleshooting
 
-### Enable Debug Mode
+#### Enable Debug Mode
 
 For Homebridge Web UI users:
 - Go to the `Homebridge Setting` page
