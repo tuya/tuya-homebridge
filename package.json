@@ -1,6 +1,6 @@
 {
   "name": "@0x5e/homebridge-tuya-platform",
-  "version": "1.6.0-beta.11",
+  "version": "1.6.0-beta.12",
   "description": "Tuya plugin for Hombridge, maintained by @0x5e, former employee of Tuya.",
   "license": "MIT",
   "repository": {
@@ -10,10 +10,12 @@
   "bugs": {
     "url": "https://github.com/0x5e/homebridge-tuya-platform/issues"
   },
-  "funding": [{
-    "type": "paypal",
-    "url": "https://paypal.me/0x5e"
-  }],
+  "funding": [
+    {
+      "type": "paypal",
+      "url": "https://paypal.me/0x5e"
+    }
+  ],
   "engines": {
     "node": ">=14.18.1",
     "homebridge": ">=1.3.5"
