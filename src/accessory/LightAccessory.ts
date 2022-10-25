@@ -38,10 +38,6 @@ export default class LightAccessory extends BaseAccessory {
         this.configureColourTemperature();
         break;
       case LightAccessoryType.RGB:
-        this.configureOn();
-        this.configureHue();
-        this.configureSaturation();
-        break;
       case LightAccessoryType.RGBC:
         this.configureOn();
         this.configureBrightness();
@@ -129,7 +125,11 @@ export default class LightAccessory extends BaseAccessory {
     }
 
     const { h, s, v } = JSON.parse(status.value as string);
-    return { h, s, v };
+    return {
+      h: h as number,
+      s: s as number,
+      v: v as number,
+    };
   }
 
   getColorProperty() {
@@ -142,6 +142,30 @@ export default class LightAccessory extends BaseAccessory {
     };
   }
 
+  inWhiteMode() {
+    const mode = this.getWorkModeDeviceFunction();
+    if (!mode) {
+      return false;
+    }
+    const status = this.device.getDeviceStatus(mode.code);
+    if (!status) {
+      return false;
+    }
+    return (status.value === 'white');
+  }
+
+  inColorMode() {
+    const mode = this.getWorkModeDeviceFunction();
+    if (!mode) {
+      return false;
+    }
+    const status = this.device.getDeviceStatus(mode.code);
+    if (!status) {
+      return false;
+    }
+    return (status.value === 'colour');
+  }
+
   configureOn() {
     const service = this.getMainService();
     const onFunction = this.getOnDeviceFunction()!;
@@ -152,22 +176,46 @@ export default class LightAccessory extends BaseAccessory {
         return !!status && status!.value;
       })
       .onSet((value) => {
+        this.log.debug(`Characteristic.On set to: ${value}`);
         this.addToSendQueue([{ code: onFunction.code, value: value as boolean }]);
       });
   }
 
   configureBrightness() {
     const service = this.getMainService();
-    const brightFunction = this.getBrightnessDeviceFunction()!;
-    const { max } = this.device.getDeviceFunctionProperty(brightFunction.code) as TuyaDeviceFunctionIntegerProperty;
 
     service.getCharacteristic(this.Characteristic.Brightness)
       .onGet(() => {
+
+        // Color mode, get brightness from hsv
+        if (this.inColorMode()) {
+          const { max } = this.getColorProperty().v;
+          const brightStatus = this.getColorValue().v;
+          const brightPercent = brightStatus / max;
+          return Math.floor(brightPercent * 100);
+        }
+
+        const brightFunction = this.getBrightnessDeviceFunction()!;
+        const { max } = this.device.getDeviceFunctionProperty(brightFunction.code) as TuyaDeviceFunctionIntegerProperty;
         const brightStatus = this.device.getDeviceStatus(brightFunction.code)!;
         const brightPercent = brightStatus.value as number / max;
         return Math.floor(brightPercent * 100);
       })
       .onSet((value) => {
+        this.log.debug(`Characteristic.Brightness set to: ${value}`);
+
+        // Color mode, set brightness to hsv
+        if (this.inColorMode()) {
+          const { max } = this.getColorProperty().v;
+          const colorFunction = this.getColorDeviceFunction()!;
+          const colorValue = this.getColorValue();
+          colorValue.v = Math.floor(value as number * max / 100);
+          this.addToSendQueue([{ code: colorFunction.code, value: JSON.stringify(colorValue) }]);
+          return;
+        }
+
+        const brightFunction = this.getBrightnessDeviceFunction()!;
+        const { max } = this.device.getDeviceFunctionProperty(brightFunction.code) as TuyaDeviceFunctionIntegerProperty;
         const brightValue = Math.floor(value as number * max / 100);
         this.addToSendQueue([{ code: brightFunction.code, value: brightValue }]);
       });
@@ -188,11 +236,18 @@ export default class LightAccessory extends BaseAccessory {
         return miredValue;
       })
       .onSet((value) => {
+        this.log.debug(`Characteristic.ColorTemperature set to: ${value}`);
         const temp = Math.floor((1000000 / (value as number) - 2000) * (max - min) / (7142 - 2000) + min);
         const commands: TuyaDeviceStatus[] = [{
           code: tempFunction.code,
           value: temp,
         }];
+
+        const mode = this.getWorkModeDeviceFunction();
+        if (mode) {
+          commands.push({ code: 'work_mode', value: 'white' });
+        }
+
         this.addToSendQueue(commands);
       });
 
@@ -204,18 +259,30 @@ export default class LightAccessory extends BaseAccessory {
     const { min, max } = this.getColorProperty().h;
     service.getCharacteristic(this.Characteristic.Hue)
       .onGet(() => {
+        // White mode, return fixed Hue 0
+        if (this.inWhiteMode()) {
+          return 0;
+        }
+
         let hue = Math.floor(360 * (this.getColorValue().h - min) / (max - min));
         hue = Math.max(0, hue);
         hue = Math.min(360, hue);
         return hue;
       })
       .onSet((value) => {
+        this.log.debug(`Characteristic.Hue set to: ${value}`);
         const colorValue = this.getColorValue();
         colorValue.h = Math.floor((value as number / 360) * (max - min) + min);
         const commands: TuyaDeviceStatus[] = [{
           code: colorFunction.code,
           value: JSON.stringify(colorValue),
         }];
+
+        const mode = this.getWorkModeDeviceFunction();
+        if (mode) {
+          commands.push({ code: 'work_mode', value: 'colour' });
+        }
+
         this.addToSendQueue(commands);
       });
   }
@@ -226,24 +293,40 @@ export default class LightAccessory extends BaseAccessory {
     const { min, max } = this.getColorProperty().s;
     service.getCharacteristic(this.Characteristic.Saturation)
       .onGet(() => {
+        // White mode, return fixed Saturation 0
+        if (this.inWhiteMode()) {
+          return 0;
+        }
+
         let saturation = Math.floor(100 * (this.getColorValue().s - min) / (max - min));
         saturation = Math.max(0, saturation);
-        saturation = Math.min(360, saturation);
+        saturation = Math.min(100, saturation);
         return saturation;
       })
       .onSet((value) => {
+        this.log.debug(`Characteristic.Saturation set to: ${value}`);
         const colorValue = this.getColorValue();
         colorValue.s = Math.floor((value as number / 100) * (max - min) + min);
         const commands: TuyaDeviceStatus[] = [{
           code: colorFunction.code,
           value: JSON.stringify(colorValue),
         }];
+
+        const mode = this.getWorkModeDeviceFunction();
+        if (mode) {
+          commands.push({ code: 'work_mode', value: 'colour' });
+        }
+
         this.addToSendQueue(commands);
       });
   }
 
   sendQueue: TuyaDeviceStatus[] = [];
-  debounceSendCommands = debounce(this.deviceManager.sendCommands.bind(this.deviceManager), 100);
+  debounceSendCommands = debounce(async () => {
+    await this.deviceManager.sendCommands(this.device.id, this.sendQueue);
+    this.sendQueue = [];
+  }, 100);
+
   addToSendQueue(commands: TuyaDeviceStatus[]) {
     for (const newStatus of commands) {
       // Update cache immediately
@@ -261,6 +344,6 @@ export default class LightAccessory extends BaseAccessory {
       }
     }
 
-    this.debounceSendCommands(this.device.id, this.sendQueue);
+    this.debounceSendCommands();
   }
 }

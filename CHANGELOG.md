@@ -39,5 +39,4 @@
 - [Window] Add Curtain Switch support (`clkg`).
 
 ### Known issue
-- `LightAccessory` may not work properly, espasially on work mode change. need more test and feedbacks.
-- Sometimes mqtt not respond quickly, will influence the accessory status update. still addressing the issue.
+- Sometimes mqtt not respond quickly, the older message received later than newer one. This will influence the accessory status update.
