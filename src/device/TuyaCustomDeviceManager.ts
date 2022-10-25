@@ -3,10 +3,19 @@ import TuyaDeviceManager from './TuyaDeviceManager';
 
 export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
 
-  async getAssetList() {
-    const res = await this.api.get('/v1.0/iot-03/users/assets', {
+  async getAssetList(parent_asset_id = -1) {
+    // const res = await this.api.get('/v1.0/iot-03/users/assets', {
+    const res = await this.api.get(`/v1.0/iot-02/assets/${parent_asset_id}/sub-assets`, {
       'page_no': 0,
       'page_size': 100,
+    });
+    return res;
+  }
+
+  async authorizeAssetList(uid: string, asset_ids: string[] = [], authorized_children = false) {
+    const res = await this.api.post(`/v1.0/iot-03/users/${uid}/actions/batch-assets-authorized`, {
+      asset_ids: asset_ids.join(','),
+      authorized_children,
     });
     return res;
   }

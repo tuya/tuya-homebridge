@@ -54,12 +54,16 @@
 					"username": {
 						"title": "Username",
 						"type": "string",
-						"required": true
+						"condition": {
+							"functionBody": "return model.options.projectType === '2';"
+						}
 					},
 					"password": {
 						"title": "Password",
 						"type": "string",
-						"required": true
+						"condition": {
+							"functionBody": "return model.options.projectType === '2';"
+						}
 					},
 					"appSchema": {
 						"title": "App",

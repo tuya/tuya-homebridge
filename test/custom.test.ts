@@ -16,6 +16,11 @@ if (options.projectType === '1') {
   const customDeviceManager = new TuyaCustomDeviceManager(api, mq);
 
   describe('TuyaOpenAPI', () => {
+    test('getToken()', async () => {
+      const res = await api.getToken();
+      expectSuccessResponse(res);
+    });
+
     test('customLogin()', async () => {
       await api.customLogin(options.username, options.password);
       expect(api.isLogin()).toBeTruthy();
@@ -33,7 +38,8 @@ if (options.projectType === '1') {
     test('getAssetList()', async () => {
       const res = await customDeviceManager.getAssetList();
       expectSuccessResponse(res);
-      for (const { asset_id } of res.result.assets) {
+      const assets = res.result.list || res.result.assets;
+      for (const { asset_id } of assets) {
         assetIDList.push(asset_id);
       }
     });

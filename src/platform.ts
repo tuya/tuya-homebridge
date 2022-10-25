@@ -103,6 +103,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     }
 
     // add accessories
+    this.log.info(`Got ${devices.length} device(s).`);
     for (const device of devices) {
       this.addAccessory(device);
     }
@@ -126,14 +127,74 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       return null;
     }
 
+    const DEFAULT_USER = 'homebridge';
+    const DEFAULT_PASS = 'homebridge';
+
     let res;
-    const { endpoint, accessId, accessKey, username, password } = this.options;
+    const { endpoint, accessId, accessKey } = this.options;
     const api = new TuyaOpenAPI(endpoint, accessId, accessKey, this.log);
     const mq = new TuyaOpenMQ(api, '2.0', this.log);
     const deviceManager = new TuyaCustomDeviceManager(api, mq);
 
-    this.log.info('Log in to Tuya Cloud.');
-    res = await api.customLogin(username, password);
+    this.log.info('Get token.');
+    res = await api.getToken();
+    if (res.success === false) {
+      this.log.error(`Get token failed. code=${res.code}, msg=${res.msg}`);
+      return null;
+    }
+
+
+    this.log.info(`Search default user "${DEFAULT_USER}"`);
+    res = await api.customGetUserInfo(DEFAULT_USER);
+    if (res.success === false) {
+      this.log.error(`Search user failed. code=${res.code}, msg=${res.msg}`);
+      return null;
+    }
+
+
+    if (!res.result.user_name) {
+      this.log.info(`Default user "${DEFAULT_USER}" not exist.`);
+      this.log.info(`Creating default user "${DEFAULT_USER}".`);
+      res = await api.customCreateUser(DEFAULT_USER, DEFAULT_PASS);
+      if (res.success === false) {
+        this.log.error(`Create default user failed. code=${res.code}, msg=${res.msg}`);
+        return null;
+      }
+    } else {
+      this.log.info(`Default user "${DEFAULT_USER}" exists.`);
+    }
+    const uid = res.result.user_id;
+
+
+    this.log.info('Fetching asset list.');
+    res = await deviceManager.getAssetList();
+    if (res.success === false) {
+      this.log.error(`Fetching asset list failed. code=${res.code}, msg=${res.msg}`);
+      return null;
+    }
+
+    const assetIDList: string[] = [];
+    for (const { asset_id, asset_name } of res.result.list) {
+      this.log.info(`Got asset_id=${asset_id}, asset_name=${asset_name}`);
+      assetIDList.push(asset_id);
+    }
+
+    if (assetIDList.length === 0) {
+      this.log.warn('Asset list is empty. exit.');
+      return null;
+    }
+
+
+    this.log.info('Authorize asset list.');
+    res = await deviceManager.authorizeAssetList(uid, assetIDList, true);
+    if (res.success === false) {
+      this.log.error(`Authorize asset list failed. code=${res.code}, msg=${res.msg}`);
+      return null;
+    }
+
+
+    this.log.info(`Log in with user "${DEFAULT_USER}".`);
+    res = await api.customLogin(DEFAULT_USER, DEFAULT_USER);
     if (res.success === false) {
       this.log.error(`Login failed. code=${res.code}, msg=${res.msg}`);
       if (LOGIN_ERROR_MESSAGES[res.code]) {
@@ -144,23 +205,6 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
     this.log.info('Start MQTT connection.');
     mq.start();
-
-    this.log.info('Fetching asset list.');
-    res = await deviceManager.getAssetList();
-    if (res.success === false) {
-      this.log.error(`Fetching asset list failed. code=${res.code}, msg=${res.msg}`);
-      return null;
-    }
-    const assetIDList: string[] = [];
-    for (const { asset_id, asset_name } of res.result.assets) {
-      this.log.info(`Got asset_id=${asset_id}, asset_name=${asset_name}`);
-      assetIDList.push(asset_id);
-    }
-
-    if (assetIDList.length === 0) {
-      this.log.warn('Asset list is empty. exit.');
-      return null;
-    }
 
     this.log.info('Fetching device list.');
     const devices = await deviceManager.updateDevices(assetIDList);

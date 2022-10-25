@@ -126,7 +126,34 @@ export default class TuyaOpenAPI {
     return;
   }
 
+  /**
+   * In 'Custom' project, get a token directly. (Login with admin)
+   * Have permission on asset management, user management.
+   * But lost some permission on device management.
+   * @returns
+   */
+  async getToken() {
+    const res = await this.get('/v1.0/token', { grant_type: 1 });
+    if (res.success) {
+      const { access_token, refresh_token, uid, expire_time } = res.result;
+      this.tokenInfo = {
+        access_token: access_token,
+        refresh_token: refresh_token,
+        uid: uid,
+        expire: expire_time * 1000 + new Date().getTime(),
+      };
+    }
+    return res;
+  }
 
+  /**
+   * In 'Smart Home' project, login with App's user.
+   * @param countryCode 2-digit Country Code
+   * @param username Username
+   * @param password Password
+   * @param appSchema App Schema: 'tuyaSmart', 'smartlife'
+   * @returns
+   */
   async homeLogin(countryCode: number, username: string, password: string, appSchema: string) {
 
     for (const _endpoint of Object.keys(DEFAULT_ENDPOINTS)) {
@@ -158,6 +185,38 @@ export default class TuyaOpenAPI {
     return res;
   }
 
+  /**
+   * In 'Custom' project, Search user by username.
+   * @param username Username
+   * @returns
+   */
+  async customGetUserInfo(username: string) {
+    const res = await this.get(`/v1.2/iot-02/users/${username}`);
+    return res;
+  }
+
+  /**
+   * In 'Custom' project, create a user.
+   * @param username Username
+   * @param password Password
+   * @param country_code Country Code (Useless)
+   * @returns
+   */
+  async customCreateUser(username: string, password: string, country_code = 1) {
+    const res = await this.post('/v1.0/iot-02/users', {
+      username,
+      password: Crypto.SHA256(password).toString().toLowerCase(),
+      country_code,
+    });
+    return res;
+  }
+
+  /**
+   * In 'Custom' project, login with user.
+   * @param username Username
+   * @param password Password
+   * @returns
+   */
   async customLogin(username: string, password: string) {
     const res = await this.post('/v1.0/iot-03/users/login', {
       'username': username,

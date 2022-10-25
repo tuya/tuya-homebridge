@@ -15,6 +15,7 @@
 - Remove `lang` option.
 - Update unit test.
 - For `Custom` project type, some API has switched to the same as `Smart Home`.
+- Rewrite the `Custom` project start process. User will be created and authorized automatically.
 
 ### Fixed
 - 1004 signature error when url query has more than 2 elements.

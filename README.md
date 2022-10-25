@@ -36,6 +36,8 @@ If beta version works fine for a while, it will be merged into the upstream repo
     - Smoke Sensor
     - Contact Sensor
     - Leak Sensor
+- For `Custom` project, `username` and `password` options are no longer need. The plugin will create a default user and authorize to all assets automatically.
+
 
 ## Supported Tuya Devices
 

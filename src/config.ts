@@ -30,8 +30,6 @@ export const customOptionsSchema = {
     endpoint: { type: 'string', format: 'url', required: true },
     accessId: { type: 'string', required: true },
     accessKey: { type: 'string', required: true },
-    username: { type: 'string', required: true },
-    password: { type: 'string', required: true },
   },
 };
 
