@@ -53,19 +53,17 @@ export default class BaseAccessory {
   }
 
   addBatteryService() {
-    if (!this.device.getDeviceStatus('battery_percentage')) {
+    if (!this.getBatteryPercentage()) {
       return;
     }
 
     const service = this.accessory.getService(this.Service.Battery)
       || this.accessory.addService(this.Service.Battery);
 
-    if (this.device.getDeviceStatus('battery_state')
-      || this.device.getDeviceStatus('battery_percentage')) {
-
+    if (this.getBatteryState() || this.getBatteryPercentage()) {
       service.getCharacteristic(this.Characteristic.StatusLowBattery)
         .onGet(() => {
-          let status = this.device.getDeviceStatus('battery_state');
+          let status = this.getBatteryState();
           if (status) {
             return (status!.value === 'low') ?
               this.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW :
@@ -73,7 +71,7 @@ export default class BaseAccessory {
           }
 
           // fallback
-          status = this.device.getDeviceStatus('battery_percentage');
+          status = this.getBatteryPercentage();
           return (status!.value as number <= 20) ?
             this.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW :
             this.Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL;
@@ -81,19 +79,40 @@ export default class BaseAccessory {
         });
     }
 
-    if (service.UUID === this.Service.Battery.UUID
-      && this.device.getDeviceStatus('battery_percentage')) {
-
+    if (this.getBatteryPercentage()) {
       service.getCharacteristic(this.Characteristic.BatteryLevel)
         .onGet(() => {
-          const status = this.device.getDeviceStatus('battery_percentage');
+          const status = this.getBatteryPercentage();
           let percent = Math.max(0, status!.value as number);
           percent = Math.min(100, percent);
           return percent;
         });
     }
 
+    if (this.getChargeState()) {
+      service.getCharacteristic(this.Characteristic.ChargingState)
+        .onGet(() => {
+          const status = this.getChargeState();
+          return (status?.value as boolean) ?
+            this.Characteristic.ChargingState.CHARGING :
+            this.Characteristic.ChargingState.NOT_CHARGING;
+        });
+    }
   }
+
+  getBatteryState() {
+    return this.device.getDeviceStatus('battery_state');
+  }
+
+  getBatteryPercentage() {
+    return this.device.getDeviceStatus('battery_percentage')
+      || this.device.getDeviceStatus('residual_electricity');
+  }
+
+  getChargeState() {
+    return this.device.getDeviceStatus('charge_state');
+  }
+
 
   configureService(deviceFunction: TuyaDeviceFunction) {
 
