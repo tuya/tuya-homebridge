@@ -19,6 +19,7 @@
 
 ### Fixed
 - 1004 signature error when url query has more than 2 elements.
+- 1010 token expired error when refresh access_token.
 - 1106 permission error when polling device info list.
 - 1100, 2017 errors when login. (via config validation)
 - Fix access_token undefined error. (https://github.com/tuya/tuya-homebridge/issues/298#issuecomment-1278238870 by @Azukovskij )
@@ -28,6 +29,7 @@
 - Legacy accessory codes moved to `src/accessory/legacy/` folder.
 - [Light] Add `debounce` and command send queue, more stable during frequent operations on different characteristics.
 - [Light] Fix wrong color temperature map. (https://github.com/tuya/tuya-homebridge/issues/136 by @XiaoTonyLuo and https://github.com/tuya/tuya-homebridge/pull/135 by @levidhuyvetter)
+- [Light] Color mode and white mode switching should be working now.
 - [CarbonMonoxideSensor] Add CO Detector support (`cobj`).
 - [CarbonDioxideSensor] Add CO2 Detector support (`co2bj`).
 - [LeakSensor] Add Water Detector support (`sj`).
