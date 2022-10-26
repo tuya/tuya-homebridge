@@ -102,7 +102,7 @@ export default class LightAccessory extends BaseAccessory {
 
   getColorTemperatureDeviceFunction() {
     const tempFunction = this.device.getDeviceFunction('temp_value')
-      || this.device.getDeviceFunction('temp_value');
+      || this.device.getDeviceFunction('temp_value_v2');
     return tempFunction;
   }
 
