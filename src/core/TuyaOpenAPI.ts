@@ -120,12 +120,12 @@ export default class TuyaOpenAPI {
       return;
     }
 
-    const { access_token, refresh_token, uid, expire } = res.result;
+    const { access_token, refresh_token, uid, expire_time } = res.result;
     this.tokenInfo = {
       access_token: access_token,
       refresh_token: refresh_token,
       uid: uid,
-      expire: expire * 1000 + new Date().getTime(),
+      expire: expire_time * 1000 + new Date().getTime(),
     };
 
   }
