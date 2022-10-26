@@ -73,12 +73,7 @@ export default class TuyaOpenAPI {
   public assetIDArr: Array<string> = [];
   public deviceArr: Array<object> = [];
 
-  public tokenInfo = {
-    access_token: '',
-    refresh_token: '',
-    uid: '',
-    expire: 0,
-  };
+  public tokenInfo = { access_token: '', refresh_token: '', uid: '', expire: 0 };
 
   constructor(
     public endpoint: Endpoints | string,
@@ -98,6 +93,13 @@ export default class TuyaOpenAPI {
     return (this.tokenInfo.expire - 60 * 1000 <= new Date().getTime());
   }
 
+  isTokenManagementAPI(path: string) {
+    if (path.startsWith('/v1.0/token')) {
+      return true;
+    }
+    return false;
+  }
+
   async _refreshAccessTokenIfNeed(path: string) {
     if (!this.isLogin()) {
       return;
@@ -107,23 +109,25 @@ export default class TuyaOpenAPI {
       return;
     }
 
-    if (path.startsWith('/v1.0/token')) {
+    if (this.isTokenManagementAPI(path)) {
       return;
     }
 
-    this.tokenInfo.access_token = '';
+    this.log.debug('Refresh access_token');
     const res = await this.get(`/v1.0/token/${this.tokenInfo.refresh_token}`);
-    if (res.success) {
-      const { access_token, refresh_token, uid, expire } = res.result;
-      this.tokenInfo = {
-        access_token: access_token,
-        refresh_token: refresh_token,
-        uid: uid,
-        expire: expire * 1000 + new Date().getTime(),
-      };
+    if (res.success === false) {
+      this.log.error(`Refresh access_token failed. code=${res.code}, msg=${res.msg}`);
+      return;
     }
 
-    return;
+    const { access_token, refresh_token, uid, expire } = res.result;
+    this.tokenInfo = {
+      access_token: access_token,
+      refresh_token: refresh_token,
+      uid: uid,
+      expire: expire * 1000 + new Date().getTime(),
+    };
+
   }
 
   /**
@@ -163,12 +167,12 @@ export default class TuyaOpenAPI {
       }
     }
 
-    this.tokenInfo.access_token = '';
+    this.tokenInfo = { access_token: '', refresh_token: '', uid: '', expire: 0 };
     const res = await this.post('/v1.0/iot-01/associated-users/actions/authorized-login', {
-      'country_code': countryCode,
-      'username': username,
-      'password': Crypto.MD5(password).toString(),
-      'schema': appSchema,
+      country_code: countryCode,
+      username: username,
+      password: Crypto.MD5(password).toString(),
+      schema: appSchema,
     });
 
     if (res.success) {
@@ -218,9 +222,10 @@ export default class TuyaOpenAPI {
    * @returns
    */
   async customLogin(username: string, password: string) {
+    this.tokenInfo = { access_token: '', refresh_token: '', uid: '', expire: 0 };
     const res = await this.post('/v1.0/iot-03/users/login', {
-      'username': username,
-      'password': Crypto.SHA256(password).toString().toLowerCase(),
+      username: username,
+      password: Crypto.SHA256(password).toString().toLowerCase(),
     });
 
     if (res.success) {
@@ -248,7 +253,7 @@ export default class TuyaOpenAPI {
       'client_id': this.accessId,
       'nonce': nonce,
       'Signature-Headers': 'client_id',
-      'sign': this._getSign(this.accessId, this.accessKey, accessToken, now, nonce, stringToSign),
+      'sign': this._getSign(this.accessId, this.accessKey, this.isTokenManagementAPI(path) ? '' : this.tokenInfo.access_token, now, nonce, stringToSign),
       'sign_method': 'HMAC-SHA256',
       'access_token': accessToken,
       'lang': this.lang,
