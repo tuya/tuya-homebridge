@@ -122,7 +122,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Multi-functional Sensor | 多功能传感器 | dgnbj | | |
 | Methane Detector | 甲烷报警传感器 | jwbj | Leak Sensor | ✅ |
 | Human Motion Sensor | 人体运动传感器 | pir | Motion Sensor | ✅ |
-| Human Presence Sensor | 人体存在传感器 | hps | | |
+| Human Presence Sensor | 人体存在传感器 | hps | Occupancy Sensor | ✅ |
 | Smart Lock | 智能门锁 | ms | | |
 | Environmental Detector | 环境检测仪 | hjjcy | | |
 

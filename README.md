@@ -26,6 +26,7 @@ If beta version works fine for a while, it will be merged into the upstream repo
     - Light Sensor
     - Water Detector
     - Temperature and Humidity Sensor
+    - Human Presence Sensor
     - Window
 - Reimplemented accessory code. Some bug fixed.
     - Switch

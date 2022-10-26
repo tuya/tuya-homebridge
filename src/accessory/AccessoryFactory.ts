@@ -18,6 +18,7 @@ import TemperatureHumiditySensorAccessory from './TemperatureHumiditySensorAcces
 import LightSensorAccessory from './LightSensorAccessory';
 import MotionSensorAccessory from './MotionSensorAccessory';
 import AirQualitySensorAccessory from './AirQualitySensorAccessory';
+import HumanPresenceSensorAccessory from './HumanPresenceSensorAccessory';
 
 import LegacyAccessoryFactory from './LegacyAccessoryFactory';
 
@@ -95,6 +96,9 @@ export default class AccessoryFactory {
         break;
       case 'pm25':
         handler = new AirQualitySensorAccessory(platform, accessory);
+        break;
+      case 'hps':
+        handler = new HumanPresenceSensorAccessory(platform, accessory);
         break;
     }
 

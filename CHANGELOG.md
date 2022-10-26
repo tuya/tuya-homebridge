@@ -39,6 +39,7 @@
 - [AirQualitySensor] Add PM2.5 Detector support (`pm25`).
 - [Window] Add Door and Window Controller support (`mc`).
 - [Window] Add Curtain Switch support (`clkg`).
+- [OccupancySensor] Add Human Presence Sensor support (`hps`).
 
 ### Known issue
 - Sometimes mqtt not respond quickly, the older message received later than newer one. This will influence the accessory status update.
