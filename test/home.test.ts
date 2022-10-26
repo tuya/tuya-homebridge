@@ -30,7 +30,7 @@ if (options.projectType === '2') {
   describe('TuyaHomeDeviceManager', () => {
 
     const homeIDList: number[] = [];
-    test('getAssetList()', async () => {
+    test('getHomeList()', async () => {
       const res = await homeDeviceManager.getHomeList();
       expectSuccessResponse(res);
       for (const { home_id } of res.result) {

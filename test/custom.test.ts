@@ -21,8 +21,23 @@ if (options.projectType === '1') {
       expectSuccessResponse(res);
     });
 
+    test('customGetUserInfo()', async () => {
+      const res = await api.customGetUserInfo('homebridge');
+      expectSuccessResponse(res);
+    });
+
+    test('customCreateUser()', async () => {
+      const res = await api.customCreateUser('homebridge', 'homebridge');
+      if (res.success === false && res.code === 14520015) {
+        // already exist
+      } else {
+        expectSuccessResponse(res);
+      }
+    });
+
     test('customLogin()', async () => {
-      await api.customLogin(options.username, options.password);
+      const res = await api.customLogin('homebridge', 'homebridge');
+      expectSuccessResponse(res);
       expect(api.isLogin()).toBeTruthy();
     });
 
