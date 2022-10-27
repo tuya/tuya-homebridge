@@ -63,7 +63,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Diffuser | 香薰机 | xxj | | |
 | Curtain | 窗帘 | cl | Window Covering | ✅ |
 | Door and Window Controller | 门窗控制器 | mc | Window | ✅ |
-| Thermostat | 温控器 | wk | | |
+| Thermostat | 温控器 | wk | Thermostat | ✅ |
 | Bathroom Heater | 浴霸 | yb | | |
 | Irrigator | 灌溉器 | ggq | | |
 | Humidifier | 加湿器 | jsq | | |

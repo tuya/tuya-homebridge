@@ -9,6 +9,7 @@ import SwitchAccessory from './SwitchAccessory';
 import GarageDoorAccessory from './GarageDoorAccessory';
 import WindowAccessory from './WindowAccessory';
 import WindowCoveringAccessory from './WindowCoveringAccessory';
+import ThermostatAccessory from './ThermostatAccessory';
 import ContactSensorAccessory from './ContactSensorAccessory';
 import LeakSensorAccessory from './LeakSensorAccessory';
 import CarbonMonoxideSensorAccessory from './CarbonMonoxideSensorAccessory';
@@ -64,6 +65,9 @@ export default class AccessoryFactory {
       case 'cl':
       case 'clkg':
         handler = new WindowCoveringAccessory(platform, accessory);
+        break;
+      case 'wk':
+        handler = new ThermostatAccessory(platform, accessory);
         break;
       case 'ywbj':
         handler = new SmokeSensorAccessory(platform, accessory);
