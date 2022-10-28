@@ -36,11 +36,12 @@ export default class AccessoryFactory {
         // TODO AirPurifierAccessory
         break;
       case 'dj':
-      case 'dd':
-      case 'fwd':
-      case 'tgq':
       case 'xdd':
+      case 'fwd':
       case 'dc':
+      case 'dd':
+      case 'tgq':
+      case 'sxd':
       case 'tgkg':
         handler = new LightAccessory(platform, accessory);
         break;
