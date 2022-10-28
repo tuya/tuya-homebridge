@@ -150,6 +150,7 @@ export default class ThermostatAccessory extends BaseAccessory {
       props.maxValue = Math.min(props.maxValue, tempFunction.max / multiple);
       props.minStep = Math.max(props.minStep, tempFunction.step / multiple);
     }
+    this.log.debug(`Set props for CurrentTemperature: ${JSON.stringify(tempFunction)}`);
 
     this.mainService().getCharacteristic(this.Characteristic.CurrentTemperature)
       .onGet(() => {
@@ -172,6 +173,7 @@ export default class ThermostatAccessory extends BaseAccessory {
       props.maxValue = Math.min(props.maxValue, tempFunction.max / multiple);
       props.minStep = Math.max(props.minStep, tempFunction.step / multiple);
     }
+    this.log.debug(`Set props for TargetTemperature: ${JSON.stringify(tempFunction)}`);
 
     this.mainService().getCharacteristic(this.Characteristic.TargetTemperature)
       .onGet(() => {
