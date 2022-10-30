@@ -1,4 +1,5 @@
 import { PlatformAccessory } from 'homebridge';
+import { TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
@@ -12,19 +13,25 @@ export default class WindowCoveringAccessory extends BaseAccessory {
   constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
     super(platform, accessory);
 
-    if (this.getWorkState()) {
-      this.configurePositionState();
-    }
-
-    if (this.getTargetPosition()) {
-      this.configureCurrentPosition();
-      this.configureTargetPosition();
-    }
+    this.configurePositionState();
+    this.configureCurrentPosition();
+    this.configureTargetPosition();
   }
 
   configureCurrentPosition() {
     this.mainService().getCharacteristic(this.Characteristic.CurrentPosition)
       .onGet(() => {
+        if (!this.positionSupported()) {
+          const control = this.device.getDeviceStatus('control');
+          if (control?.value === 'close') {
+            return 0;
+          } else if (control?.value === 'stop') {
+            return 50;
+          } else if (control?.value === 'open') {
+            return 100;
+          }
+        }
+
         const state = this.getCurrentPosition()
           || this.getTargetPosition();
         let value = Math.max(0, state?.value as number);
@@ -36,14 +43,18 @@ export default class WindowCoveringAccessory extends BaseAccessory {
   configurePositionState() {
     this.mainService().getCharacteristic(this.Characteristic.PositionState)
       .onGet(() => {
+        const state = this.getWorkState();
+        if (!state) {
+          return this.Characteristic.PositionState.STOPPED;
+        }
+
         const current = this.getCurrentPosition();
         const target = this.getTargetPosition();
         if (current?.value === target?.value) {
           return this.Characteristic.PositionState.STOPPED;
         }
 
-        const state = this.getWorkState();
-        return (state?.value === 'opening') ?
+        return (state.value === 'opening') ?
           this.Characteristic.PositionState.INCREASING :
           this.Characteristic.PositionState.DECREASING;
       });
@@ -52,17 +63,41 @@ export default class WindowCoveringAccessory extends BaseAccessory {
   configureTargetPosition() {
     this.mainService().getCharacteristic(this.Characteristic.TargetPosition)
       .onGet(() => {
+        if (!this.positionSupported()) {
+          const control = this.device.getDeviceStatus('control');
+          if (control?.value === 'close') {
+            return 0;
+          } else if (control?.value === 'stop') {
+            return 50;
+          } else if (control?.value === 'open') {
+            return 100;
+          }
+        }
+
         const state = this.getTargetPosition();
         let value = Math.max(0, state?.value as number);
         value = Math.min(100, value);
         return value;
       })
       .onSet(value => {
-        const state = this.getTargetPosition();
-        this.deviceManager.sendCommands(this.device.id, [{
-          code: state!.code,
-          value: value as number,
-        }]);
+        const commands: TuyaDeviceStatus[] = [];
+        if (!this.positionSupported()) {
+          const control = this.device.getDeviceStatus('control');
+          if (value === 0) {
+            commands.push({ code: control!.code, value: 'close' });
+          } else if (value === 100) {
+            commands.push({ code: control!.code, value: 'open' });
+          } else {
+            commands.push({ code: control!.code, value: 'stop' });
+          }
+        } else {
+          const state = this.getTargetPosition();
+          commands.push({ code: state!.code, value: value as number });
+        }
+        this.deviceManager.sendCommands(this.device.id, commands);
+      })
+      .setProps({
+        minStep: this.positionSupported() ? 1 : 50,
       });
   }
 
@@ -77,6 +112,11 @@ export default class WindowCoveringAccessory extends BaseAccessory {
 
   getWorkState() {
     return this.device.getDeviceStatus('work_state'); // opening, closing
+  }
+
+  positionSupported() {
+    // return false;
+    return this.getCurrentPosition() || this.getTargetPosition();
   }
 
   /*
