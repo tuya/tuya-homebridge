@@ -66,7 +66,7 @@ export default class ThermostatAccessory extends BaseAccessory {
 
         if (status.value === 'hot') {
           return this.Characteristic.CurrentHeatingCoolingState.HEAT;
-        } else if (status.value === 'cold') {
+        } else if (status.value === 'cold' || status.value === 'eco') {
           return this.Characteristic.CurrentHeatingCoolingState.COOL;
         }
         // Don't know how to display unsupported work mode.
@@ -86,7 +86,7 @@ export default class ThermostatAccessory extends BaseAccessory {
       if (mode.range.includes('hot')) {
         validValues.push(this.Characteristic.TargetHeatingCoolingState.HEAT);
       }
-      if (mode.range.includes('cold')) {
+      if (mode.range.includes('cold') || mode.range.includes('eco')) {
         validValues.push(this.Characteristic.TargetHeatingCoolingState.COOL);
       }
     }
@@ -106,7 +106,7 @@ export default class ThermostatAccessory extends BaseAccessory {
 
         if (status.value === 'hot') {
           return this.Characteristic.TargetHeatingCoolingState.HEAT;
-        } else if (status.value === 'cold') {
+        } else if (status.value === 'cold' || status.value === 'eco') {
           return this.Characteristic.TargetHeatingCoolingState.COOL;
         } else if (status.value === 'auto' || status.value === 'temp_auto') {
           return this.Characteristic.TargetHeatingCoolingState.AUTO;
@@ -126,9 +126,12 @@ export default class ThermostatAccessory extends BaseAccessory {
           if (value === this.Characteristic.TargetHeatingCoolingState.HEAT
             && mode.range.includes('hot')) {
             commands.push({ code: 'mode', value: 'hot' });
-          } else if (value === this.Characteristic.TargetHeatingCoolingState.COOL
-            && mode.range.includes('cold')) {
-            commands.push({ code: 'mode', value: 'cold' });
+          } else if (value === this.Characteristic.TargetHeatingCoolingState.COOL) {
+            if (mode.range.includes('eco')) {
+              commands.push({ code: 'mode', value: 'eco' });
+            } else if (mode.range.includes('cold')) {
+              commands.push({ code: 'mode', value: 'eco' });
+            }
           } else if (value === this.Characteristic.TargetHeatingCoolingState.AUTO
             && mode.range.includes('auto')) {
             commands.push({ code: 'mode', value: 'auto' });
