@@ -65,7 +65,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Door and Window Controller | 门窗控制器 | mc | Window | ✅ |
 | Thermostat | 温控器 | wk | Thermostat | ✅ |
 | Bathroom Heater | 浴霸 | yb | | |
-| Irrigator | 灌溉器 | ggq | | |
+| Irrigator | 灌溉器 | ggq | Valve | ✅ |
 | Humidifier | 加湿器 | jsq | | |
 | Dehumidifier | 除湿机 | cs | | |
 | Fan | 风扇 | fs | Fanv2 | ✅ |

@@ -29,6 +29,7 @@ If beta version works fine for a while, it will be merged into the upstream repo
     - Human Presence Sensor
     - Window
     - Thermostat
+    - Irrigator
 - Reimplemented accessory code. Some bug fixed.
     - Switch
     - Outlet

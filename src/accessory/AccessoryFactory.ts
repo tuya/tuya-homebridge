@@ -10,6 +10,7 @@ import GarageDoorAccessory from './GarageDoorAccessory';
 import WindowAccessory from './WindowAccessory';
 import WindowCoveringAccessory from './WindowCoveringAccessory';
 import ThermostatAccessory from './ThermostatAccessory';
+import ValueAccessory from './ValveAccessory';
 import ContactSensorAccessory from './ContactSensorAccessory';
 import LeakSensorAccessory from './LeakSensorAccessory';
 import CarbonMonoxideSensorAccessory from './CarbonMonoxideSensorAccessory';
@@ -69,6 +70,9 @@ export default class AccessoryFactory {
         break;
       case 'wk':
         handler = new ThermostatAccessory(platform, accessory);
+        break;
+      case 'ggq':
+        handler = new ValueAccessory(platform, accessory);
         break;
       case 'ywbj':
         handler = new SmokeSensorAccessory(platform, accessory);

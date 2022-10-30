@@ -42,6 +42,7 @@
 - [OccupancySensor] Add Human Presence Sensor support (`hps`).
 - [Thermostat] Add Thermostat support (`wk`).
 - [Light] Add Spotlight support (`sxd`).
+- [Valve] Add Irrigator support (`ggq`).
 
 ### Known issue
 - Sometimes mqtt not respond quickly, the older message received later than newer one. This will influence the accessory status update.
