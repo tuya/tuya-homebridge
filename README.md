@@ -98,6 +98,18 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 
 ## Troubleshooting
 
+#### Get Device Information
+
+You can get device informations here:
+https://iot.tuya.com/cloud/device/detail
+
+If your device is not working well, or not supported yet, please provide these informations:
+- Product Category
+- Standard Instruction Set (Also called as 'functions')
+- Standard Status Set (Also called as 'status')
+
+They can also be found in the homebridge debug logs.
+
 #### Enable Debug Mode
 
 For Homebridge Web UI users:
