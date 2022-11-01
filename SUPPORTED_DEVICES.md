@@ -15,7 +15,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | String Lights | 灯串 | dc | Lightbulb | ✅ |
 | Strip Lights | 灯带 | dd | Lightbulb | ✅ |
 | Motion Sensor Light | 感应灯 | gyd | | |
-| Ceiling Fan Light | 风扇灯 | fsd | | |
+| Ceiling Fan Light | 风扇灯 | fsd | Fanv2 | ✅ |
 | Solar Light | 太阳能灯 | tyndj | | |
 | Dimmer | 调光器 | tgq | Lightbulb | ✅ |
 | Remote Control | 遥控器 | ykq | | |

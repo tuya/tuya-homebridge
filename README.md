@@ -34,6 +34,7 @@ If beta version works fine for a while, it will be merged into the upstream repo
     - Switch
     - Outlet
     - Lightbulb
+    - Fan
     - Garage Door Opener
     - Window Covering
     - Smoke Sensor

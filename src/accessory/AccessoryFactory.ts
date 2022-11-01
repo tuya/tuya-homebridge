@@ -6,6 +6,7 @@ import BaseAccessory from './BaseAccessory';
 import LightAccessory from './LightAccessory';
 import OutletAccessory from './OutletAccessory';
 import SwitchAccessory from './SwitchAccessory';
+import FanAccessory from './FanAccessory';
 import GarageDoorAccessory from './GarageDoorAccessory';
 import WindowAccessory from './WindowAccessory';
 import WindowCoveringAccessory from './WindowCoveringAccessory';
@@ -56,8 +57,9 @@ export default class AccessoryFactory {
         handler = new SwitchAccessory(platform, accessory);
         break;
       case 'fs':
+      case 'fsd':
       case 'fskg':
-        // TODO Fanv2Accessory
+        handler = new FanAccessory(platform, accessory);
         break;
       case 'ckmkzq':
         handler = new GarageDoorAccessory(platform, accessory);

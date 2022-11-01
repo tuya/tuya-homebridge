@@ -25,7 +25,7 @@
 - Fix access_token undefined error. (https://github.com/tuya/tuya-homebridge/issues/298#issuecomment-1278238870 by @Azukovskij )
 
 ### Accessory category specific
-- Rewrite `BaseAccessory`, `SwitchAccessory`, `OutletAccessory`, `LightAccessory`, `ContactSensorAccessory`, `LeakSensorAccessory`, `SmokeSensorAccessory`, `GarageDoorAccessory`, `WindowCoveringAccessory` reduce about 50% code size. Now writing a accessory class is much more simple.
+- Rewrite `BaseAccessory`, `SwitchAccessory`, `OutletAccessory`, `LightAccessory`, `ContactSensorAccessory`, `LeakSensorAccessory`, `SmokeSensorAccessory`, `GarageDoorAccessory`, `WindowCoveringAccessory`, `FanAccessory` reduce about 50% code size. Now writing a accessory class is much more simple.
 - Legacy accessory codes moved to `src/accessory/legacy/` folder.
 - [Light] Add `debounce` and command send queue, more stable during frequent operations on different characteristics.
 - [Light] Fix wrong color temperature map. (https://github.com/tuya/tuya-homebridge/issues/136 by @XiaoTonyLuo and https://github.com/tuya/tuya-homebridge/pull/135 by @levidhuyvetter)
@@ -43,6 +43,7 @@
 - [Thermostat] Add Thermostat support (`wk`).
 - [Light] Add Spotlight support (`sxd`).
 - [Valve] Add Irrigator support (`ggq`).
+- [Fanv2] Add Ceiling Fan Light support (`fsd`).
 
 ### Known issue
 - Sometimes mqtt not respond quickly, the older message received later than newer one. This will influence the accessory status update.
