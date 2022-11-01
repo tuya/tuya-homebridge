@@ -117,18 +117,25 @@ export default class TuyaOpenMQ {
   }
 
   private lastPayload?;
-  _onMessage(topic: string, payload: Buffer) {
+  async _onMessage(topic: string, payload: Buffer) {
     const { protocol, data, t } = JSON.parse(payload.toString());
-    let message = this._decodeMQMessage(data, this.config!.password, t);
-    this.log.debug(`TuyaOpenMQ onMessage: topic = ${topic}, protocol = ${protocol}, message = ${message}`);
-    message = JSON.parse(message);
+    const messageData = this._decodeMQMessage(data, this.config!.password, t);
+    this.log.debug(`TuyaOpenMQ onMessage: topic = ${topic}, protocol = ${protocol}, message = ${messageData}`);
+    let message = JSON.parse(messageData);
 
     // Check message order
     const currentPayload = { protocol, message, t };
-    if (this.lastPayload && t < this.lastPayload.t) {
+    if (protocol === 4 && this.lastPayload && t < this.lastPayload.t) {
       this.log.warn(`TuyaOpenMQ warning: message received with wrong order.
 lastMessage: dataId=${this.lastPayload.message['dataId']}, t=${this.lastPayload.t}, ${new Date(this.lastPayload.t).toISOString()}
 currentMessage: dataId=${message['dataId']}, t=${t}, ${new Date(t).toISOString()}`);
+      this.log.warn('Fallback to use API fetching the latest device status.');
+      const devId = message['devId'];
+      const res = await this.api.get(`/v1.0/iot-03/devices/${devId}/status`);
+      if (res.success === false) {
+        return;
+      }
+      message = { devId, status: res.result };
     }
     this.lastPayload = currentPayload;
 
