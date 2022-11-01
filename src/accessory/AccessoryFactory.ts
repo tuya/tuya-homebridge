@@ -52,6 +52,7 @@ export default class AccessoryFactory {
         break;
       case 'kg':
       case 'tdq':
+      case 'qjdcz':
         handler = new SwitchAccessory(platform, accessory);
         break;
       case 'fs':
