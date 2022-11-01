@@ -124,10 +124,11 @@ export default class TuyaDeviceManager extends EventEmitter {
       case TuyaMQTTProtocol.DEVICE_INFO_UPDATE: {
         const { bizCode, bizData, devId } = message;
         if (bizCode === 'bindUser') {
-          // TODO failed if request to quickly
-          await new Promise(resolve => setTimeout(resolve, 3000));
-          const device = await this.updateDevice(devId);
-          this.emit(Events.DEVICE_ADD, device);
+          // Disabled because it will received device which not belongs to current user's home.
+          // // TODO failed if request to quickly
+          // await new Promise(resolve => setTimeout(resolve, 3000));
+          // const device = await this.updateDevice(devId);
+          // this.emit(Events.DEVICE_ADD, device);
         } else if (bizCode === 'nameUpdate') {
           const { name } = bizData;
           const device = this.getDevice(devId);
