@@ -1,4 +1,5 @@
 import { PlatformAccessory } from 'homebridge';
+import { TuyaDeviceFunctionIntegerProperty } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
@@ -13,8 +14,11 @@ export default class TemperatureHumiditySensorAccessory extends BaseAccessory {
 
       service.getCharacteristic(this.Characteristic.CurrentTemperature)
         .onGet(() => {
+          const property = this.device.getDeviceFunctionProperty('va_temperature') as TuyaDeviceFunctionIntegerProperty | undefined;
+          const multiple = property ? Math.pow(10, property.scale) : 1;
           const status = this.device.getDeviceStatus('va_temperature');
-          let temperature = Math.max(-270, status!.value as number);
+          let temperature = status!.value as number / multiple;
+          temperature = Math.max(-270, temperature);
           temperature = Math.min(100, temperature);
           return temperature;
         });
