@@ -1,4 +1,4 @@
-import { TuyaDeviceFunction, TuyaDeviceFunctionType } from '../device/TuyaDevice';
+import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
 
 export default class SwitchAccessory extends BaseAccessory {
@@ -7,24 +7,24 @@ export default class SwitchAccessory extends BaseAccessory {
     return this.Service.Switch;
   }
 
-  configureService(deviceFunction: TuyaDeviceFunction) {
-    if (deviceFunction.type !== TuyaDeviceFunctionType.Boolean) {
+  configureService(schema: TuyaDeviceSchema) {
+    if (schema.type !== TuyaDeviceSchemaType.Boolean) {
       return;
     }
 
-    const service = this.accessory.getService(deviceFunction.code)
-      || this.accessory.addService(this.mainService(), deviceFunction.name, deviceFunction.code);
+    const service = this.accessory.getService(schema.code)
+      || this.accessory.addService(this.mainService(), schema.code, schema.code);
 
-    service.setCharacteristic(this.Characteristic.Name, deviceFunction.name);
+    service.setCharacteristic(this.Characteristic.Name, schema.code);
 
     service.getCharacteristic(this.Characteristic.On)
       .onGet(async () => {
-        const status = this.device.getDeviceStatus(deviceFunction.code);
+        const status = this.device.getStatus(schema.code);
         return status!.value as boolean;
       })
       .onSet(async (value) => {
         await this.deviceManager.sendCommands(this.device.id, [{
-          code: deviceFunction.code,
+          code: schema.code,
           value: value as boolean,
         }]);
       });

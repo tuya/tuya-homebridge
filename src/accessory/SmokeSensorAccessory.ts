@@ -12,8 +12,8 @@ export default class SmokeSensor extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.SmokeDetected)
       .onGet(() => {
-        const status = this.device.getDeviceStatus('smoke_sensor_status')
-          || this.device.getDeviceStatus('smoke_sensor_state');
+        const status = this.device.getStatus('smoke_sensor_status')
+          || this.device.getStatus('smoke_sensor_state');
 
         if ((status && (status.value === 'alarm' || status.value === '1'))) {
           return this.Characteristic.LeakDetected.LEAK_DETECTED;

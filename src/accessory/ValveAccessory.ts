@@ -1,34 +1,34 @@
-import { TuyaDeviceFunction, TuyaDeviceFunctionType } from '../device/TuyaDevice';
+import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
 
 export default class ValueAccessory extends BaseAccessory {
 
-  configureService(deviceFunction: TuyaDeviceFunction) {
-    if (!deviceFunction.code.startsWith('switch')
-      || deviceFunction.type !== TuyaDeviceFunctionType.Boolean) {
+  configureService(schema: TuyaDeviceSchema) {
+    if (!schema.code.startsWith('switch')
+      || schema.type !== TuyaDeviceSchemaType.Boolean) {
       return;
     }
 
-    const service = this.accessory.getService(deviceFunction.code)
-      || this.accessory.addService(this.Service.Valve, deviceFunction.name, deviceFunction.code);
+    const service = this.accessory.getService(schema.code)
+      || this.accessory.addService(this.Service.Valve, schema.code, schema.code);
 
-    service.setCharacteristic(this.Characteristic.Name, deviceFunction.name);
+    service.setCharacteristic(this.Characteristic.Name, schema.code);
     service.setCharacteristic(this.Characteristic.ValveType, this.Characteristic.ValveType.IRRIGATION);
 
     service.getCharacteristic(this.Characteristic.InUse)
       .onGet(() => {
-        const status = this.device.getDeviceStatus(deviceFunction.code);
+        const status = this.device.getStatus(schema.code);
         return status?.value as boolean;
       });
 
     service.getCharacteristic(this.Characteristic.Active)
       .onGet(() => {
-        const status = this.device.getDeviceStatus(deviceFunction.code);
+        const status = this.device.getStatus(schema.code);
         return status?.value as boolean;
       })
       .onSet(value => {
         this.deviceManager.sendCommands(this.device.id, [{
-          code: deviceFunction.code,
+          code: schema.code,
           value: (value as number === 1) ? true : false,
         }]);
       });

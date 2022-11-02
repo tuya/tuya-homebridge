@@ -1,5 +1,5 @@
 import { PlatformAccessory } from 'homebridge';
-import { TuyaDeviceStatus, TuyaDeviceFunctionEnumProperty, TuyaDeviceFunctionIntegerProperty } from '../device/TuyaDevice';
+import { TuyaDeviceStatus, TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
@@ -26,38 +26,34 @@ export default class FanAccessory extends BaseAccessory {
   }
 
   getFanActiveStatus() {
-    return this.device.getDeviceStatus('switch_fan')
-      || this.device.getDeviceStatus('fan_switch')
-      || this.device.getDeviceStatus('switch');
+    return this.device.getStatus('switch_fan')
+      || this.device.getStatus('fan_switch')
+      || this.device.getStatus('switch');
   }
 
-  getFanSpeedFunction() {
-    return this.device.getDeviceFunction('fan_speed');
+  getFanSpeedSchema() {
+    return this.device.getSchema('fan_speed');
   }
 
-  getFanSpeedLevelFunction() {
-    return this.device.getDeviceFunction('fan_speed_enum');
-  }
-
-  getFanSpeedLevelProperty() {
-    return this.device.getDeviceFunctionProperty('fan_speed_enum') as TuyaDeviceFunctionEnumProperty | undefined;
+  getFanSpeedLevelSchema() {
+    return this.device.getSchema('fan_speed_enum');
   }
 
   getFanSwingStatus() {
-    return this.device.getDeviceStatus('fan_horizontal');
+    return this.device.getStatus('fan_horizontal');
   }
 
   getLightOnStatus() {
-    return this.device.getDeviceStatus('light')
-      || this.device.getDeviceStatus('switch_led');
+    return this.device.getStatus('light')
+      || this.device.getStatus('switch_led');
   }
 
   getLightBrightnessStatus() {
-    return this.device.getDeviceStatus('bright_value');
+    return this.device.getStatus('bright_value');
   }
 
-  getLightBrightnessProperty() {
-    return this.device.getDeviceFunctionProperty('bright_value') as TuyaDeviceFunctionIntegerProperty | undefined;
+  getLightBrightnessSchema() {
+    return this.device.getSchema('bright_value');
   }
 
 
@@ -77,12 +73,12 @@ export default class FanAccessory extends BaseAccessory {
   }
 
   configureRotationSpeed() {
-    const speedFunction = this.getFanSpeedFunction();
-    const speedLevelFunction = this.getFanSpeedLevelFunction();
-    const speedLevelProperty = this.getFanSpeedLevelProperty();
+    const speedSchema = this.getFanSpeedSchema();
+    const speedLevelSchema = this.getFanSpeedLevelSchema();
+    const speedLevelProperty = speedLevelSchema?.property as TuyaDeviceSchemaEnumProperty;
     const props = { minValue: 0, maxValue: 100, minStep: 1};
-    if (!speedFunction) {
-      if (speedLevelProperty) {
+    if (!speedSchema) {
+      if (speedLevelSchema) {
         props.minStep = Math.floor(100 / (speedLevelProperty.range.length - 1));
         props.maxValue = props.minStep * (speedLevelProperty.range.length - 1);
       } else {
@@ -93,14 +89,14 @@ export default class FanAccessory extends BaseAccessory {
 
     this.fanService().getCharacteristic(this.Characteristic.RotationSpeed)
       .onGet(() => {
-        if (speedFunction) {
-          const status = this.device.getDeviceStatus(speedFunction.code);
+        if (speedSchema) {
+          const status = this.device.getStatus(speedSchema.code);
           let value = Math.max(0, status?.value as number);
           value = Math.min(100, value);
           return value;
         } else {
-          if (speedLevelProperty) {
-            const status = this.device.getDeviceStatus(speedLevelFunction!.code)!;
+          if (speedLevelSchema) {
+            const status = this.device.getStatus(speedLevelSchema.code)!;
             const index = speedLevelProperty.range.indexOf(status.value as string);
             return props.minStep * index;
           }
@@ -111,12 +107,12 @@ export default class FanAccessory extends BaseAccessory {
       })
       .onSet(value => {
         const commands: TuyaDeviceStatus[] = [];
-        if (speedFunction) {
-          commands.push({ code: speedFunction.code, value: value as number });
+        if (speedSchema) {
+          commands.push({ code: speedSchema.code, value: value as number });
         } else {
-          if (speedLevelProperty) {
+          if (speedLevelSchema) {
             const index = value as number / props.minStep;
-            commands.push({ code: speedLevelFunction!.code, value: speedLevelProperty.range[index] });
+            commands.push({ code: speedLevelSchema.code, value: speedLevelProperty.range[index] });
           } else {
             const on = this.getFanActiveStatus()!;
             commands.push({ code: on.code, value: (value > 50) ? true : false });
@@ -148,7 +144,7 @@ export default class FanAccessory extends BaseAccessory {
 
   configureLightBrightness() {
 
-    const property = this.getLightBrightnessProperty();
+    const property = this.getLightBrightnessSchema()?.property as TuyaDeviceSchemaIntegerProperty;
     if (!property) {
       return;
     }

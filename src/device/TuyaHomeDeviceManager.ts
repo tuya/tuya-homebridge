@@ -1,4 +1,4 @@
-import TuyaDevice, { TuyaDeviceFunction } from './TuyaDevice';
+import TuyaDevice from './TuyaDevice';
 import TuyaDeviceManager from './TuyaDeviceManager';
 
 export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
@@ -24,21 +24,8 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
       return [];
     }
 
-    const devIds: string[] = [];
     for (const device of devices) {
-      devIds.push(device.id);
-    }
-
-    const functions = await this.getDeviceListFunctions(devIds);
-
-    for (const device of devices) {
-      for (const item of functions) {
-        if (device.product_id === item['product_id']) {
-          device.functions = item['functions'] as TuyaDeviceFunction[];
-          break;
-        }
-      }
-      device.functions = device.functions || [];
+      device.schema = await this.getDeviceSchema(device.id);
     }
 
     this.devices = devices;

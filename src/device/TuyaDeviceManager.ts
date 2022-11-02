@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import TuyaOpenAPI from '../core/TuyaOpenAPI';
 import TuyaOpenMQ from '../core/TuyaOpenMQ';
-import TuyaDevice, { TuyaDeviceStatus } from './TuyaDevice';
+import TuyaDevice, { TuyaDeviceSchema, TuyaDeviceSchemaMode, TuyaDeviceStatus } from './TuyaDevice';
 
 enum Events {
   DEVICE_ADD = 'DEVICE_ADD',
@@ -41,19 +41,13 @@ export default class TuyaDeviceManager extends EventEmitter {
 
   async updateDevice(deviceID: string) {
 
-    let res = await this.getDeviceInfo(deviceID);
+    const res = await this.getDeviceInfo(deviceID);
     if (!res.success) {
       return null;
     }
-    const device = new TuyaDevice(res.result);
 
-    res = await this.getDeviceFunctions(deviceID);
-    if (res.success) {
-      device.functions = res.result['functions'];
-    } else {
-      this.log.warn(`Get device functions failed. code=${res.code}, msg=${res.msg}`);
-      device.functions = [];
-    }
+    const device = new TuyaDevice(res.result);
+    device.schema = await this.getDeviceSchema(deviceID);
 
     const oldDevice = this.getDevice(deviceID);
     if (oldDevice) {
@@ -75,11 +69,6 @@ export default class TuyaDeviceManager extends EventEmitter {
     return res;
   }
 
-  async getDeviceFunctions(deviceID: string) {
-    const res = await this.api.get(`/v1.0/devices/${deviceID}/functions`);
-    return res;
-  }
-
   async getDeviceListFunctions(devIds: string[] = []) {
     const PAGE_COUNT = 20;
 
@@ -94,6 +83,33 @@ export default class TuyaDeviceManager extends EventEmitter {
 
     return results;
   }
+
+  async getDeviceSchema(deviceID: string) {
+    // const res = await this.api.get(`/v1.2/iot-03/devices/${deviceID}/specification`);
+    const res = await this.api.get(`/v1.0/devices/${deviceID}/specifications`);
+    if (res.success === false) {
+      this.log.warn(`Get device specification failed. devId=${deviceID}, code=${res.code}, msg=${res.msg}`);
+      return [];
+    }
+
+    // Combine functions and status together, as it used to be.
+    const schemas: TuyaDeviceSchema[] = [];
+    for (const { code, type, values } of [...res.result.status, ...res.result.functions]) {
+      const read = (res.result.status).find(schema => schema.code === code) !== undefined;
+      const write = (res.result.functions).find(schema => schema.code === code) !== undefined;
+      let mode = TuyaDeviceSchemaMode.UNKNOWN;
+      if (read && write) {
+        mode = TuyaDeviceSchemaMode.READ_WRITE;
+      } else if (read && !write) {
+        mode = TuyaDeviceSchemaMode.READ_ONLY;
+      } else if (!read && write) {
+        mode = TuyaDeviceSchemaMode.WRITE_ONLY;
+      }
+      schemas.push({ code, mode, type, values, property: JSON.parse(values) });
+    }
+    return schemas;
+  }
+
 
   async sendCommands(deviceID: string, commands: TuyaDeviceStatus[]) {
     const res = await this.api.post(`/v1.0/devices/${deviceID}/commands`, { commands });

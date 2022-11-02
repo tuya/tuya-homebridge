@@ -1,5 +1,5 @@
 import { PlatformAccessory } from 'homebridge';
-import { TuyaDeviceFunctionEnumProperty, TuyaDeviceFunctionIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
+import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
@@ -20,38 +20,38 @@ export default class ThermostatAccessory extends BaseAccessory {
       || this.accessory.addService(this.Service.Thermostat);
   }
 
-  getCurrentTempFunctionProperty() {
-    return (this.device.getDeviceFunctionProperty('temp_current')
-      || this.device.getDeviceFunctionProperty('temp_set')) as TuyaDeviceFunctionIntegerProperty | undefined;
+  getCurrentTempSchema() {
+    return this.device.getSchema('temp_current')
+      || this.device.getSchema('temp_set');
   }
 
-  getTargetTempFunctionProperty() {
-    return this.device.getDeviceFunctionProperty('temp_set') as TuyaDeviceFunctionIntegerProperty | undefined;
+  getTargetTempSchema() {
+    return this.device.getSchema('temp_set');
   }
 
-  getCurrentTempDeviceStatus() {
-    return this.device.getDeviceStatus('temp_current')
-      || this.device.getDeviceStatus('temp_set'); // fallback
+  getCurrentTempStatus() {
+    return this.device.getStatus('temp_current')
+      || this.device.getStatus('temp_set'); // fallback
   }
 
-  getTargetTempDeviceStatus() {
-    return this.device.getDeviceStatus('temp_set');
+  getTargetTempStatus() {
+    return this.device.getStatus('temp_set');
   }
 
   configureCurrentState() {
     this.mainService().getCharacteristic(this.Characteristic.CurrentHeatingCoolingState)
       .onGet(() => {
-        const on = this.device.getDeviceStatus('switch');
+        const on = this.device.getStatus('switch');
         if (on && on.value === false) {
           return this.Characteristic.CurrentHeatingCoolingState.OFF;
         }
 
-        const status = this.device.getDeviceStatus('work_state')
-          || this.device.getDeviceStatus('mode');
+        const status = this.device.getStatus('work_state')
+          || this.device.getStatus('mode');
         if (!status) {
           // If don't support mode, compare current and target temp.
-          const current = this.getCurrentTempDeviceStatus();
-          const target = this.getTargetTempDeviceStatus();
+          const current = this.getCurrentTempStatus();
+          const target = this.getTargetTempStatus();
           if (!target || !current) {
             return this.Characteristic.CurrentHeatingCoolingState.OFF;
           }
@@ -81,24 +81,24 @@ export default class ThermostatAccessory extends BaseAccessory {
       this.Characteristic.TargetHeatingCoolingState.AUTO,
     ];
 
-    const mode = this.device.getDeviceFunctionProperty('mode') as TuyaDeviceFunctionEnumProperty | undefined;
-    if (mode) {
-      if (mode.range.includes('hot')) {
+    const property = this.device.getSchema('mode')?.property as TuyaDeviceSchemaEnumProperty;
+    if (property) {
+      if (property.range.includes('hot')) {
         validValues.push(this.Characteristic.TargetHeatingCoolingState.HEAT);
       }
-      if (mode.range.includes('cold') || mode.range.includes('eco')) {
+      if (property.range.includes('cold') || property.range.includes('eco')) {
         validValues.push(this.Characteristic.TargetHeatingCoolingState.COOL);
       }
     }
 
     this.mainService().getCharacteristic(this.Characteristic.TargetHeatingCoolingState)
       .onGet(() => {
-        const on = this.device.getDeviceStatus('switch');
+        const on = this.device.getStatus('switch');
         if (on && on.value === false) {
           return this.Characteristic.TargetHeatingCoolingState.OFF;
         }
 
-        const status = this.device.getDeviceStatus('mode');
+        const status = this.device.getStatus('mode');
         if (!status) {
           // If don't support mode, display auto.
           return this.Characteristic.TargetHeatingCoolingState.AUTO;
@@ -121,19 +121,18 @@ export default class ThermostatAccessory extends BaseAccessory {
           value: (value === this.Characteristic.TargetHeatingCoolingState.OFF) ? false : true,
         }];
 
-        const mode = this.device.getDeviceFunctionProperty('mode') as TuyaDeviceFunctionEnumProperty | undefined;
-        if (mode) {
+        if (property) {
           if (value === this.Characteristic.TargetHeatingCoolingState.HEAT
-            && mode.range.includes('hot')) {
+            && property.range.includes('hot')) {
             commands.push({ code: 'mode', value: 'hot' });
           } else if (value === this.Characteristic.TargetHeatingCoolingState.COOL) {
-            if (mode.range.includes('eco')) {
+            if (property.range.includes('eco')) {
               commands.push({ code: 'mode', value: 'eco' });
-            } else if (mode.range.includes('cold')) {
+            } else if (property.range.includes('cold')) {
               commands.push({ code: 'mode', value: 'eco' });
             }
           } else if (value === this.Characteristic.TargetHeatingCoolingState.AUTO
-            && mode.range.includes('auto')) {
+            && property.range.includes('auto')) {
             commands.push({ code: 'mode', value: 'auto' });
           }
         }
@@ -146,18 +145,18 @@ export default class ThermostatAccessory extends BaseAccessory {
 
   configureCurrentTemp() {
     const props = { minValue: -270, maxValue: 100, minStep: 0.1 };
-    const tempFunction = this.getCurrentTempFunctionProperty();
-    const multiple = tempFunction ? Math.pow(10, tempFunction.scale) : 1;
-    if (tempFunction) {
-      props.minValue = Math.max(props.minValue, tempFunction.min / multiple);
-      props.maxValue = Math.min(props.maxValue, tempFunction.max / multiple);
-      props.minStep = Math.max(props.minStep, tempFunction.step / multiple);
+    const property = this.getCurrentTempSchema()?.property as TuyaDeviceSchemaIntegerProperty;
+    const multiple = property ? Math.pow(10, property.scale) : 1;
+    if (property) {
+      props.minValue = Math.max(props.minValue, property.min / multiple);
+      props.maxValue = Math.min(props.maxValue, property.max / multiple);
+      props.minStep = Math.max(props.minStep, property.step / multiple);
     }
-    this.log.debug(`Set props for CurrentTemperature: ${JSON.stringify(tempFunction)}`);
+    this.log.debug('Set props for CurrentTemperature:', props);
 
     this.mainService().getCharacteristic(this.Characteristic.CurrentTemperature)
       .onGet(() => {
-        const status = this.getCurrentTempDeviceStatus();
+        const status = this.getCurrentTempStatus();
         let temp = status?.value as number / multiple;
         temp = Math.min(props.maxValue, temp);
         temp = Math.max(props.minValue, temp);
@@ -169,18 +168,18 @@ export default class ThermostatAccessory extends BaseAccessory {
 
   configureTargetTemp() {
     const props = { minValue: 10, maxValue: 38, minStep: 0.1 };
-    const tempFunction = this.getTargetTempFunctionProperty();
-    const multiple = tempFunction ? Math.pow(10, tempFunction.scale) : 1;
-    if (tempFunction) {
-      props.minValue = Math.max(props.minValue, tempFunction.min / multiple);
-      props.maxValue = Math.min(props.maxValue, tempFunction.max / multiple);
-      props.minStep = Math.max(props.minStep, tempFunction.step / multiple);
+    const property = this.getTargetTempSchema()?.property as TuyaDeviceSchemaIntegerProperty;
+    const multiple = property ? Math.pow(10, property.scale) : 1;
+    if (property) {
+      props.minValue = Math.max(props.minValue, property.min / multiple);
+      props.maxValue = Math.min(props.maxValue, property.max / multiple);
+      props.minStep = Math.max(props.minStep, property.step / multiple);
     }
-    this.log.debug(`Set props for TargetTemperature: ${JSON.stringify(tempFunction)}`);
+    this.log.debug('Set props for TargetTemperature:', props);
 
     this.mainService().getCharacteristic(this.Characteristic.TargetTemperature)
       .onGet(() => {
-        const status = this.getTargetTempDeviceStatus();
+        const status = this.getTargetTempStatus();
         let temp = status?.value as number / multiple;
         temp = Math.min(props.maxValue, temp);
         temp = Math.max(props.minStep, temp);
@@ -197,12 +196,12 @@ export default class ThermostatAccessory extends BaseAccessory {
   }
 
   configureTempDisplayUnits() {
-    if (!this.device.getDeviceStatus('temp_unit_convert')) {
+    if (!this.device.getStatus('temp_unit_convert')) {
       return;
     }
     this.mainService().getCharacteristic(this.Characteristic.TemperatureDisplayUnits)
       .onGet(() => {
-        const status = this.device.getDeviceStatus('temp_unit_convert');
+        const status = this.device.getStatus('temp_unit_convert');
         return (status?.value === 'c') ?
           this.Characteristic.TemperatureDisplayUnits.CELSIUS :
           this.Characteristic.TemperatureDisplayUnits.FAHRENHEIT;

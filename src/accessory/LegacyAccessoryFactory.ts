@@ -34,6 +34,8 @@ export default class LegacyAccessoryFactory {
       };
     }
 
+    device['functions'] = device.schema;
+
     let handler;
     switch (device.category) {
       case 'kj':

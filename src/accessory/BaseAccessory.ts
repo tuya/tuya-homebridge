@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PlatformAccessory, Service, Characteristic } from 'homebridge';
 
-import { TuyaDeviceFunction, TuyaDeviceStatus } from '../device/TuyaDevice';
+import { TuyaDeviceSchema, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 
 const MANUFACTURER = 'Tuya Inc.';
@@ -29,11 +29,8 @@ export default class BaseAccessory {
     this.addAccessoryInfoService();
     this.addBatteryService();
 
-    for (const deviceFunction of this.device.functions) {
-      const status = this.device.getDeviceStatus(deviceFunction.code);
-      if (status) {
-        this.configureService(deviceFunction);
-      }
+    for (const schema of this.device.schema) {
+      this.configureService(schema);
     }
 
     this.onDeviceStatusUpdate(this.device.status);
@@ -101,20 +98,20 @@ export default class BaseAccessory {
   }
 
   getBatteryState() {
-    return this.device.getDeviceStatus('battery_state');
+    return this.device.getStatus('battery_state');
   }
 
   getBatteryPercentage() {
-    return this.device.getDeviceStatus('battery_percentage')
-      || this.device.getDeviceStatus('residual_electricity');
+    return this.device.getStatus('battery_percentage')
+      || this.device.getStatus('residual_electricity');
   }
 
   getChargeState() {
-    return this.device.getDeviceStatus('charge_state');
+    return this.device.getStatus('charge_state');
   }
 
 
-  configureService(deviceFunction: TuyaDeviceFunction) {
+  configureService(schema: TuyaDeviceSchema) {
 
   }
 

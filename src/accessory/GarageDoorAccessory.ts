@@ -12,8 +12,8 @@ export default class GarageDoorAccessory extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.CurrentDoorState)
       .onGet(() => {
-        const currentStatus = this.device.getDeviceStatus('doorcontact_state')!;
-        const targetStatus = this.device.getDeviceStatus('switch_1')!;
+        const currentStatus = this.device.getStatus('doorcontact_state')!;
+        const targetStatus = this.device.getStatus('switch_1')!;
 
         if (currentStatus.value === true && targetStatus.value === true) {
           return this.Characteristic.CurrentDoorState.OPEN;
@@ -31,7 +31,7 @@ export default class GarageDoorAccessory extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.TargetDoorState)
       .onGet(() => {
-        const status = this.device.getDeviceStatus('switch_1')!;
+        const status = this.device.getStatus('switch_1')!;
         return status.value ?
           this.Characteristic.TargetDoorState.OPEN :
           this.Characteristic.TargetDoorState.CLOSED;

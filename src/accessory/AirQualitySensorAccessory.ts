@@ -12,7 +12,7 @@ export default class AirQualitySensorAccessory extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.AirQuality)
       .onGet(() => {
-        const status = this.device.getDeviceStatus('pm25_value');
+        const status = this.device.getStatus('pm25_value');
         if (status) {
           let pm25 = Math.max(0, status?.value as number);
           pm25 = Math.min(1000, pm25);
@@ -30,30 +30,30 @@ export default class AirQualitySensorAccessory extends BaseAccessory {
         return this.Characteristic.AirQuality.UNKNOWN;
       });
 
-    if (this.device.getDeviceStatus('pm25_value')) {
+    if (this.device.getStatus('pm25_value')) {
       service.getCharacteristic(this.Characteristic.PM2_5Density)
         .onGet(() => {
-          const status = this.device.getDeviceStatus('pm25_value');
+          const status = this.device.getStatus('pm25_value');
           let pm25 = Math.max(0, status?.value as number);
           pm25 = Math.min(1000, pm25);
           return pm25;
         });
     }
 
-    if (this.device.getDeviceStatus('pm10')) {
+    if (this.device.getStatus('pm10')) {
       service.getCharacteristic(this.Characteristic.PM10Density)
         .onGet(() => {
-          const status = this.device.getDeviceStatus('pm10');
+          const status = this.device.getStatus('pm10');
           let pm25 = Math.max(0, status?.value as number);
           pm25 = Math.min(1000, pm25);
           return pm25;
         });
     }
 
-    if (this.device.getDeviceStatus('voc_value')) {
+    if (this.device.getStatus('voc_value')) {
       service.getCharacteristic(this.Characteristic.VOCDensity)
         .onGet(() => {
-          const status = this.device.getDeviceStatus('voc_value');
+          const status = this.device.getStatus('voc_value');
           let voc = Math.max(0, status?.value as number);
           voc = Math.min(1000, voc);
           return voc;

@@ -22,7 +22,7 @@ export default class WindowCoveringAccessory extends BaseAccessory {
     this.mainService().getCharacteristic(this.Characteristic.CurrentPosition)
       .onGet(() => {
         if (!this.positionSupported()) {
-          const control = this.device.getDeviceStatus('control');
+          const control = this.device.getStatus('control');
           if (control?.value === 'close') {
             return 0;
           } else if (control?.value === 'stop') {
@@ -64,7 +64,7 @@ export default class WindowCoveringAccessory extends BaseAccessory {
     this.mainService().getCharacteristic(this.Characteristic.TargetPosition)
       .onGet(() => {
         if (!this.positionSupported()) {
-          const control = this.device.getDeviceStatus('control');
+          const control = this.device.getStatus('control');
           if (control?.value === 'close') {
             return 0;
           } else if (control?.value === 'stop') {
@@ -82,17 +82,16 @@ export default class WindowCoveringAccessory extends BaseAccessory {
       .onSet(value => {
         const commands: TuyaDeviceStatus[] = [];
         if (!this.positionSupported()) {
-          const control = this.device.getDeviceStatus('control');
           if (value === 0) {
-            commands.push({ code: control!.code, value: 'close' });
+            commands.push({ code: 'control', value: 'close' });
           } else if (value === 100) {
-            commands.push({ code: control!.code, value: 'open' });
+            commands.push({ code: 'control', value: 'open' });
           } else {
-            commands.push({ code: control!.code, value: 'stop' });
+            commands.push({ code: 'control', value: 'stop' });
           }
         } else {
-          const state = this.getTargetPosition();
-          commands.push({ code: state!.code, value: value as number });
+          const state = this.getTargetPosition()!;
+          commands.push({ code: state.code, value: value as number });
         }
         this.deviceManager.sendCommands(this.device.id, commands);
       })
@@ -102,16 +101,16 @@ export default class WindowCoveringAccessory extends BaseAccessory {
   }
 
   getCurrentPosition() {
-    return this.device.getDeviceStatus('percent_state'); // 0~100
+    return this.device.getStatus('percent_state'); // 0~100
   }
 
   getTargetPosition() {
-    return this.device.getDeviceStatus('percent_control')
-    || this.device.getDeviceStatus('position');  // 0~100
+    return this.device.getStatus('percent_control')
+    || this.device.getStatus('position');  // 0~100
   }
 
   getWorkState() {
-    return this.device.getDeviceStatus('work_state'); // opening, closing
+    return this.device.getStatus('work_state'); // opening, closing
   }
 
   positionSupported() {
@@ -121,9 +120,9 @@ export default class WindowCoveringAccessory extends BaseAccessory {
 
   /*
   isMotorReversed() {
-    const state = this.device.getDeviceStatus('control_back_mode')
-      || this.device.getDeviceStatus('control_back')
-      || this.device.getDeviceStatus('opposite');
+    const state = this.device.getStatus('control_back_mode')
+      || this.device.getStatus('control_back')
+      || this.device.getStatus('opposite');
     if (!state) {
       return false;
     }

@@ -1,5 +1,12 @@
 
-export enum TuyaDeviceFunctionType {
+export enum TuyaDeviceSchemaMode {
+  UNKNOWN = '',
+  READ_WRITE = 'rw',
+  READ_ONLY = 'ro',
+  WRITE_ONLY = 'wo',
+}
+
+export enum TuyaDeviceSchemaType {
   Boolean = 'Boolean',
   Integer = 'Integer',
   Enum = 'Enum',
@@ -8,7 +15,7 @@ export enum TuyaDeviceFunctionType {
   Raw = 'Raw',
 }
 
-export type TuyaDeviceFunctionIntegerProperty = {
+export type TuyaDeviceSchemaIntegerProperty = {
   min: number;
   max: number;
   scale: number;
@@ -16,27 +23,28 @@ export type TuyaDeviceFunctionIntegerProperty = {
   unit: string;
 };
 
-export type TuyaDeviceFunctionEnumProperty = {
+export type TuyaDeviceSchemaEnumProperty = {
   range: string[];
 };
 
-export type TuyaDeviceFunctionJSONProperty = object;
+export type TuyaDeviceSchemaObjectProperty = object;
 
-export type TuyaDeviceFunctionProperty = TuyaDeviceFunctionIntegerProperty
-  | TuyaDeviceFunctionEnumProperty
-  | TuyaDeviceFunctionJSONProperty;
-
-export type TuyaDeviceFunction = {
-  code: string;
-  name: string;
-  desc: string;
-  type: TuyaDeviceFunctionType;
-  values: string;
-};
+export type TuyaDeviceSchemaProperty = TuyaDeviceSchemaIntegerProperty
+  | TuyaDeviceSchemaEnumProperty
+  | TuyaDeviceSchemaObjectProperty;
 
 export type TuyaDeviceStatus = {
   code: string;
   value: string | number | boolean;
+};
+
+export type TuyaDeviceSchema = {
+  code: string;
+  // name: string;
+  mode: TuyaDeviceSchemaMode;
+  type: TuyaDeviceSchemaType;
+  values: string;
+  property: TuyaDeviceSchemaProperty; // JSON.parse(schema.values);
 };
 
 export default class TuyaDevice {
@@ -52,7 +60,7 @@ export default class TuyaDevice {
   product_name!: string;
   icon!: string;
   category!: string;
-  functions!: TuyaDeviceFunction[];
+  schema!: TuyaDeviceSchema[];
 
   // status
   status!: TuyaDeviceStatus[];
@@ -74,19 +82,11 @@ export default class TuyaDevice {
     Object.assign(this, obj);
   }
 
-  getDeviceFunction(code: string) {
-    return this.functions.find(_function => _function.code === code);
+  getSchema(code: string) {
+    return this.schema.find(schema => schema.code === code);
   }
 
-  getDeviceFunctionProperty(code: string) {
-    const deviceFunction = this.getDeviceFunction(code);
-    if (!deviceFunction) {
-      return;
-    }
-    return JSON.parse(deviceFunction.values) as TuyaDeviceFunctionProperty;
-  }
-
-  getDeviceStatus(code: string) {
+  getStatus(code: string) {
     return this.status.find(status => status.code === code);
   }
 
