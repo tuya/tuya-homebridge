@@ -100,17 +100,18 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 
 ## Troubleshooting
 
+When your device is not working well, or not supported yet, please submit the issue and upload your device informations.
+If that's still not enough, you can enable the debug mode to get the detail log.
+
 #### Get Device Information
 
-You can get device informations here:
-https://iot.tuya.com/cloud/device/detail
+After successful launching Homebridge, the device list will be saved inside Homebridge's persist path.
+You can get the file path from running log like this:
+```
+[2022/11/3 18:37:43] [TuyaPlatform] Device list saved at ~/.homebridge/persist/TuyaDeviceList.{uid}.json
+```
 
-If your device is not working well, or not supported yet, please provide these informations:
-- Product Category
-- Standard Instruction Set (Also called as 'functions')
-- Standard Status Set (Also called as 'status')
-
-They can also be found in the homebridge debug logs.
+Please remove the sensitive data such as `ip`, `lon`, `lat`, `local_key`, `uid` before uploading.
 
 #### Enable Debug Mode
 

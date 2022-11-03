@@ -1,5 +1,7 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 import { Validator } from 'jsonschema';
+import path from 'path';
+import fs from 'fs/promises';
 
 import TuyaOpenMQ from './core/TuyaOpenMQ';
 import TuyaDevice, { TuyaDeviceStatus } from './device/TuyaDevice';
@@ -102,8 +104,12 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    // add accessories
     this.log.info(`Got ${devices.length} device(s).`);
+    const file = path.join(this.api.user.persistPath(), `TuyaDeviceList.${this.deviceManager!.api.tokenInfo.uid}.json`);
+    this.log.info('Device list saved at %s', file);
+    await fs.writeFile(file, JSON.stringify(devices, null, 2));
+
+    // add accessories
     for (const device of devices) {
       this.addAccessory(device);
     }
