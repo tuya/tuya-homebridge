@@ -114,10 +114,10 @@ export default class TuyaOpenAPI {
       return;
     }
 
-    this.log.debug('Refresh access_token');
+    this.log.debug('[TuyaOpenAPI] Refreshing access_token');
     const res = await this.get(`/v1.0/token/${this.tokenInfo.refresh_token}`);
     if (res.success === false) {
-      this.log.error(`Refresh access_token failed. code=${res.code}, msg=${res.msg}`);
+      this.log.error('[TuyaOpenAPI] Refresh access_token failed. code = %s, msg = %s', res.code, res.msg);
       return;
     }
 
@@ -262,9 +262,8 @@ export default class TuyaOpenAPI {
       'dev_channel': 'homebridge',
       'devVersion': version,
     };
-    // eslint-disable-next-line max-len
-    this.log.debug(`TuyaOpenAPI request: method = ${method}, endpoint = ${this.endpoint}, path = ${path}, params = ${JSON.stringify(params)}, body = ${JSON.stringify(body)}, headers = ${JSON.stringify(headers)}`);
-
+    this.log.debug('[TuyaOpenAPI] request:\nmethod = %s\nendpoint = %s\npath = %s\nquery = %s\nheaders = %s\nbody = %s',
+      method, this.endpoint, path, JSON.stringify(params, null, 2), JSON.stringify(headers, null, 2), JSON.stringify(body, null, 2));
     const res = await axios({
       baseURL: this.endpoint,
       url: path,
@@ -274,7 +273,7 @@ export default class TuyaOpenAPI {
       data: body,
     });
 
-    this.log.debug(`TuyaOpenAPI response: path = ${path}, data = ${JSON.stringify(res.data)}`);
+    this.log.debug('[TuyaOpenAPI] response:\npath = %s\ndata = %s', path, JSON.stringify(res.data, null, 2));
     if (res.data && API_ERROR_MESSAGES[res.data.code]) {
       this.log.error(API_ERROR_MESSAGES[res.data.code]);
     }

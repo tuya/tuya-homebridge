@@ -308,7 +308,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    this.log.debug(`onDeviceInfoUpdate devId=${device.id}, info=${JSON.stringify(info)}`);
+    // this.log.debug('onDeviceInfoUpdate devId = %s, status = %o}', device.id, info);
     handler.onDeviceInfoUpdate(info);
   }
 
@@ -318,7 +318,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    this.log.debug(`onDeviceStatusUpdate devId=${device.id}, status=${JSON.stringify(status)}`);
+    // this.log.debug('onDeviceStatusUpdate devId = %s, status = %o}', device.id, status);
     handler.onDeviceStatusUpdate(status);
   }
 

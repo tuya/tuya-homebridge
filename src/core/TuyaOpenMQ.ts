@@ -72,7 +72,7 @@ export default class TuyaOpenMQ {
     }
 
     const { url, client_id, username, password, expire_time, source_topic } = res.result;
-    this.log.debug(`TuyaOpenMQ connecting: ${url}`);
+    this.log.debug('[TuyaOpenMQ] connecting to:', url);
     const client = mqtt.connect(url, {
       clientId: client_id,
       username: username,
@@ -105,31 +105,33 @@ export default class TuyaOpenMQ {
   }
 
   _onConnect() {
-    this.log.debug('TuyaOpenMQ connected');
+    this.log.debug('[TuyaOpenMQ] connected');
   }
 
   _onError(error: Error) {
-    this.log.error('TuyaOpenMQ error:', error);
+    this.log.error('[TuyaOpenMQ] error:', error);
   }
 
   _onEnd() {
-    this.log.debug('TuyaOpenMQ end');
+    this.log.debug('[TuyaOpenMQ] end');
   }
 
   private lastPayload?;
   async _onMessage(topic: string, payload: Buffer) {
     const { protocol, data, t } = JSON.parse(payload.toString());
     const messageData = this._decodeMQMessage(data, this.config!.password, t);
-    this.log.debug(`TuyaOpenMQ onMessage: topic = ${topic}, protocol = ${protocol}, message = ${messageData}`);
     let message = JSON.parse(messageData);
+    this.log.debug('[TuyaOpenMQ] onMessage:\ntopic = %s\nprotocol = %s\nmessage = %s', topic, protocol, JSON.stringify(message, null, 2));
 
     // Check message order
     const currentPayload = { protocol, message, t };
     if (protocol === 4 && this.lastPayload && t < this.lastPayload.t) {
-      this.log.warn(`TuyaOpenMQ warning: message received with wrong order.
-lastMessage: dataId=${this.lastPayload.message['dataId']}, t=${this.lastPayload.t}, ${new Date(this.lastPayload.t).toISOString()}
-currentMessage: dataId=${message['dataId']}, t=${t}, ${new Date(t).toISOString()}`);
-      this.log.warn('Fallback to use API fetching the latest device status.');
+      this.log.warn('[TuyaOpenMQ] Message received with wrong order.');
+      this.log.warn('[TuyaOpenMQ] LastMessage: dataId = %s, t = %s, %s',
+        this.lastPayload.message['dataId'], this.lastPayload.t, new Date(this.lastPayload.t).toISOString());
+      this.log.warn('[TuyaOpenMQ] CurrentMessage: dataId = %s, t = %s, %s',
+        message['dataId'], t, new Date(t).toISOString());
+      this.log.warn('[TuyaOpenMQ] Fallback to use API fetching the latest device status.');
       const devId = message['devId'];
       const res = await this.api.get(`/v1.0/iot-03/devices/${devId}/status`);
       if (res.success === false) {

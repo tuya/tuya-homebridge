@@ -33,11 +33,6 @@ export type TuyaDeviceSchemaProperty = TuyaDeviceSchemaIntegerProperty
   | TuyaDeviceSchemaEnumProperty
   | TuyaDeviceSchemaObjectProperty;
 
-export type TuyaDeviceStatus = {
-  code: string;
-  value: string | number | boolean;
-};
-
 export type TuyaDeviceSchema = {
   code: string;
   // name: string;
@@ -45,6 +40,11 @@ export type TuyaDeviceSchema = {
   type: TuyaDeviceSchemaType;
   values: string;
   property: TuyaDeviceSchemaProperty; // JSON.parse(schema.values);
+};
+
+export type TuyaDeviceStatus = {
+  code: string;
+  value: string | number | boolean;
 };
 
 export default class TuyaDevice {

@@ -69,26 +69,11 @@ export default class TuyaDeviceManager extends EventEmitter {
     return res;
   }
 
-  async getDeviceListFunctions(devIds: string[] = []) {
-    const PAGE_COUNT = 20;
-
-    let index = 0;
-    const results: object[] = [];
-    while(index < devIds.length) {
-      const res = await this.api.get('/v1.0/devices/functions', { 'device_ids': devIds.slice(index, index += PAGE_COUNT).join(',') });
-      if (res.result) {
-        results.push(...res.result);
-      }
-    }
-
-    return results;
-  }
-
   async getDeviceSchema(deviceID: string) {
     // const res = await this.api.get(`/v1.2/iot-03/devices/${deviceID}/specification`);
     const res = await this.api.get(`/v1.0/devices/${deviceID}/specifications`);
     if (res.success === false) {
-      this.log.warn(`Get device specification failed. devId=${deviceID}, code=${res.code}, msg=${res.msg}`);
+      this.log.warn('[TuyaDeviceManager] Get device specification failed. devId = %s, code = %s, msg = %s', deviceID, res.code, res.msg);
       return [];
     }
 
@@ -156,12 +141,12 @@ export default class TuyaDeviceManager extends EventEmitter {
         } else if (bizCode === 'delete') {
           this.emit(Events.DEVICE_DELETE, devId);
         } else {
-          this.log.warn(`Unhandled mqtt message: bizCode=${bizCode}, bizData=${JSON.stringify(bizData)}`);
+          this.log.warn('[TuyaDeviceManager] Unhandled mqtt message: bizCode = %s, bizData = %o', bizCode, bizData);
         }
         break;
       }
       default:
-        this.log.warn(`Unhandled mqtt message: protocol=${protocol}, message=${JSON.stringify(message)}`);
+        this.log.warn('[TuyaDeviceManager] Unhandled mqtt message: protocol = %s, message = %o', protocol, message);
         break;
     }
   }
