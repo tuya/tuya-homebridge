@@ -78,7 +78,7 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - Create a cloud develop project.
 - Go to `Project Page` > `Devices Panel` > `Link Tuya App Account`, link your app account.
 
-## For "Custom" Project
+### For "Custom" Project
 
 - `platform` - **required** : Must be 'TuyaPlatform'
 - `options.projectType` - **required** : Must be '1'
@@ -86,7 +86,7 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - `options.accessId` - **required** : Access ID from [Tuya IoT Platform -> Cloud Develop](https://iot.tuya.com/cloud)
 - `options.accessKey` - **required** : Access Secret from [Tuya IoT Platform -> Cloud Develop](https://iot.tuya.com/cloud)
 
-## For "Smart Home" Project
+### For "Smart Home" Project
 
 - `platform` - **required** : Must be 'TuyaPlatform'
 - `options.projectType` - **required** : Must be '2'
