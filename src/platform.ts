@@ -213,6 +213,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     mq.start();
 
     this.log.info('Fetching device list.');
+    deviceManager.ownerIDs = assetIDList;
     const devices = await deviceManager.updateDevices(assetIDList);
 
     this.deviceManager = deviceManager;
@@ -262,6 +263,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     }
 
     this.log.info('Fetching device list.');
+    deviceManager.ownerIDs = homeIDList.map(homeID =>homeID.toString());
     const devices = await deviceManager.updateDevices(homeIDList);
 
     this.deviceManager = deviceManager;

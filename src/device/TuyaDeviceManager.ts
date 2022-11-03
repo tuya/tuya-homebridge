@@ -19,6 +19,7 @@ export default class TuyaDeviceManager extends EventEmitter {
 
   static readonly Events = Events;
 
+  public ownerIDs: string[] = [];
   public devices: TuyaDevice[] = [];
   public log = this.api.log;
 
@@ -35,7 +36,7 @@ export default class TuyaDeviceManager extends EventEmitter {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async updateDevices(areaIDList: []): Promise<TuyaDevice[]> {
+  async updateDevices(ownerIDs: []): Promise<TuyaDevice[]> {
     return [];
   }
 
@@ -64,8 +65,8 @@ export default class TuyaDeviceManager extends EventEmitter {
     return res;
   }
 
-  async getDeviceListInfo(devIds: string[] = []) {
-    const res = await this.api.get('/v1.0/devices', { 'device_ids': devIds.join(',') });
+  async getDeviceListInfo(deviceIDs: string[] = []) {
+    const res = await this.api.get('/v1.0/devices', { 'device_ids': deviceIDs.join(',') });
     return res;
   }
 
@@ -125,11 +126,19 @@ export default class TuyaDeviceManager extends EventEmitter {
       case TuyaMQTTProtocol.DEVICE_INFO_UPDATE: {
         const { bizCode, bizData, devId } = message;
         if (bizCode === 'bindUser') {
-          // Disabled because it will received device which not belongs to current user's home.
-          // // TODO failed if request to quickly
-          // await new Promise(resolve => setTimeout(resolve, 3000));
-          // const device = await this.updateDevice(devId);
-          // this.emit(Events.DEVICE_ADD, device);
+          const { ownerId } = bizData;
+          if (!this.ownerIDs.includes(ownerId)) {
+            this.log.warn('[TuyaDeviceManager] Update devId = %s not included in your ownerIDs. Skip.', devId);
+            return;
+          }
+
+          // TODO failed if request to quickly
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          const device = await this.updateDevice(devId);
+          if (!device) {
+            return;
+          }
+          this.emit(Events.DEVICE_ADD, device);
         } else if (bizCode === 'nameUpdate') {
           const { name } = bizData;
           const device = this.getDevice(devId);
@@ -139,6 +148,17 @@ export default class TuyaDeviceManager extends EventEmitter {
           device.name = name;
           this.emit(Events.DEVICE_INFO_UPDATE, device, bizData);
         } else if (bizCode === 'delete') {
+          const { ownerId } = bizData;
+          if (!this.ownerIDs.includes(ownerId)) {
+            this.log.warn('[TuyaDeviceManager] Remove devId = %s not included in your ownerIDs. Skip.', devId);
+            return;
+          }
+
+          const device = this.getDevice(devId);
+          if (!device) {
+            return;
+          }
+          this.devices.splice(this.devices.indexOf(device), 1);
           this.emit(Events.DEVICE_DELETE, devId);
         } else {
           this.log.warn('[TuyaDeviceManager] Unhandled mqtt message: bizCode = %s, bizData = %o', bizCode, bizData);
