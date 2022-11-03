@@ -33,14 +33,12 @@
   ],
   "dependencies": {
     "axios": "^0.21.1",
-    "crypto-js": "^4.0.0",
     "debounce": "^1.2.1",
     "jsonschema": "^1.4.1",
     "mqtt": "^4.2.6",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@types/crypto-js": "^4.1.1",
     "@types/debounce": "^1.2.1",
     "@types/jest": "^29.1.2",
     "@types/node": "^16.10.9",

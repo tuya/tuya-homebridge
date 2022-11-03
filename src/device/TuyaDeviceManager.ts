@@ -19,16 +19,17 @@ export default class TuyaDeviceManager extends EventEmitter {
 
   static readonly Events = Events;
 
+  public mq: TuyaOpenMQ;
   public ownerIDs: string[] = [];
   public devices: TuyaDevice[] = [];
   public log = this.api.log;
 
   constructor(
     public api: TuyaOpenAPI,
-    public mq: TuyaOpenMQ,
   ) {
     super();
-    mq.addMessageListener(this.onMQTTMessage.bind(this));
+    this.mq = new TuyaOpenMQ(api, api.log);
+    this.mq.addMessageListener(this.onMQTTMessage.bind(this));
   }
 
   getDevice(deviceID: string) {

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { Method } from 'axios';
-import Crypto from 'crypto-js';
+import Crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 
 // eslint-disable-next-line
@@ -172,7 +172,7 @@ export default class TuyaOpenAPI {
     const res = await this.post('/v1.0/iot-01/associated-users/actions/authorized-login', {
       country_code: countryCode,
       username: username,
-      password: Crypto.MD5(password).toString(),
+      password: Crypto.createHash('md5').update(password).digest('hex'),
       schema: appSchema,
     });
 
@@ -210,7 +210,7 @@ export default class TuyaOpenAPI {
   async customCreateUser(username: string, password: string, country_code = 1) {
     const res = await this.post('/v1.0/iot-02/users', {
       username,
-      password: Crypto.SHA256(password).toString().toLowerCase(),
+      password: Crypto.createHash('sha256').update(password).digest('hex'),
       country_code,
     });
     return res;
@@ -226,7 +226,7 @@ export default class TuyaOpenAPI {
     this.tokenInfo = { access_token: '', refresh_token: '', uid: '', expire: 0 };
     const res = await this.post('/v1.0/iot-03/users/login', {
       username: username,
-      password: Crypto.SHA256(password).toString().toLowerCase(),
+      password: Crypto.createHash('sha256').update(password).digest('hex'),
     });
 
     if (res.success) {
@@ -295,15 +295,14 @@ export default class TuyaOpenAPI {
 
   _getSign(accessId: string, accessKey: string, accessToken = '', timestamp = 0, nonce: string, stringToSign: string) {
     const message = [accessId, accessToken, timestamp, nonce, stringToSign].join('');
-    const hash = Crypto.HmacSHA256(message, accessKey);
-    const sign = hash.toString().toUpperCase();
+    const sign = Crypto.createHmac('SHA256', accessKey).update(message).digest('hex').toUpperCase();
     return sign;
   }
 
   _getStringToSign(method: Method, path: string, params, body) {
     const httpMethod = method.toUpperCase();
     const bodyStream = body ? JSON.stringify(body) : '';
-    const contentSHA256 = Crypto.SHA256(bodyStream);
+    const contentSHA256 = Crypto.createHash('sha256').update(bodyStream).digest('hex');
     const headers = `client_id:${this.accessId}\n`;
     const url = this._getSignUrl(path, params);
     const result = [httpMethod, contentSHA256, headers, url].join('\n');

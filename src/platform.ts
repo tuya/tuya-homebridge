@@ -3,7 +3,6 @@ import { Validator } from 'jsonschema';
 import path from 'path';
 import fs from 'fs/promises';
 
-import TuyaOpenMQ from './core/TuyaOpenMQ';
 import TuyaDevice, { TuyaDeviceStatus } from './device/TuyaDevice';
 import TuyaDeviceManager from './device/TuyaDeviceManager';
 import TuyaCustomDeviceManager from './device/TuyaCustomDeviceManager';
@@ -139,8 +138,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     let res;
     const { endpoint, accessId, accessKey } = this.options;
     const api = new TuyaOpenAPI(endpoint, accessId, accessKey, this.log);
-    const mq = new TuyaOpenMQ(api, '2.0', this.log);
-    const deviceManager = new TuyaCustomDeviceManager(api, mq);
+    const deviceManager = new TuyaCustomDeviceManager(api);
 
     this.log.info('Get token.');
     res = await api.getToken();
@@ -210,7 +208,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     }
 
     this.log.info('Start MQTT connection.');
-    mq.start();
+    deviceManager.mq.start();
 
     this.log.info('Fetching device list.');
     deviceManager.ownerIDs = assetIDList;
@@ -228,8 +226,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     let res;
     const { accessId, accessKey, countryCode, username, password, appSchema } = this.options;
     const api = new TuyaOpenAPI(TuyaOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
-    const mq = new TuyaOpenMQ(api, '1.0', this.log);
-    const deviceManager = new TuyaHomeDeviceManager(api, mq);
+    const deviceManager = new TuyaHomeDeviceManager(api);
 
     this.log.info('Log in to Tuya Cloud.');
     res = await api.homeLogin(countryCode, username, password, appSchema);
@@ -242,7 +239,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     }
 
     this.log.info('Start MQTT connection.');
-    mq.start();
+    deviceManager.mq.start();
 
     this.log.info('Fetching home list.');
     res = await deviceManager.getHomeList();
