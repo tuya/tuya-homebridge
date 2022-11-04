@@ -17,17 +17,17 @@ export default class ValueAccessory extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.InUse)
       .onGet(() => {
-        const status = this.device.getStatus(schema.code);
+        const status = this.getStatus(schema.code);
         return status?.value as boolean;
       });
 
     service.getCharacteristic(this.Characteristic.Active)
       .onGet(() => {
-        const status = this.device.getStatus(schema.code);
+        const status = this.getStatus(schema.code);
         return status?.value as boolean;
       })
       .onSet(value => {
-        this.deviceManager.sendCommands(this.device.id, [{
+        this.sendCommands([{
           code: schema.code,
           value: (value as number === 1) ? true : false,
         }]);

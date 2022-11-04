@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PlatformAccessory, Service, Characteristic } from 'homebridge';
+import { debounce } from 'debounce';
 
 import { TuyaDeviceSchema, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
@@ -98,16 +99,54 @@ export default class BaseAccessory {
   }
 
   getBatteryState() {
-    return this.device.getStatus('battery_state');
+    return this.getStatus('battery_state');
   }
 
   getBatteryPercentage() {
-    return this.device.getStatus('battery_percentage')
-      || this.device.getStatus('residual_electricity');
+    return this.getStatus('battery_percentage')
+      || this.getStatus('residual_electricity');
   }
 
   getChargeState() {
-    return this.device.getStatus('charge_state');
+    return this.getStatus('charge_state');
+  }
+
+
+  getSchema(code: string) {
+    return this.device.schema.find(schema => schema.code === code);
+  }
+
+  getStatus(code: string) {
+    return this.device.status.find(status => status.code === code);
+  }
+
+  private sendQueue = new Map<string, TuyaDeviceStatus>();
+  private debounceSendCommands = debounce(async () => {
+    const commands = Object.values(this.sendQueue);
+    await this.deviceManager.sendCommands(this.device.id, commands);
+    this.sendQueue.clear();
+  }, 100);
+
+  async sendCommands(commands: TuyaDeviceStatus[], debounce = false) {
+
+    // Update cache immediately
+    for (const newStatus of commands) {
+      const oldStatus = this.device.status.find(_status => _status.code === newStatus.code);
+      if (oldStatus) {
+        oldStatus.value = newStatus.value;
+      }
+    }
+
+    if (debounce === false) {
+      return await this.deviceManager.sendCommands(this.device.id, commands);
+    }
+
+    for (const newStatus of commands) {
+      // Update send queue
+      this.sendQueue[newStatus.code] = newStatus;
+    }
+
+    this.debounceSendCommands();
   }
 
 
@@ -115,7 +154,7 @@ export default class BaseAccessory {
 
   }
 
-  onDeviceInfoUpdate(info) {
+  async onDeviceInfoUpdate(info) {
     // name, online, ...
   }
 
@@ -124,11 +163,12 @@ export default class BaseAccessory {
       for (const characteristic of service.characteristics) {
         const getHandler = characteristic['getHandler'];
         const newValue = getHandler ? (await getHandler()) : characteristic.value;
-        if (characteristic.value !== newValue) {
-          // eslint-disable-next-line max-len
-          this.log.debug(`Update value ${characteristic.value} => ${newValue} for devId=${this.device.id} service=${service.UUID}, subtype=${service.subtype}, characteristic=${characteristic.UUID}`);
-          characteristic.updateValue(newValue);
+        if (characteristic.value === newValue) {
+          continue;
         }
+        this.log.debug('Update value %o => %o for devId = %o service = %o, subtype = %o, characteristic = %o',
+          characteristic.value, newValue, this.device.id, service.UUID, service.subtype, characteristic.UUID);
+        characteristic.updateValue(newValue);
       }
     }
   }

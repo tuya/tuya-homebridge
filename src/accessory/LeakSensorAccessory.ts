@@ -12,10 +12,10 @@ export default class LeakSensor extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.LeakDetected)
       .onGet(() => {
-        const gas = this.device.getStatus('gas_sensor_status')
-          || this.device.getStatus('gas_sensor_state');
-        const ch4 = this.device.getStatus('ch4_sensor_state');
-        const water = this.device.getStatus('watersensor_state');
+        const gas = this.getStatus('gas_sensor_status')
+          || this.getStatus('gas_sensor_state');
+        const ch4 = this.getStatus('ch4_sensor_state');
+        const water = this.getStatus('watersensor_state');
 
         if ((gas && (gas.value === 'alarm' || gas.value === '1'))
           || (ch4 && ch4.value === 'alarm')

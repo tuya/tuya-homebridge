@@ -12,7 +12,7 @@ export default class ContaceSensor extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.ContactSensorState)
       .onGet(() => {
-        const status = this.device.getStatus('doorcontact_state');
+        const status = this.getStatus('doorcontact_state');
         return status!.value ?
           this.Characteristic.ContactSensorState.CONTACT_NOT_DETECTED:
           this.Characteristic.ContactSensorState.CONTACT_DETECTED;

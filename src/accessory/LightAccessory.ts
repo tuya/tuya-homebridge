@@ -1,4 +1,3 @@
-import { debounce } from 'debounce';
 import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
@@ -94,33 +93,33 @@ export default class LightAccessory extends BaseAccessory {
   }
 
   getOnSchema() {
-    return this.device.getSchema('switch_led')
-    || this.device.getSchema('switch_led_1');
+    return this.getSchema('switch_led')
+    || this.getSchema('switch_led_1');
   }
 
   getBrightnessSchema() {
-    return this.device.getSchema('bright_value')
-      || this.device.getSchema('bright_value_v2')
-      || this.device.getSchema('bright_value_1');
+    return this.getSchema('bright_value')
+      || this.getSchema('bright_value_v2')
+      || this.getSchema('bright_value_1');
   }
 
   getColorTemperatureSchema() {
-    return this.device.getSchema('temp_value')
-      || this.device.getSchema('temp_value_v2');
+    return this.getSchema('temp_value')
+      || this.getSchema('temp_value_v2');
   }
 
   getColorSchema() {
-    return this.device.getSchema('colour_data')
-      || this.device.getSchema('colour_data_v2');
+    return this.getSchema('colour_data')
+      || this.getSchema('colour_data_v2');
   }
 
   getWorkModeSchema() {
-    return this.device.getSchema('work_mode');
+    return this.getSchema('work_mode');
   }
 
   getColorValue() {
     const schema = this.getColorSchema();
-    const status = this.device.getStatus(schema!.code);
+    const status = this.getStatus(schema!.code);
     if (!status || !status.value || status.value === '' || status.value === '{}') {
       return { h: 0, s: 0, v: 0 };
     }
@@ -138,7 +137,7 @@ export default class LightAccessory extends BaseAccessory {
     if (!mode) {
       return false;
     }
-    const status = this.device.getStatus(mode.code);
+    const status = this.getStatus(mode.code);
     if (!status) {
       return false;
     }
@@ -150,7 +149,7 @@ export default class LightAccessory extends BaseAccessory {
     if (!mode) {
       return false;
     }
-    const status = this.device.getStatus(mode.code);
+    const status = this.getStatus(mode.code);
     if (!status) {
       return false;
     }
@@ -163,12 +162,12 @@ export default class LightAccessory extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.On)
       .onGet(() => {
-        const status = this.device.getStatus(schema.code);
+        const status = this.getStatus(schema.code);
         return !!status && status!.value;
       })
       .onSet((value) => {
         this.log.debug(`Characteristic.On set to: ${value}`);
-        this.addToSendQueue([{ code: schema.code, value: value as boolean }]);
+        this.sendCommands([{ code: schema.code, value: value as boolean }], true);
       });
   }
 
@@ -188,7 +187,7 @@ export default class LightAccessory extends BaseAccessory {
 
         const brightSchema = this.getBrightnessSchema()!;
         const { max } = brightSchema.property as TuyaDeviceSchemaIntegerProperty;
-        const brightStatus = this.device.getStatus(brightSchema.code)!;
+        const brightStatus = this.getStatus(brightSchema.code)!;
         const brightPercent = brightStatus.value as number / max;
         return Math.floor(brightPercent * 100);
       })
@@ -201,14 +200,14 @@ export default class LightAccessory extends BaseAccessory {
           const colorSchema = this.getColorSchema()!;
           const colorValue = this.getColorValue();
           colorValue.v = Math.floor(value as number * max / 100);
-          this.addToSendQueue([{ code: colorSchema.code, value: JSON.stringify(colorValue) }]);
+          this.sendCommands([{ code: colorSchema.code, value: JSON.stringify(colorValue) }], true);
           return;
         }
 
         const brightSchema = this.getBrightnessSchema()!;
         const { max } = brightSchema.property as TuyaDeviceSchemaIntegerProperty;
         const brightValue = Math.floor(value as number * max / 100);
-        this.addToSendQueue([{ code: brightSchema.code, value: brightValue }]);
+        this.sendCommands([{ code: brightSchema.code, value: brightValue }], true);
       });
 
   }
@@ -220,7 +219,7 @@ export default class LightAccessory extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.ColorTemperature)
       .onGet(() => {
-        const tempStatus = this.device.getStatus(tempSchema.code)!;
+        const tempStatus = this.getStatus(tempSchema.code)!;
         let miredValue = Math.floor(1000000 / ((tempStatus.value as number - min) * (7142 - 2000) / (max - min) + 2000));
         miredValue = Math.max(140, miredValue);
         miredValue = Math.min(500, miredValue);
@@ -239,7 +238,7 @@ export default class LightAccessory extends BaseAccessory {
           commands.push({ code: mode.code, value: 'white' });
         }
 
-        this.addToSendQueue(commands);
+        this.sendCommands(commands, true);
       });
 
   }
@@ -274,7 +273,7 @@ export default class LightAccessory extends BaseAccessory {
           commands.push({ code: mode.code, value: 'colour' });
         }
 
-        this.addToSendQueue(commands);
+        this.sendCommands(commands, true);
       });
   }
 
@@ -308,33 +307,8 @@ export default class LightAccessory extends BaseAccessory {
           commands.push({ code: mode.code, value: 'colour' });
         }
 
-        this.addToSendQueue(commands);
+        this.sendCommands(commands, true);
       });
   }
 
-  sendQueue: TuyaDeviceStatus[] = [];
-  debounceSendCommands = debounce(async () => {
-    await this.deviceManager.sendCommands(this.device.id, this.sendQueue);
-    this.sendQueue = [];
-  }, 100);
-
-  addToSendQueue(commands: TuyaDeviceStatus[]) {
-    for (const newStatus of commands) {
-      // Update cache immediately
-      const oldStatus = this.device.status.find(_status => _status.code === newStatus.code);
-      if (oldStatus) {
-        oldStatus.value = newStatus.value;
-      }
-
-      // Update send queue
-      const queueStatus = this.sendQueue.find(_status => _status.code === newStatus.code);
-      if (queueStatus) {
-        queueStatus.value = newStatus.value;
-      } else {
-        this.sendQueue.push(newStatus);
-      }
-    }
-
-    this.debounceSendCommands();
-  }
 }

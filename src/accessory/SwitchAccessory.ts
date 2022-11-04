@@ -19,11 +19,11 @@ export default class SwitchAccessory extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.On)
       .onGet(async () => {
-        const status = this.device.getStatus(schema.code);
+        const status = this.getStatus(schema.code);
         return status!.value as boolean;
       })
       .onSet(async (value) => {
-        await this.deviceManager.sendCommands(this.device.id, [{
+        await this.sendCommands([{
           code: schema.code,
           value: value as boolean,
         }]);

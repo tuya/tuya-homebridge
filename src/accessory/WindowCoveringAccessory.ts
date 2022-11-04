@@ -22,7 +22,7 @@ export default class WindowCoveringAccessory extends BaseAccessory {
     this.mainService().getCharacteristic(this.Characteristic.CurrentPosition)
       .onGet(() => {
         if (!this.positionSupported()) {
-          const control = this.device.getStatus('control');
+          const control = this.getStatus('control');
           if (control?.value === 'close') {
             return 0;
           } else if (control?.value === 'stop') {
@@ -64,7 +64,7 @@ export default class WindowCoveringAccessory extends BaseAccessory {
     this.mainService().getCharacteristic(this.Characteristic.TargetPosition)
       .onGet(() => {
         if (!this.positionSupported()) {
-          const control = this.device.getStatus('control');
+          const control = this.getStatus('control');
           if (control?.value === 'close') {
             return 0;
           } else if (control?.value === 'stop') {
@@ -93,7 +93,7 @@ export default class WindowCoveringAccessory extends BaseAccessory {
           const state = this.getTargetPosition()!;
           commands.push({ code: state.code, value: value as number });
         }
-        this.deviceManager.sendCommands(this.device.id, commands);
+        this.sendCommands(commands, true);
       })
       .setProps({
         minStep: this.positionSupported() ? 1 : 50,
@@ -101,16 +101,16 @@ export default class WindowCoveringAccessory extends BaseAccessory {
   }
 
   getCurrentPosition() {
-    return this.device.getStatus('percent_state'); // 0~100
+    return this.getStatus('percent_state'); // 0~100
   }
 
   getTargetPosition() {
-    return this.device.getStatus('percent_control')
-    || this.device.getStatus('position');  // 0~100
+    return this.getStatus('percent_control')
+    || this.getStatus('position');  // 0~100
   }
 
   getWorkState() {
-    return this.device.getStatus('work_state'); // opening, closing
+    return this.getStatus('work_state'); // opening, closing
   }
 
   positionSupported() {
@@ -120,9 +120,9 @@ export default class WindowCoveringAccessory extends BaseAccessory {
 
   /*
   isMotorReversed() {
-    const state = this.device.getStatus('control_back_mode')
-      || this.device.getStatus('control_back')
-      || this.device.getStatus('opposite');
+    const state = this.getStatus('control_back_mode')
+      || this.getStatus('control_back')
+      || this.getStatus('opposite');
     if (!state) {
       return false;
     }

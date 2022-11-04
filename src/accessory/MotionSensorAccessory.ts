@@ -7,13 +7,13 @@ export default class MotionSensorAccessory extends BaseAccessory {
   constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
     super(platform, accessory);
 
-    if (this.device.getStatus('pir')) {
+    if (this.getStatus('pir')) {
       const service = this.accessory.getService(this.Service.MotionSensor)
         || this.accessory.addService(this.Service.MotionSensor);
 
       service.getCharacteristic(this.Characteristic.MotionDetected)
         .onGet(() => {
-          const status = this.device.getStatus('pir');
+          const status = this.getStatus('pir');
           return (status!.value === 'pir');
         });
     }

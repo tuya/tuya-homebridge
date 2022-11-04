@@ -26,34 +26,34 @@ export default class FanAccessory extends BaseAccessory {
   }
 
   getFanActiveStatus() {
-    return this.device.getStatus('switch_fan')
-      || this.device.getStatus('fan_switch')
-      || this.device.getStatus('switch');
+    return this.getStatus('switch_fan')
+      || this.getStatus('fan_switch')
+      || this.getStatus('switch');
   }
 
   getFanSpeedSchema() {
-    return this.device.getSchema('fan_speed');
+    return this.getSchema('fan_speed');
   }
 
   getFanSpeedLevelSchema() {
-    return this.device.getSchema('fan_speed_enum');
+    return this.getSchema('fan_speed_enum');
   }
 
   getFanSwingStatus() {
-    return this.device.getStatus('fan_horizontal');
+    return this.getStatus('fan_horizontal');
   }
 
   getLightOnStatus() {
-    return this.device.getStatus('light')
-      || this.device.getStatus('switch_led');
+    return this.getStatus('light')
+      || this.getStatus('switch_led');
   }
 
   getLightBrightnessStatus() {
-    return this.device.getStatus('bright_value');
+    return this.getStatus('bright_value');
   }
 
   getLightBrightnessSchema() {
-    return this.device.getSchema('bright_value');
+    return this.getSchema('bright_value');
   }
 
 
@@ -65,10 +65,10 @@ export default class FanAccessory extends BaseAccessory {
       })
       .onSet(value => {
         const status = this.getFanActiveStatus()!;
-        this.deviceManager.sendCommands(this.device.id, [{
+        this.sendCommands([{
           code: status.code,
           value: (value === this.Characteristic.Active.ACTIVE) ? true : false,
-        }]);
+        }], true);
       });
   }
 
@@ -90,13 +90,13 @@ export default class FanAccessory extends BaseAccessory {
     this.fanService().getCharacteristic(this.Characteristic.RotationSpeed)
       .onGet(() => {
         if (speedSchema) {
-          const status = this.device.getStatus(speedSchema.code);
+          const status = this.getStatus(speedSchema.code);
           let value = Math.max(0, status?.value as number);
           value = Math.min(100, value);
           return value;
         } else {
           if (speedLevelSchema) {
-            const status = this.device.getStatus(speedLevelSchema.code)!;
+            const status = this.getStatus(speedLevelSchema.code)!;
             const index = speedLevelProperty.range.indexOf(status.value as string);
             return props.minStep * index;
           }
@@ -118,7 +118,7 @@ export default class FanAccessory extends BaseAccessory {
             commands.push({ code: on.code, value: (value > 50) ? true : false });
           }
         }
-        this.deviceManager.sendCommands(this.device.id, commands);
+        this.sendCommands(commands, true);
       })
       .setProps(props);
   }
@@ -135,10 +135,10 @@ export default class FanAccessory extends BaseAccessory {
         return status?.value as boolean;
       })
       .onSet(value => {
-        this.deviceManager.sendCommands(this.device.id, [{
+        this.sendCommands([{
           code: status.code,
           value: value as boolean,
-        }]);
+        }], true);
       });
   }
 
@@ -159,10 +159,10 @@ export default class FanAccessory extends BaseAccessory {
       })
       .onSet(value => {
         const status = this.getLightBrightnessStatus()!;
-        this.deviceManager.sendCommands(this.device.id, [{
+        this.sendCommands([{
           code: status.code,
           value: Math.floor((value as number) * property.max / 100),
-        }]);
+        }], true);
       });
   }
 }

@@ -85,12 +85,4 @@ export default class TuyaDevice {
     Object.assign(this, obj);
   }
 
-  getSchema(code: string) {
-    return this.schema.find(schema => schema.code === code);
-  }
-
-  getStatus(code: string) {
-    return this.status.find(status => status.code === code);
-  }
-
 }

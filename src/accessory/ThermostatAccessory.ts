@@ -21,33 +21,33 @@ export default class ThermostatAccessory extends BaseAccessory {
   }
 
   getCurrentTempSchema() {
-    return this.device.getSchema('temp_current')
-      || this.device.getSchema('temp_set');
+    return this.getSchema('temp_current')
+      || this.getSchema('temp_set');
   }
 
   getTargetTempSchema() {
-    return this.device.getSchema('temp_set');
+    return this.getSchema('temp_set');
   }
 
   getCurrentTempStatus() {
-    return this.device.getStatus('temp_current')
-      || this.device.getStatus('temp_set'); // fallback
+    return this.getStatus('temp_current')
+      || this.getStatus('temp_set'); // fallback
   }
 
   getTargetTempStatus() {
-    return this.device.getStatus('temp_set');
+    return this.getStatus('temp_set');
   }
 
   configureCurrentState() {
     this.mainService().getCharacteristic(this.Characteristic.CurrentHeatingCoolingState)
       .onGet(() => {
-        const on = this.device.getStatus('switch');
+        const on = this.getStatus('switch');
         if (on && on.value === false) {
           return this.Characteristic.CurrentHeatingCoolingState.OFF;
         }
 
-        const status = this.device.getStatus('work_state')
-          || this.device.getStatus('mode');
+        const status = this.getStatus('work_state')
+          || this.getStatus('mode');
         if (!status) {
           // If don't support mode, compare current and target temp.
           const current = this.getCurrentTempStatus();
@@ -81,7 +81,7 @@ export default class ThermostatAccessory extends BaseAccessory {
       this.Characteristic.TargetHeatingCoolingState.AUTO,
     ];
 
-    const property = this.device.getSchema('mode')?.property as TuyaDeviceSchemaEnumProperty;
+    const property = this.getSchema('mode')?.property as TuyaDeviceSchemaEnumProperty;
     if (property) {
       if (property.range.includes('hot')) {
         validValues.push(this.Characteristic.TargetHeatingCoolingState.HEAT);
@@ -93,12 +93,12 @@ export default class ThermostatAccessory extends BaseAccessory {
 
     this.mainService().getCharacteristic(this.Characteristic.TargetHeatingCoolingState)
       .onGet(() => {
-        const on = this.device.getStatus('switch');
+        const on = this.getStatus('switch');
         if (on && on.value === false) {
           return this.Characteristic.TargetHeatingCoolingState.OFF;
         }
 
-        const status = this.device.getStatus('mode');
+        const status = this.getStatus('mode');
         if (!status) {
           // If don't support mode, display auto.
           return this.Characteristic.TargetHeatingCoolingState.AUTO;
@@ -137,7 +137,7 @@ export default class ThermostatAccessory extends BaseAccessory {
           }
         }
 
-        this.deviceManager.sendCommands(this.device.id, commands);
+        this.sendCommands(commands);
       })
       .setProps({ validValues });
 
@@ -186,7 +186,7 @@ export default class ThermostatAccessory extends BaseAccessory {
         return temp;
       })
       .onSet(value => {
-        this.deviceManager.sendCommands(this.device.id, [{
+        this.sendCommands([{
           code: 'temp_set',
           value: value as number * multiple,
         }]);
@@ -196,18 +196,18 @@ export default class ThermostatAccessory extends BaseAccessory {
   }
 
   configureTempDisplayUnits() {
-    if (!this.device.getStatus('temp_unit_convert')) {
+    if (!this.getStatus('temp_unit_convert')) {
       return;
     }
     this.mainService().getCharacteristic(this.Characteristic.TemperatureDisplayUnits)
       .onGet(() => {
-        const status = this.device.getStatus('temp_unit_convert');
+        const status = this.getStatus('temp_unit_convert');
         return (status?.value === 'c') ?
           this.Characteristic.TemperatureDisplayUnits.CELSIUS :
           this.Characteristic.TemperatureDisplayUnits.FAHRENHEIT;
       })
       .onSet(value => {
-        this.deviceManager.sendCommands(this.device.id, [{
+        this.sendCommands([{
           code: 'temp_unit_convert',
           value: (value === this.Characteristic.TemperatureDisplayUnits.CELSIUS) ? 'c':'f',
         }]);
