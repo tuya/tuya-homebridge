@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import TuyaOpenAPI from '../core/TuyaOpenAPI';
 import TuyaOpenMQ from '../core/TuyaOpenMQ';
-import TuyaDevice, { TuyaDeviceSchema, TuyaDeviceSchemaMode, TuyaDeviceStatus } from './TuyaDevice';
+import TuyaDevice, { TuyaDeviceSchema, TuyaDeviceSchemaMode, TuyaDeviceSchemaType, TuyaDeviceStatus } from './TuyaDevice';
 
 enum Events {
   DEVICE_ADD = 'DEVICE_ADD',
@@ -92,7 +92,8 @@ export default class TuyaDeviceManager extends EventEmitter {
       } else if (!read && write) {
         mode = TuyaDeviceSchemaMode.WRITE_ONLY;
       }
-      schemas.push({ code, mode, type, values, property: JSON.parse(values) });
+      const property = type === TuyaDeviceSchemaType.String ? values : JSON.parse(values);
+      schemas.push({ code, mode, type, values, property });
     }
     return schemas;
   }

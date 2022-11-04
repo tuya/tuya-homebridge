@@ -27,11 +27,14 @@ export type TuyaDeviceSchemaEnumProperty = {
   range: string[];
 };
 
-export type TuyaDeviceSchemaObjectProperty = object;
+export type TuyaDeviceSchemaStringProperty = string;
+
+export type TuyaDeviceSchemaJSONProperty = object;
 
 export type TuyaDeviceSchemaProperty = TuyaDeviceSchemaIntegerProperty
   | TuyaDeviceSchemaEnumProperty
-  | TuyaDeviceSchemaObjectProperty;
+  | TuyaDeviceSchemaStringProperty
+  | TuyaDeviceSchemaJSONProperty;
 
 export type TuyaDeviceSchema = {
   code: string;
