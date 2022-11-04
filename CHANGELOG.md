@@ -5,6 +5,7 @@
 ### Added
 - Add config validation on plugin start.
 - Persist TuyaDeviceList.json for debugging (#41)
+- Add instructions for handling API errors.
 
 ### Changed
 - Rewritten in TypeScript, brings benefits of type checking, smart code hints, etc.
