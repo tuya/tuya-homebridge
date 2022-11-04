@@ -36,7 +36,7 @@ export default class TemperatureHumiditySensorAccessory extends BaseAccessory {
         .onGet(() => {
           const status = this.device.getStatus('va_humidity');
           this.log.debug('CurrentRelativeHumidity:', 'property =', property, 'multiple =', multiple, 'status =', status);
-          let humidity = Math.max(0, status!.value as number) / multiple;
+          let humidity = Math.floor(status!.value as number / multiple);
           humidity = Math.max(0, humidity);
           humidity = Math.min(100, humidity);
           return humidity;
