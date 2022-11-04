@@ -60,6 +60,7 @@ export default class TuyaOpenMQ {
 
     const res = await this._getMQConfig('mqtt');
     if (res.success === false) {
+      this.log.warn('[TuyaOpenMQ] Get MQTT config failed. code = %s, msg = %s', res.code, res.msg);
       this.stop();
       return;
     }

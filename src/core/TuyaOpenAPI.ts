@@ -38,13 +38,21 @@ export const LOGIN_ERROR_MESSAGES = {
 
 export const API_ERROR_MESSAGES = {
   28841002: 'API subscription expired. Please renew the API subscription at Tuya IoT Platform.',
+  28841101: `
+API not subscribed. Please go to "Tuya IoT Platform -> Cloud -> Development -> Project -> Service API",
+and Authorize the following APIs before using:
+- Authorization Token Management
+- Device Status Notification
+- IoT Core
+- Industry Project Client Service (for "Custom" project)
+`,
   28841105: `
 API not authorized. Please go to "Tuya IoT Platform -> Cloud -> Development -> Project -> Service API",
 and Authorize the following APIs before using:
 - Authorization Token Management
 - Device Status Notification
 - IoT Core
-- Industry Project Client Service (for "Custom" project type)
+- Industry Project Client Service (for "Custom" project)
 `,
 };
 
