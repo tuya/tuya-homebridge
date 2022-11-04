@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import TuyaOpenAPI from '../core/TuyaOpenAPI';
 import TuyaOpenMQ from '../core/TuyaOpenMQ';
-import TuyaDevice, { TuyaDeviceSchema, TuyaDeviceSchemaMode, TuyaDeviceSchemaType, TuyaDeviceStatus } from './TuyaDevice';
+import TuyaDevice, { TuyaDeviceSchema, TuyaDeviceSchemaMode, TuyaDeviceSchemaProperty, TuyaDeviceStatus } from './TuyaDevice';
 
 enum Events {
   DEVICE_ADD = 'DEVICE_ADD',
@@ -79,9 +79,17 @@ export default class TuyaDeviceManager extends EventEmitter {
       return [];
     }
 
+    if (res.result.category === 'infrared_ac') {
+      // TODO infrared_ac schema is nonstandard, skip now.
+      return [];
+    }
+
     // Combine functions and status together, as it used to be.
-    const schemas: TuyaDeviceSchema[] = [];
+    const schemas = new Map<string, TuyaDeviceSchema>();
     for (const { code, type, values } of [...res.result.status, ...res.result.functions]) {
+      if (schemas[code]) {
+        continue;
+      }
       const read = (res.result.status).find(schema => schema.code === code) !== undefined;
       const write = (res.result.functions).find(schema => schema.code === code) !== undefined;
       let mode = TuyaDeviceSchemaMode.UNKNOWN;
@@ -92,10 +100,15 @@ export default class TuyaDeviceManager extends EventEmitter {
       } else if (!read && write) {
         mode = TuyaDeviceSchemaMode.WRITE_ONLY;
       }
-      const property = type === TuyaDeviceSchemaType.String ? values : JSON.parse(values);
-      schemas.push({ code, mode, type, values, property });
+      let property: TuyaDeviceSchemaProperty;
+      try {
+        property = JSON.parse(values);
+        schemas[code] = { code, mode, type, values, property };
+      } catch (error) {
+        this.log.error(error);
+      }
     }
-    return schemas;
+    return Object.values(schemas) as TuyaDeviceSchema[];
   }
 
 
