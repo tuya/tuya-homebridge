@@ -180,16 +180,20 @@ export default class LightAccessory extends BaseAccessory {
         // Color mode, get brightness from hsv
         if (this.inColorMode()) {
           const { max } = (this.getColorSchema()?.property as TuyaDeviceSchemaColorProperty).v;
-          const brightStatus = this.getColorValue().v;
-          const brightPercent = brightStatus / max;
-          return Math.floor(brightPercent * 100);
+          const status = this.getColorValue().v;
+          let value = Math.floor(100 * status / max);
+          value = Math.max(0, value);
+          value = Math.min(100, value);
+          return value;
         }
 
-        const brightSchema = this.getBrightnessSchema()!;
-        const { max } = brightSchema.property as TuyaDeviceSchemaIntegerProperty;
-        const brightStatus = this.getStatus(brightSchema.code)!;
-        const brightPercent = brightStatus.value as number / max;
-        return Math.floor(brightPercent * 100);
+        const schema = this.getBrightnessSchema()!;
+        const { max } = schema.property as TuyaDeviceSchemaIntegerProperty;
+        const status = this.getStatus(schema.code)!;
+        let value = Math.floor(100 * (status.value as number) / max);
+        value = Math.max(0, value);
+        value = Math.min(100, value);
+        return value;
       })
       .onSet((value) => {
         this.log.debug(`Characteristic.Brightness set to: ${value}`);
