@@ -2,7 +2,6 @@
 import { describe, expect, test } from '@jest/globals';
 
 import TuyaOpenAPI from '../src/core/TuyaOpenAPI';
-import TuyaOpenMQ from '../src/core/TuyaOpenMQ';
 import TuyaDevice from '../src/device/TuyaDevice';
 
 import TuyaCustomDeviceManager from '../src/device/TuyaCustomDeviceManager';
@@ -12,8 +11,7 @@ import { config, expectDevice, expectSuccessResponse } from './util';
 const { options } = config;
 if (options.projectType === '1') {
   const api = new TuyaOpenAPI(options.endpoint, options.accessId, options.accessKey);
-  const mq = new TuyaOpenMQ(api, '2.0');
-  const customDeviceManager = new TuyaCustomDeviceManager(api, mq);
+  const deviceManager = new TuyaCustomDeviceManager(api);
 
   describe('TuyaOpenAPI', () => {
     test('getToken()', async () => {
@@ -51,7 +49,7 @@ if (options.projectType === '1') {
 
     const assetIDList: string[] = [];
     test('getAssetList()', async () => {
-      const res = await customDeviceManager.getAssetList();
+      const res = await deviceManager.getAssetList();
       expectSuccessResponse(res);
       const assets = res.result.list || res.result.assets;
       for (const { asset_id } of assets) {
@@ -60,17 +58,17 @@ if (options.projectType === '1') {
     });
 
     test('updateDevices()', async () => {
-      const devices = await customDeviceManager.updateDevices(assetIDList);
+      const devices = await deviceManager.updateDevices(assetIDList);
       expect(devices).not.toBeNull();
       for (const device of devices) {
         expectDevice(device);
       }
-    }, 10 * 1000);
+    }, 30 * 1000);
 
     test('updateDevice()', async () => {
-      let device: TuyaDevice | null = Array.from(customDeviceManager.devices)[0];
+      let device: TuyaDevice | null = Array.from(deviceManager.devices)[0];
       expectDevice(device);
-      device = await customDeviceManager.updateDevice(device.id);
+      device = await deviceManager.updateDevice(device.id);
       expectDevice(device!);
     });
   });
@@ -79,20 +77,20 @@ if (options.projectType === '1') {
 
     test('start()', async () => {
       await new Promise((resolve, reject) => {
-        mq._onConnect = () => {
+        deviceManager.mq._onConnect = () => {
           console.log('TuyaOpenMQ connected');
           resolve(null);
         };
-        mq._onError = (err) => {
+        deviceManager.mq._onError = (err) => {
           console.log('TuyaOpenMQ error:', err);
           reject(err);
         };
-        mq.start();
+        deviceManager.mq.start();
       });
     });
 
     test('stop()', async () => {
-      mq.stop();
+      deviceManager.mq.stop();
     });
 
   });
