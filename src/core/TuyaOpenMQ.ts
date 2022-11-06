@@ -1,6 +1,7 @@
 import mqtt from 'mqtt';
 import { v4 as uuid_v4 } from 'uuid';
 import Crypto from 'crypto';
+import CryptoJS from 'crypto-js';
 
 import TuyaOpenAPI from './TuyaOpenAPI';
 import Logger from '../util/Logger';
@@ -28,6 +29,7 @@ export default class TuyaOpenMQ {
   public running = false;
   public client?: mqtt.MqttClient;
   public config?: TuyaMQTTConfig;
+  public version = '1.0';
   public messageListeners = new Set<TuyaMQTTCallback>();
   public linkId = uuid_v4();
 
@@ -98,7 +100,7 @@ export default class TuyaOpenMQ {
       'link_id': this.linkId,
       'link_type': linkType,
       'topics': 'device',
-      'msg_encrypted_version': '2.0',
+      'msg_encrypted_version': this.version,
     });
     return res;
   }
@@ -119,6 +121,10 @@ export default class TuyaOpenMQ {
   async _onMessage(topic: string, payload: Buffer) {
     const { protocol, data, t } = JSON.parse(payload.toString());
     const messageData = this._decodeMQMessage(data, this.config!.password, t);
+    if (!messageData) {
+      this.log.warn('[TuyaOpenMQ] Message decode failed:', payload.toString());
+      return;
+    }
     let message = JSON.parse(messageData);
     this.log.debug('[TuyaOpenMQ] onMessage:\ntopic = %s\nprotocol = %s\nmessage = %s', topic, protocol, JSON.stringify(message, null, 2));
 
@@ -145,7 +151,16 @@ export default class TuyaOpenMQ {
     }
   }
 
-  _decodeMQMessage(data: string, password: string, t: number) {
+  _decodeMQMessage_1_0(b64msg: string, password: string) {
+    password = password.substring(8, 24);
+    const msg = CryptoJS.AES.decrypt(b64msg, CryptoJS.enc.Utf8.parse(password), {
+      mode: CryptoJS.mode.ECB,
+      padding: CryptoJS.pad.Pkcs7,
+    }).toString(CryptoJS.enc.Utf8);
+    return msg;
+  }
+
+  _decodeMQMessage_2_0(data: string, password: string, t: number) {
     // Base64 decoding generates Buffers
     const tmpbuffer = Buffer.from(data, 'base64');
     const key = password.substring(8, 24).toString();
@@ -166,6 +181,13 @@ export default class TuyaOpenMQ {
     return msg.toString('utf8');
   }
 
+  _decodeMQMessage(data: string, password: string, t: number) {
+    if (this.version === '2.0') {
+      return this._decodeMQMessage_2_0(data, password, t);
+    } else {
+      return this._decodeMQMessage_1_0(data, password);
+    }
+  }
 
   addMessageListener(listener: TuyaMQTTCallback) {
     this.messageListeners.add(listener);

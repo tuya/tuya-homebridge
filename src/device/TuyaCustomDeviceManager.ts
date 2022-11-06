@@ -1,7 +1,15 @@
+import TuyaOpenAPI from '../core/TuyaOpenAPI';
 import TuyaDevice from './TuyaDevice';
 import TuyaDeviceManager from './TuyaDeviceManager';
 
 export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
+
+  constructor(
+    public api: TuyaOpenAPI,
+  ) {
+    super(api);
+    this.mq.version = '2.0';
+  }
 
   async getAssetList(parent_asset_id = -1) {
     // const res = await this.api.get('/v1.0/iot-03/users/assets', {
