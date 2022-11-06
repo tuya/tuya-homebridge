@@ -1,5 +1,5 @@
 import { PlatformAccessory } from 'homebridge';
-import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty } from '../device/TuyaDevice';
+import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
@@ -38,11 +38,20 @@ export default class FanAccessory extends BaseAccessory {
   }
 
   getFanSpeedSchema() {
-    return this.getSchema('fan_speed');
+    const schema = this.getSchema('fan_speed');
+    if (schema && schema.type === TuyaDeviceSchemaType.Integer) {
+      return schema;
+    }
+    return undefined;
   }
 
   getFanSpeedLevelSchema() {
-    return this.getSchema('fan_speed_enum');
+    const schema = this.getSchema('fan_speed_enum')
+      || this.getSchema('fan_speed');
+    if (schema && schema.type === TuyaDeviceSchemaType.Enum) {
+      return schema;
+    }
+    return undefined;
   }
 
   getLightOnSchema() {
@@ -102,6 +111,7 @@ export default class FanAccessory extends BaseAccessory {
       .onSet(value => {
         const index = value as number / props.minStep;
         value = property.range[index].toString();
+        this.log.debug('Set RotationSpeed to:', value);
         this.sendCommands([{ code: schema.code, value }], true);
       })
       .setProps(props);
