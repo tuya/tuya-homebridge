@@ -4,7 +4,6 @@ import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
 import AirPurifierAccessory from './legacy/air_purifier_accessory';
-import HeaterAccessory from './legacy/heater_accessory';
 
 class LegacyAccessoryWrapper {
 
@@ -40,9 +39,6 @@ export default class LegacyAccessoryFactory {
     switch (device.category) {
       case 'kj':
         handler = new AirPurifierAccessory(platform, accessory, device);
-        break;
-      case 'qn':
-        handler = new HeaterAccessory(platform, accessory, device);
         break;
     }
 

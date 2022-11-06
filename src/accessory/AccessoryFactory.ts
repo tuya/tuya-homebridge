@@ -11,6 +11,7 @@ import GarageDoorAccessory from './GarageDoorAccessory';
 import WindowAccessory from './WindowAccessory';
 import WindowCoveringAccessory from './WindowCoveringAccessory';
 import ThermostatAccessory from './ThermostatAccessory';
+import HeaterAccessory from './HeaterAccessory';
 import ValueAccessory from './ValveAccessory';
 import ContactSensorAccessory from './ContactSensorAccessory';
 import LeakSensorAccessory from './LeakSensorAccessory';
@@ -75,14 +76,14 @@ export default class AccessoryFactory {
       case 'wkf':
         handler = new ThermostatAccessory(platform, accessory);
         break;
+      case 'qn':
+        handler = new HeaterAccessory(platform, accessory);
+        break;
       case 'ggq':
         handler = new ValueAccessory(platform, accessory);
         break;
       case 'ywbj':
         handler = new SmokeSensorAccessory(platform, accessory);
-        break;
-      case 'qn':
-        // TODO HeaterAccessory
         break;
       case 'mcs':
         handler = new ContactSensorAccessory(platform, accessory);
