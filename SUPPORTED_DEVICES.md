@@ -65,6 +65,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Curtain | 窗帘 | cl | Window Covering | ✅ |
 | Door and Window Controller | 门窗控制器 | mc | Window | ✅ |
 | Thermostat | 温控器 | wk | Thermostat | ✅ |
+| Thermostat Valve | 温控阀 | wkf | Thermostat | ✅ |
 | Bathroom Heater | 浴霸 | yb | | |
 | Irrigator | 灌溉器 | ggq | Valve | ✅ |
 | Humidifier | 加湿器 | jsq | | |

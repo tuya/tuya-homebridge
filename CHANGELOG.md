@@ -42,3 +42,4 @@
 - [Valve] Add Irrigator support (`ggq`). (#28)
 - [Switch] Add Scene Light Socket support (qjdcz). (#33)
 - [Fanv2] Add Ceiling Fan Light support (`fsd`). (#37)
+- [Thermostat] Add Thermostat Valve support (`wkf`).

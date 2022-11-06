@@ -72,6 +72,7 @@ export default class AccessoryFactory {
         handler = new WindowCoveringAccessory(platform, accessory);
         break;
       case 'wk':
+      case 'wkf':
         handler = new ThermostatAccessory(platform, accessory);
         break;
       case 'ggq':

@@ -20,23 +20,28 @@ export default class ThermostatAccessory extends BaseAccessory {
       || this.accessory.addService(this.Service.Thermostat);
   }
 
+  getCurrentModeSchema() {
+    return this.getSchema('work_state')
+    || this.getSchema('mode'); // fallback
+  }
+
+  getTargetModeSchema() {
+    return this.getSchema('mode');
+  }
+
   getCurrentTempSchema() {
     return this.getSchema('temp_current')
-      || this.getSchema('temp_set');
+      || this.getSchema('temp_set'); // fallback
   }
 
   getTargetTempSchema() {
     return this.getSchema('temp_set');
   }
 
-  getCurrentTempStatus() {
-    return this.getStatus('temp_current')
-      || this.getStatus('temp_set'); // fallback
+  getTempUnitConvertSchema() {
+    return this.getSchema('temp_unit_convert');
   }
 
-  getTargetTempStatus() {
-    return this.getStatus('temp_set');
-  }
 
   configureCurrentState() {
     this.mainService().getCharacteristic(this.Characteristic.CurrentHeatingCoolingState)
@@ -46,15 +51,16 @@ export default class ThermostatAccessory extends BaseAccessory {
           return this.Characteristic.CurrentHeatingCoolingState.OFF;
         }
 
-        const status = this.getStatus('work_state')
-          || this.getStatus('mode');
-        if (!status) {
+        const schema = this.getCurrentModeSchema();
+        if (!schema) {
           // If don't support mode, compare current and target temp.
-          const current = this.getCurrentTempStatus();
-          const target = this.getTargetTempStatus();
-          if (!target || !current) {
+          const currentSchema = this.getCurrentTempSchema();
+          const targetSchema = this.getTargetTempSchema();
+          if (!currentSchema || !targetSchema) {
             return this.Characteristic.CurrentHeatingCoolingState.OFF;
           }
+          const current = this.getStatus(currentSchema.code)!;
+          const target = this.getStatus(targetSchema.code)!;
           if (target.value > current.value) {
             return this.Characteristic.CurrentHeatingCoolingState.HEAT;
           } else if (target.value < current.value) {
@@ -64,7 +70,8 @@ export default class ThermostatAccessory extends BaseAccessory {
           }
         }
 
-        if (status.value === 'hot') {
+        const status = this.getStatus(schema.code)!;
+        if (status.value === 'hot' || status.value === 'opened') {
           return this.Characteristic.CurrentHeatingCoolingState.HEAT;
         } else if (status.value === 'cold' || status.value === 'eco') {
           return this.Characteristic.CurrentHeatingCoolingState.COOL;
@@ -77,11 +84,16 @@ export default class ThermostatAccessory extends BaseAccessory {
 
   configureTargetState() {
     const validValues = [
-      this.Characteristic.TargetHeatingCoolingState.OFF,
       this.Characteristic.TargetHeatingCoolingState.AUTO,
     ];
 
-    const property = this.getSchema('mode')?.property as TuyaDeviceSchemaEnumProperty;
+    // Thermostat valve may not support 'Power Off'
+    if (this.getStatus('switch')) {
+      validValues.push(this.Characteristic.TargetHeatingCoolingState.OFF);
+    }
+
+    const schema = this.getTargetModeSchema();
+    const property = schema?.property as TuyaDeviceSchemaEnumProperty;
     if (property) {
       if (property.range.includes('hot')) {
         validValues.push(this.Characteristic.TargetHeatingCoolingState.HEAT);
@@ -98,12 +110,12 @@ export default class ThermostatAccessory extends BaseAccessory {
           return this.Characteristic.TargetHeatingCoolingState.OFF;
         }
 
-        const status = this.getStatus('mode');
-        if (!status) {
+        if (!schema) {
           // If don't support mode, display auto.
           return this.Characteristic.TargetHeatingCoolingState.AUTO;
         }
 
+        const status = this.getStatus(schema.code)!;
         if (status.value === 'hot') {
           return this.Characteristic.TargetHeatingCoolingState.HEAT;
         } else if (status.value === 'cold' || status.value === 'eco') {
@@ -116,48 +128,60 @@ export default class ThermostatAccessory extends BaseAccessory {
         return this.Characteristic.TargetHeatingCoolingState.AUTO;
       })
       .onSet(value => {
-        const commands: TuyaDeviceStatus[] = [{
-          code: 'switch',
-          value: (value === this.Characteristic.TargetHeatingCoolingState.OFF) ? false : true,
-        }];
+        const commands: TuyaDeviceStatus[] = [];
 
-        if (property) {
+        // Thermostat valve may not support 'Power Off'
+        if (this.getStatus('switch')) {
+          commands.push({
+            code: 'switch',
+            value: (value === this.Characteristic.TargetHeatingCoolingState.OFF) ? false : true,
+          });
+        }
+
+        if (schema) {
           if (value === this.Characteristic.TargetHeatingCoolingState.HEAT
             && property.range.includes('hot')) {
-            commands.push({ code: 'mode', value: 'hot' });
+            commands.push({ code: schema.code, value: 'hot' });
           } else if (value === this.Characteristic.TargetHeatingCoolingState.COOL) {
             if (property.range.includes('eco')) {
-              commands.push({ code: 'mode', value: 'eco' });
+              commands.push({ code: schema.code, value: 'eco' });
             } else if (property.range.includes('cold')) {
-              commands.push({ code: 'mode', value: 'eco' });
+              commands.push({ code: schema.code, value: 'eco' });
             }
           } else if (value === this.Characteristic.TargetHeatingCoolingState.AUTO
             && property.range.includes('auto')) {
-            commands.push({ code: 'mode', value: 'auto' });
+            commands.push({ code: schema.code, value: 'auto' });
           }
         }
 
-        this.sendCommands(commands);
+        if (commands.length !== 0) {
+          this.sendCommands(commands);
+        }
       })
       .setProps({ validValues });
 
   }
 
   configureCurrentTemp() {
-    const props = { minValue: -270, maxValue: 100, minStep: 0.1 };
-    const property = this.getCurrentTempSchema()?.property as TuyaDeviceSchemaIntegerProperty;
-    const multiple = property ? Math.pow(10, property.scale) : 1;
-    if (property) {
-      props.minValue = Math.max(props.minValue, property.min / multiple);
-      props.maxValue = Math.min(props.maxValue, property.max / multiple);
-      props.minStep = Math.max(props.minStep, property.step / multiple);
+    const schema = this.getCurrentTempSchema();
+    if (!schema) {
+      this.log.warn('CurrentTemperature not supported for devId:', this.device.id);
+      return;
     }
+
+    const property = schema.property as TuyaDeviceSchemaIntegerProperty;
+    const multiple = property ? Math.pow(10, property.scale) : 1;
+    const props = {
+      minValue: Math.max(-270, property.min / multiple),
+      maxValue: Math.min(100, property.max / multiple),
+      minStep: Math.max(0.1, property.step / multiple),
+    };
     this.log.debug('Set props for CurrentTemperature:', props);
 
     this.mainService().getCharacteristic(this.Characteristic.CurrentTemperature)
       .onGet(() => {
-        const status = this.getCurrentTempStatus();
-        let temp = status?.value as number / multiple;
+        const status = this.getStatus(schema.code)!;
+        let temp = status.value as number / multiple;
         temp = Math.min(props.maxValue, temp);
         temp = Math.max(props.minValue, temp);
         return temp;
@@ -167,27 +191,32 @@ export default class ThermostatAccessory extends BaseAccessory {
   }
 
   configureTargetTemp() {
-    const props = { minValue: 10, maxValue: 38, minStep: 0.1 };
-    const property = this.getTargetTempSchema()?.property as TuyaDeviceSchemaIntegerProperty;
-    const multiple = property ? Math.pow(10, property.scale) : 1;
-    if (property) {
-      props.minValue = Math.max(props.minValue, property.min / multiple);
-      props.maxValue = Math.min(props.maxValue, property.max / multiple);
-      props.minStep = Math.max(props.minStep, property.step / multiple);
+    const schema = this.getTargetTempSchema();
+    if (!schema) {
+      this.log.warn('TargetTemperature not supported for devId:', this.device.id);
+      return;
     }
+
+    const property = schema.property as TuyaDeviceSchemaIntegerProperty;
+    const multiple = Math.pow(10, property.scale);
+    const props = {
+      minValue: Math.max(10, property.min / multiple),
+      maxValue: Math.min(38, property.max / multiple),
+      minStep: Math.max(0.1, property.step / multiple),
+    };
     this.log.debug('Set props for TargetTemperature:', props);
 
     this.mainService().getCharacteristic(this.Characteristic.TargetTemperature)
       .onGet(() => {
-        const status = this.getTargetTempStatus();
-        let temp = status?.value as number / multiple;
+        const status = this.getStatus(schema.code)!;
+        let temp = status.value as number / multiple;
         temp = Math.min(props.maxValue, temp);
-        temp = Math.max(props.minStep, temp);
+        temp = Math.max(props.minValue, temp);
         return temp;
       })
       .onSet(value => {
         this.sendCommands([{
-          code: 'temp_set',
+          code: schema.code,
           value: value as number * multiple,
         }]);
       })
@@ -196,19 +225,20 @@ export default class ThermostatAccessory extends BaseAccessory {
   }
 
   configureTempDisplayUnits() {
-    if (!this.getStatus('temp_unit_convert')) {
+    const schema = this.getTempUnitConvertSchema();
+    if (!schema) {
       return;
     }
     this.mainService().getCharacteristic(this.Characteristic.TemperatureDisplayUnits)
       .onGet(() => {
-        const status = this.getStatus('temp_unit_convert');
-        return (status?.value === 'c') ?
+        const status = this.getStatus(schema.code)!;
+        return (status.value === 'c') ?
           this.Characteristic.TemperatureDisplayUnits.CELSIUS :
           this.Characteristic.TemperatureDisplayUnits.FAHRENHEIT;
       })
       .onSet(value => {
         this.sendCommands([{
-          code: 'temp_unit_convert',
+          code: schema.code,
           value: (value === this.Characteristic.TemperatureDisplayUnits.CELSIUS) ? 'c':'f',
         }]);
       });
