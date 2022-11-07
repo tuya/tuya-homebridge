@@ -33,7 +33,7 @@ export const LOGIN_ERROR_MESSAGES = {
   1104: 'Please make sure your endpoint, accessId, accessKey is right.',
   1106: 'Please make sure your countryCode, username, password, appSchema is correct, and app account is linked with cloud project.',
   2401: 'Username or password is wrong.',
-  2406: 'Please make sure your cloud project is created after May 25, 2021.',
+  2406: 'Please make sure you selected the right data center where your app account located, and the app account is linked with cloud project.',
 };
 
 export const API_ERROR_MESSAGES = {
