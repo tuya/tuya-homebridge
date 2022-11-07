@@ -43,12 +43,12 @@ export default class LightAccessory extends BaseAccessory {
         this.configureColourTemperature();
         break;
       case LightAccessoryType.RGB:
-      case LightAccessoryType.RGBC:
         this.configureOn();
         this.configureBrightness();
         this.configureHue();
         this.configureSaturation();
         break;
+      case LightAccessoryType.RGBC:
       case LightAccessoryType.RGBCW:
         this.configureOn();
         this.configureBrightness();
@@ -217,33 +217,46 @@ export default class LightAccessory extends BaseAccessory {
   }
 
   configureColourTemperature() {
-    const service = this.getLightService();
-    const tempSchema = this.getColorTemperatureSchema()!;
-    const { min, max } = tempSchema.property as TuyaDeviceSchemaIntegerProperty;
+    const type = this.getAccessoryType();
+    const props = { minValue: 140, maxValue: 500, minStep: 1 };
+    if (type === LightAccessoryType.RGBC) {
+      props.minValue = props.maxValue = 200;
+    }
 
+    const service = this.getLightService();
     service.getCharacteristic(this.Characteristic.ColorTemperature)
       .onGet(() => {
-        const tempStatus = this.getStatus(tempSchema.code)!;
-        let miredValue = Math.floor(1000000 / ((tempStatus.value as number - min) * (7142 - 2000) / (max - min) + 2000));
+        if (type === LightAccessoryType.RGBC) {
+          return props.minValue;
+        }
+
+        const schema = this.getColorTemperatureSchema()!;
+        const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
+        const status = this.getStatus(schema.code)!;
+        let miredValue = Math.floor(1000000 / ((status.value as number - min) * (7142 - 2000) / (max - min) + 2000));
         miredValue = Math.max(140, miredValue);
         miredValue = Math.min(500, miredValue);
         return miredValue;
       })
       .onSet((value) => {
         this.log.debug(`Characteristic.ColorTemperature set to: ${value}`);
-        const temp = Math.floor((1000000 / (value as number) - 2000) * (max - min) / (7142 - 2000) + min);
-        const commands: TuyaDeviceStatus[] = [{
-          code: tempSchema.code,
-          value: temp,
-        }];
 
+        const commands: TuyaDeviceStatus[] = [];
         const mode = this.getWorkModeSchema();
         if (mode) {
           commands.push({ code: mode.code, value: 'white' });
         }
 
+        if (type !== LightAccessoryType.RGBC) {
+          const schema = this.getColorTemperatureSchema()!;
+          const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
+          const temp = Math.floor((1000000 / (value as number) - 2000) * (max - min) / (7142 - 2000) + min);
+          commands.push({ code: schema.code, value: temp });
+        }
+
         this.sendCommands(commands, true);
-      });
+      })
+      .setProps(props);
 
   }
 
