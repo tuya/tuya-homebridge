@@ -149,10 +149,12 @@ export default class TuyaDeviceManager extends EventEmitter {
 
           // TODO failed if request to quickly
           await new Promise(resolve => setTimeout(resolve, 3000));
+
           const device = await this.updateDevice(devId);
           if (!device) {
             return;
           }
+          this.mq.start(); // Force reconnect, unless new device status update won't get received
           this.emit(Events.DEVICE_ADD, device);
         } else if (bizCode === 'nameUpdate') {
           const { name } = bizData;

@@ -26,7 +26,6 @@ type TuyaMQTTCallback = (topic: string, protocol: number, data) => void;
 
 export default class TuyaOpenMQ {
 
-  public running = false;
   public client?: mqtt.MqttClient;
   public config?: TuyaMQTTConfig;
   public version = '1.0';
@@ -43,12 +42,10 @@ export default class TuyaOpenMQ {
   }
 
   start() {
-    this.running = true;
-    this._loop();
+    this._connect();
   }
 
   stop() {
-    this.running = false;
     if (this.timer) {
       clearTimeout(this.timer);
     }
@@ -58,18 +55,13 @@ export default class TuyaOpenMQ {
     }
   }
 
-  async _loop() {
+  async _connect() {
+    this.stop();
 
     const res = await this._getMQConfig('mqtt');
     if (res.success === false) {
       this.log.warn('[TuyaOpenMQ] Get MQTT config failed. code = %s, msg = %s', res.code, res.msg);
-      this.stop();
       return;
-    }
-
-    if (this.client) {
-      this.client.removeAllListeners();
-      this.client.end();
     }
 
     const { url, client_id, username, password, expire_time, source_topic } = res.result;
@@ -90,7 +82,7 @@ export default class TuyaOpenMQ {
     this.config = res.result;
 
     // reconnect every 2 hours required
-    this.timer = setTimeout(this._loop.bind(this), (expire_time - 60) * 1000);
+    this.timer = setTimeout(this._connect.bind(this), (expire_time - 60) * 1000);
 
   }
 
