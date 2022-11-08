@@ -219,9 +219,6 @@ export default class LightAccessory extends BaseAccessory {
   configureColourTemperature() {
     const type = this.getAccessoryType();
     const props = { minValue: 140, maxValue: 500, minStep: 1 };
-    if (type === LightAccessoryType.RGBC) {
-      props.minValue = props.maxValue = 200;
-    }
 
     const service = this.getLightService();
     service.getCharacteristic(this.Characteristic.ColorTemperature)
