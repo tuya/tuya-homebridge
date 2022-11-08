@@ -1,6 +1,6 @@
 {
   "name": "@0x5e/homebridge-tuya-platform",
-  "version": "1.6.0-beta.26",
+  "version": "1.6.0-beta.27",
   "description": "Tuya plugin for Hombridge, maintained by @0x5e, former employee of Tuya.",
   "license": "MIT",
   "repository": {
