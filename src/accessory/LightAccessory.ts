@@ -200,17 +200,21 @@ export default class LightAccessory extends BaseAccessory {
 
         // Color mode, set brightness to hsv
         if (this.inColorMode()) {
-          const { max } = (this.getColorSchema()?.property as TuyaDeviceSchemaColorProperty).v;
+          const { min, max } = (this.getColorSchema()?.property as TuyaDeviceSchemaColorProperty).v;
           const colorSchema = this.getColorSchema()!;
           const colorValue = this.getColorValue();
           colorValue.v = Math.floor(value as number * max / 100);
+          colorValue.v = Math.max(min, colorValue.v);
+          colorValue.v = Math.min(max, colorValue.v);
           this.sendCommands([{ code: colorSchema.code, value: JSON.stringify(colorValue) }], true);
           return;
         }
 
         const brightSchema = this.getBrightnessSchema()!;
-        const { max } = brightSchema.property as TuyaDeviceSchemaIntegerProperty;
-        const brightValue = Math.floor(value as number * max / 100);
+        const { min, max } = brightSchema.property as TuyaDeviceSchemaIntegerProperty;
+        let brightValue = Math.floor(value as number * max / 100);
+        brightValue = Math.max(min, brightValue);
+        brightValue = Math.min(max, brightValue);
         this.sendCommands([{ code: brightSchema.code, value: brightValue }], true);
       });
 
@@ -268,7 +272,7 @@ export default class LightAccessory extends BaseAccessory {
           return 0;
         }
 
-        let hue = Math.floor(360 * (this.getColorValue().h - min) / (max - min));
+        let hue = Math.floor(360 * this.getColorValue().h / max);
         hue = Math.max(0, hue);
         hue = Math.min(360, hue);
         return hue;
@@ -276,7 +280,9 @@ export default class LightAccessory extends BaseAccessory {
       .onSet((value) => {
         this.log.debug(`Characteristic.Hue set to: ${value}`);
         const colorValue = this.getColorValue();
-        colorValue.h = Math.floor((value as number / 360) * (max - min) + min);
+        colorValue.h = Math.floor(value as number * max / 360);
+        colorValue.h = Math.max(min, colorValue.h);
+        colorValue.h = Math.min(max, colorValue.h);
         const commands: TuyaDeviceStatus[] = [{
           code: colorSchema.code,
           value: JSON.stringify(colorValue),
@@ -302,7 +308,7 @@ export default class LightAccessory extends BaseAccessory {
           return 0;
         }
 
-        let saturation = Math.floor(100 * (this.getColorValue().s - min) / (max - min));
+        let saturation = Math.floor(100 * this.getColorValue().s / max);
         saturation = Math.max(0, saturation);
         saturation = Math.min(100, saturation);
         return saturation;
@@ -310,7 +316,9 @@ export default class LightAccessory extends BaseAccessory {
       .onSet((value) => {
         this.log.debug(`Characteristic.Saturation set to: ${value}`);
         const colorValue = this.getColorValue();
-        colorValue.s = Math.floor((value as number / 100) * (max - min) + min);
+        colorValue.s = Math.floor(value as number * max / 100);
+        colorValue.s = Math.max(min, colorValue.s);
+        colorValue.s = Math.min(max, colorValue.s);
         const commands: TuyaDeviceStatus[] = [{
           code: colorSchema.code,
           value: JSON.stringify(colorValue),
