@@ -224,7 +224,7 @@ export default class LightAccessory extends BaseAccessory {
     service.getCharacteristic(this.Characteristic.ColorTemperature)
       .onGet(() => {
         if (type === LightAccessoryType.RGBC) {
-          return props.minValue;
+          return 153;
         }
 
         const schema = this.getColorTemperatureSchema()!;
