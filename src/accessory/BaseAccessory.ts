@@ -122,7 +122,7 @@ export default class BaseAccessory {
 
   private sendQueue = new Map<string, TuyaDeviceStatus>();
   private debounceSendCommands = debounce(async () => {
-    const commands = Object.values(this.sendQueue);
+    const commands = [...this.sendQueue.values()];
     await this.deviceManager.sendCommands(this.device.id, commands);
     this.sendQueue.clear();
   }, 100);
@@ -143,7 +143,7 @@ export default class BaseAccessory {
 
     for (const newStatus of commands) {
       // Update send queue
-      this.sendQueue[newStatus.code] = newStatus;
+      this.sendQueue.set(newStatus.code, newStatus);
     }
 
     this.debounceSendCommands();
