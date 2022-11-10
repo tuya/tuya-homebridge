@@ -43,6 +43,7 @@ export default class AccessoryFactory {
       case 'fwd':
       case 'dc':
       case 'dd':
+      case 'gyd':
       case 'tgq':
       case 'sxd':
       case 'tgkg':

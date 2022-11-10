@@ -43,3 +43,4 @@
 - [Switch] Add Scene Light Socket support (qjdcz). (#33)
 - [Fanv2] Add Ceiling Fan Light support (`fsd`). (#37)
 - [Thermostat] Add Thermostat Valve support (`wkf`).
+- [Light] Add Motion Sensor Light support (`gyd`).
