@@ -198,12 +198,17 @@ export default class ThermostatAccessory extends BaseAccessory {
     }
 
     const property = schema.property as TuyaDeviceSchemaIntegerProperty;
-    const multiple = Math.pow(10, property.scale);
-    const props = {
+    let multiple = Math.pow(10, property.scale);
+    let props = {
       minValue: Math.max(10, property.min / multiple),
       maxValue: Math.min(38, property.max / multiple),
       minStep: Math.max(0.1, property.step / multiple),
     };
+    if (props.maxValue <= props.minValue) {
+      this.log.warn('The device %s seems have a wrong schema: %o, props will be reset to the default value.', this.device.id, schema);
+      multiple = 1;
+      props = { minValue: 10, maxValue: 38, minStep: 1 };
+    }
     this.log.debug('Set props for TargetTemperature:', props);
 
     this.mainService().getCharacteristic(this.Characteristic.TargetTemperature)
