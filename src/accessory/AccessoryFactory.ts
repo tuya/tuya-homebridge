@@ -12,7 +12,7 @@ import WindowAccessory from './WindowAccessory';
 import WindowCoveringAccessory from './WindowCoveringAccessory';
 import ThermostatAccessory from './ThermostatAccessory';
 import HeaterAccessory from './HeaterAccessory';
-import ValueAccessory from './ValveAccessory';
+import ValveAccessory from './ValveAccessory';
 import ContactSensorAccessory from './ContactSensorAccessory';
 import LeakSensorAccessory from './LeakSensorAccessory';
 import CarbonMonoxideSensorAccessory from './CarbonMonoxideSensorAccessory';
@@ -81,7 +81,7 @@ export default class AccessoryFactory {
         handler = new HeaterAccessory(platform, accessory);
         break;
       case 'ggq':
-        handler = new ValueAccessory(platform, accessory);
+        handler = new ValveAccessory(platform, accessory);
         break;
       case 'ywbj':
         handler = new SmokeSensorAccessory(platform, accessory);
