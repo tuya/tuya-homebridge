@@ -20,28 +20,23 @@ If beta version works fine for a while, it will be merged into the upstream repo
 - Less API errors.
 - Less development costs for new accessory categroies.
 - More supported devices.
-    - Air Quality Sensor
-    - Carbon Monoxide Sensor
-    - Carbon Dioxide Sensor
-    - Motion Sensor
-    - Light Sensor
-    - Water Detector
-    - Temperature and Humidity Sensor
-    - Human Presence Sensor
-    - Window
-    - Thermostat
-    - Irrigator
-- Reimplemented accessory code. Some bug fixed.
-    - Switch
-    - Outlet
-    - Lightbulb
-    - Fan
-    - Garage Door Opener
-    - Window Covering
-    - Smoke Sensor
-    - Contact Sensor
-    - Leak Sensor
-- For `Custom` project, `username` and `password` options are no longer need. The plugin will create a default user and authorize to all assets automatically.
+    - [Light] Spotlight (`sxd`)
+    - [Light] Motion Sensor Light (`gyd`)
+    - [Switch] Scene Light Socket (`qjdcz`)
+    - [Fanv2] Ceiling Fan Light (`fsd`)
+    - [Window] Door and Window Controller (`mc`)
+    - [WindowCovering] Curtain Switch (`clkg`)
+    - [Thermostat] Thermostat (`wk`)
+    - [Thermostat] Thermostat Valve (`wkf`)
+    - [Valve] Irrigator (`ggq`)
+    - [AirQualitySensor] PM2.5 Detector (`pm25`)
+    - [TemperatureHumiditySensor] Temperature and Humidity Sensor (`wsdcg`)
+    - [MotionSensor] Motion Sensor (`pir`)
+    - [HumanPresenceSensor] Human Presence Sensor (`hps`)
+    - [LightSensor] Light Sensor (`ldcg`)
+    - [CarbonMonoxideSensor] CO Detector (`cobj`)
+    - [CarbonDioxideSensor] CO2 Detector (`co2bj`)
+    - [LeakSensor] Water Detector (`sj`)
 
 
 ## Supported Tuya Devices
@@ -102,6 +97,9 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - `options.username` - **required** : Username
 - `options.password` - **required** : Password
 - `options.appSchema` - **required** : App schema. 'tuyaSmart' for Tuya Smart App, 'smartlife' for Smart Life App.
+
+**Note:**
+- The app account can't be used in multiple HomeBridge/HomeAssistant instance at the same time! Please consider using different app accounts and add them into the same home.
 
 
 ## Troubleshooting
