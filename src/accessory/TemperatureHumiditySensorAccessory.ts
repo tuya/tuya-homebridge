@@ -27,7 +27,7 @@ export default class TemperatureHumiditySensorAccessory extends BaseAccessory {
     service.getCharacteristic(this.Characteristic.CurrentTemperature)
       .onGet(() => {
         const status = this.getStatus(schema.code);
-        this.log.debug('CurrentTemperature:', 'property =', property, 'multiple =', multiple, 'status =', status);
+        // this.log.debug('CurrentTemperature:', 'property =', property, 'multiple =', multiple, 'status =', status);
         let temperature = status!.value as number / multiple;
         temperature = Math.max(-270, temperature);
         temperature = Math.min(100, temperature);
@@ -52,7 +52,7 @@ export default class TemperatureHumiditySensorAccessory extends BaseAccessory {
     service.getCharacteristic(this.Characteristic.CurrentRelativeHumidity)
       .onGet(() => {
         const status = this.getStatus(schema.code);
-        this.log.debug('CurrentRelativeHumidity:', 'property =', property, 'multiple =', multiple, 'status =', status);
+        // this.log.debug('CurrentRelativeHumidity:', 'property =', property, 'multiple =', multiple, 'status =', status);
         let humidity = Math.floor(status!.value as number / multiple);
         humidity = Math.max(0, humidity);
         humidity = Math.min(100, humidity);
