@@ -104,7 +104,8 @@ export default class BaseAccessory {
 
   getBatteryPercentage() {
     return this.getStatus('battery_percentage')
-      || this.getStatus('residual_electricity');
+      || this.getStatus('residual_electricity')
+      || this.getStatus('va_battery');
   }
 
   getChargeState() {
