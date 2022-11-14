@@ -99,7 +99,7 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - `options.appSchema` - **required** : App schema. 'tuyaSmart' for Tuya Smart App, 'smartlife' for Smart Life App.
 
 **Note:**
-- The app account can't be used in multiple HomeBridge/HomeAssistant instance at the same time! Please consider using different app accounts and add them into the same home.
+- The app account can't be used in multiple HomeBridge/HomeAssistant instance at the same time! Please consider using different app accounts instead.
 
 
 ## Troubleshooting
