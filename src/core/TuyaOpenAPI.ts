@@ -30,8 +30,8 @@ const DEFAULT_ENDPOINTS = {
 export const LOGIN_ERROR_MESSAGES = {
   1004: 'Please make sure your endpoint, accessId, accessKey is right.',
   1010: 'Please make sure you are not running multiple HomeBridge or HomeAssistant instance with same tuya account.',
-  1104: 'Please make sure your endpoint, accessId, accessKey is right.',
   1106: 'Please make sure your countryCode, username, password, appSchema is correct, and app account is linked with cloud project.',
+  1114: 'Please make sure your endpoint, accessId, accessKey is right.',
   2401: 'Username or password is wrong.',
   2406: 'Please make sure you selected the right data center where your app account located, and the app account is linked with cloud project.',
 };
