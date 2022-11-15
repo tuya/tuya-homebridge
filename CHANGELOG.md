@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Ceiling Fan Light support (`fsd`). (#37)
 - Add Thermostat Valve support (`wkf`). (#50)
 - Add Motion Sensor Light support (`gyd`). (#65)
+- Add Multiple Dimmer and Dimmer Switch support (`tgq`, `tgkg`).
 
 
 ### Fixed

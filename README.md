@@ -22,6 +22,8 @@ If beta version works fine for a while, it will be merged into the upstream repo
 - More supported devices.
     - [Light] Spotlight (`sxd`)
     - [Light] Motion Sensor Light (`gyd`)
+    - [Dimmer] Dual Dimmer (`tgq`)
+    - [Dimmer] Dual Dimmer Switch (`tgkg`)
     - [Switch] Scene Light Socket (`qjdcz`)
     - [Fanv2] Ceiling Fan Light (`fsd`)
     - [Window] Door and Window Controller (`mc`)

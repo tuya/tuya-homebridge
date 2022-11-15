@@ -4,6 +4,7 @@ import { TuyaPlatform } from '../platform';
 
 import BaseAccessory from './BaseAccessory';
 import LightAccessory from './LightAccessory';
+import DimmerAccessory from './DimmerAccessory';
 import OutletAccessory from './OutletAccessory';
 import SwitchAccessory from './SwitchAccessory';
 import FanAccessory from './FanAccessory';
@@ -44,10 +45,12 @@ export default class AccessoryFactory {
       case 'dc':
       case 'dd':
       case 'gyd':
-      case 'tgq':
       case 'sxd':
-      case 'tgkg':
         handler = new LightAccessory(platform, accessory);
+        break;
+      case 'tgq':
+      case 'tgkg':
+        handler = new DimmerAccessory(platform, accessory);
         break;
       case 'cz':
       case 'pc':

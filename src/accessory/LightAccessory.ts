@@ -93,14 +93,12 @@ export default class LightAccessory extends BaseAccessory {
   }
 
   getOnSchema() {
-    return this.getSchema('switch_led')
-    || this.getSchema('switch_led_1');
+    return this.getSchema('switch_led');
   }
 
   getBrightnessSchema() {
     return this.getSchema('bright_value')
-      || this.getSchema('bright_value_v2')
-      || this.getSchema('bright_value_1');
+      || this.getSchema('bright_value_v2');
   }
 
   getColorTemperatureSchema() {
