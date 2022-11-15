@@ -125,9 +125,9 @@ export default class TuyaOpenMQ {
     if (protocol === 4 && this.lastPayload && t < this.lastPayload.t) {
       this.log.warn('[TuyaOpenMQ] Message received with wrong order.');
       this.log.warn('[TuyaOpenMQ] LastMessage: dataId = %s, t = %s, %s',
-        this.lastPayload.message['dataId'], this.lastPayload.t, new Date(this.lastPayload.t).toISOString());
+        this.lastPayload.message['dataId'], this.lastPayload.t, new Date(this.lastPayload.t * 1000).toISOString());
       this.log.warn('[TuyaOpenMQ] CurrentMessage: dataId = %s, t = %s, %s',
-        message['dataId'], t, new Date(t).toISOString());
+        message['dataId'], t, new Date(t * 1000).toISOString());
       this.log.warn('[TuyaOpenMQ] Fallback to use API fetching the latest device status.');
       const devId = message['devId'];
       const res = await this.api.get(`/v1.0/iot-03/devices/${devId}/status`);
