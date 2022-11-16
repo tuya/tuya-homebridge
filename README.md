@@ -99,6 +99,7 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - `options.username` - **required** : Username
 - `options.password` - **required** : Password
 - `options.appSchema` - **required** : App schema. 'tuyaSmart' for Tuya Smart App, 'smartlife' for Smart Life App.
+- `options.homeWhitelist` - **optional**: An array of integer home ID values to whitelist. If present, only includes devices matching this Home ID value.
 
 **Note:**
 - The app account can't be used in multiple HomeBridge/HomeAssistant instance at the same time! Please consider using different app accounts instead.

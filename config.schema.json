@@ -81,7 +81,19 @@
 						"condition": {
 							"functionBody": "return model.options.projectType === '2';"
 						}
-					}
+					},
+					"homeWhitelist": {
+						"title": "Whitelisted Home IDs",
+						"description": "An optional list of Home IDs to match. If blank, all homes are matched.",
+						"type": "array",
+						"items": {
+							"title": "Home ID",
+							"type": "integer"
+						},
+						"condition": {
+							"functionBody": "return model.options.projectType === '2';"
+						}
+					}					
 				}
 			}
 		}
