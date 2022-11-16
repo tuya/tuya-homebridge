@@ -46,6 +46,7 @@ export default class BaseAccessory {
       .setCharacteristic(this.Characteristic.Manufacturer, MANUFACTURER)
       .setCharacteristic(this.Characteristic.Model, this.device.product_id)
       .setCharacteristic(this.Characteristic.Name, this.device.name)
+      .setCharacteristic(this.Characteristic.ConfiguredName, this.device.name)
       .setCharacteristic(this.Characteristic.SerialNumber, this.device.uuid)
     ;
   }

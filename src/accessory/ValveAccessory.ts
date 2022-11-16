@@ -13,6 +13,10 @@ export default class ValveAccessory extends BaseAccessory {
       || this.accessory.addService(this.Service.Valve, schema.code, schema.code);
 
     service.setCharacteristic(this.Characteristic.Name, schema.code);
+    if (!service.testCharacteristic(this.Characteristic.ConfiguredName)) {
+      service.addOptionalCharacteristic(this.Characteristic.ConfiguredName); // silence warning
+      service.setCharacteristic(this.Characteristic.ConfiguredName, schema.code);
+    }
     service.setCharacteristic(this.Characteristic.ValveType, this.Characteristic.ValveType.IRRIGATION);
 
     service.getCharacteristic(this.Characteristic.InUse)
