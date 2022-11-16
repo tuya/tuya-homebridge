@@ -75,11 +75,12 @@ If you are personal user and don't know which to choose, please use `Smart Home`
 Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - Create a cloud develop project, select the data center where your app account located. See [Mappings Between OEM App Accounts and Data Centers](https://developer.tuya.com/en/docs/iot/oem-app-data-center-distributed?id=Kafi0ku9l07qb) (If you don't know where it is, just select all.)
 - Go to `Project Page` > `Devices Panel` > `Link Tuya App Account`, link your app account.
-- Go to `Project Page` > `Service API` > `Go to Authorize`, subscribe the following APIs (its free):
+- Go to `Project Page` > `Service API` > `Go to Authorize`, subscribe the following APIs (it's free for trial):
     - Authorization Token Management
     - Device Status Notification
     - IoT Core
     - Industry Project Client Service (for "Custom" project)
+- **⚠️Extend the API trial period every 6 months here: [Tuya IoT Platform -> Cloud -> Cloud Services -> IoT Core](https://iot.tuya.com/cloud/products/detail?abilityId=1442730014117204014&id=p1668587814138nv4h3n&abilityAuth=0&tab=1)**
 
 #### For "Custom" Project
 
