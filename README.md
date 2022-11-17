@@ -39,6 +39,7 @@ If beta version works fine for a while, it will be merged into the upstream repo
     - [CarbonMonoxideSensor] CO Detector (`cobj`)
     - [CarbonDioxideSensor] CO2 Detector (`co2bj`)
     - [LeakSensor] Water Detector (`sj`)
+    - [HumidifierDehumidifier] Humidifier (`jsq`)
 
 
 ## Supported Tuya Devices
