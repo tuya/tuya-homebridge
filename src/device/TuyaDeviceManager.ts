@@ -164,6 +164,13 @@ export default class TuyaDeviceManager extends EventEmitter {
           }
           device.name = name;
           this.emit(Events.DEVICE_INFO_UPDATE, device, bizData);
+        } else if (bizCode === 'online' || bizCode === 'offline') {
+          const device = this.getDevice(devId);
+          if (!device) {
+            return;
+          }
+          device.online = (bizCode === 'online') ? true : false;
+          this.emit(Events.DEVICE_INFO_UPDATE, device, bizData);
         } else if (bizCode === 'delete') {
           const { ownerId } = bizData;
           if (!this.ownerIDs.includes(ownerId)) {
