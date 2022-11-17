@@ -12,8 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add config validation during plugin initialization.
 - Add instruction message for handling API errors.
 - Add debounce options for `sendCommands`, used for combine on/off command with LightBulb/Window/Fan slider values together.
-- Persist TuyaDeviceList.json for debugging (#41)
+- Persist TuyaDeviceList.json for debugging. (#41)
 - Add unit test.
+- Add support for whitelisting homes. (#84)
 - Add CO Detector support (`cobj`).
 - Add CO2 Detector support (`co2bj`).
 - Add Water Detector support (`sj`).
@@ -31,7 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Ceiling Fan Light support (`fsd`). (#37)
 - Add Thermostat Valve support (`wkf`). (#50)
 - Add Motion Sensor Light support (`gyd`). (#65)
-- Add Multiple Dimmer and Dimmer Switch support (`tgq`, `tgkg`).
+- Add Multiple Dimmer and Dimmer Switch support (`tgq`, `tgkg`). (#82)
+- Add HumidifierAccessory support (`jsq`). (#89)
 
 
 ### Fixed
@@ -49,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix fan speed issue. (#46 #51)
 - Workaround for Thermostat with wrong schema property (#74)
 - Fix Contact Sensor not working (#75)
+
 
 ### Changed
 - Rewritten in TypeScript, brings benefits of type checking, smart code hints, etc.
