@@ -24,6 +24,7 @@ import LightSensorAccessory from './LightSensorAccessory';
 import MotionSensorAccessory from './MotionSensorAccessory';
 import AirQualitySensorAccessory from './AirQualitySensorAccessory';
 import HumanPresenceSensorAccessory from './HumanPresenceSensorAccessory';
+import HumidifierAccessory from './HumidifierAccessory';
 
 import LegacyAccessoryFactory from './LegacyAccessoryFactory';
 
@@ -118,6 +119,10 @@ export default class AccessoryFactory {
       case 'hps':
         handler = new HumanPresenceSensorAccessory(platform, accessory);
         break;
+      case 'jsq':
+        handler = new HumidifierAccessory(platform, accessory);
+        break;
+
     }
 
     if (!handler) {
