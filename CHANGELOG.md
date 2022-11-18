@@ -1,20 +1,10 @@
 # Changelog
 
-This version has been completely rewritten in TypeScript, brings a lot of bug fix and device supported.
-
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
 ## [1.6.0] - (unreleased)
 
-### Added
-- Add config validation during plugin initialization.
-- Add instruction message for handling API errors.
-- Add debounce options for `sendCommands`, used for combine on/off command with LightBulb/Window/Fan slider values together.
-- Persist TuyaDeviceList.json for debugging. (#41)
-- Add unit test.
-- Add support for whitelisting homes. (#84)
+This version has been completely rewritten in TypeScript, brings a lot of bug fix and new device support.
+
+### New Accessories
 - Add CO Detector support (`cobj`).
 - Add CO2 Detector support (`co2bj`).
 - Add Water Detector support (`sj`).
@@ -36,6 +26,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Humidifier support (`jsq`). (#89)
 
 
+### Added
+- Add config validation during plugin initialization.
+- Add instruction message for handling API errors.
+- Add debounce in `BaseAccessory.sendCommands()` for better API request peformance.
+- Persist `TuyaDeviceList.{uid}.json` for debugging. (#41)
+- Add `homeWhitelist` option for whitelisting homes. (#84)
+
+
 ### Fixed
 - Fix 1004 signature error when url query has more than 2 elements.
 - Fix 1010 token expired error when refresh access_token.
@@ -51,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix fan speed issue. (#46 #51)
 - Workaround for Thermostat with wrong schema property (#74)
 - Fix Contact Sensor not working (#75)
+- Fix iOS 16 default accessory name issue. (#85)
 
 
 ### Changed
@@ -59,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update device info list polling logic. Less API errors.
 - Now `Manufactor`, `Serial Number` and `Model` will be correctly displayed in HomeKit.
 - All devices will be shown in HomeKit by default (Including unsupported device).
+- Updated unit test.
 
 
 ### Removed

@@ -6,11 +6,8 @@
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 [![Build and Lint](https://github.com/0x5e/homebridge-tuya-platform/actions/workflows/build.yml/badge.svg)](https://github.com/0x5e/homebridge-tuya-platform/actions/workflows/build.yml)
 
-Tuya plugin for Hombridge, maintained by @0x5e, former employee of Tuya.
+Fork version of official Tuya Homebridge plugin. Brings a lot of bug fix and new device support.
 
-Published as [@0x5e/homebridge-tuya-platform](https://npmjs.com/package/@0x5e/homebridge-tuya-platform), currently in beta version.
-
-If beta version works fine for a while, it will be merged into the upstream repo in the future.
 
 ## Features
 
