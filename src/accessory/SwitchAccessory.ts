@@ -8,17 +8,23 @@ export default class SwitchAccessory extends BaseAccessory {
   }
 
   configureService(schema: TuyaDeviceSchema) {
-    if (schema.type !== TuyaDeviceSchemaType.Boolean) {
+    if (!schema.code.startsWith('switch')
+      || schema.type !== TuyaDeviceSchemaType.Boolean) {
       return;
     }
 
-    const service = this.accessory.getService(schema.code)
-      || this.accessory.addService(this.mainService(), schema.code, schema.code);
+    let name = this.device.name;
+    if (schema.code !== 'switch') {
+      name += ` - ${schema.code.replace('switch_', '')}`;
+    }
 
-    service.setCharacteristic(this.Characteristic.Name, schema.code);
+    const service = this.accessory.getService(schema.code)
+      || this.accessory.addService(this.mainService(), name, schema.code);
+
+    service.setCharacteristic(this.Characteristic.Name, name);
     if (!service.testCharacteristic(this.Characteristic.ConfiguredName)) {
       service.addOptionalCharacteristic(this.Characteristic.ConfiguredName); // silence warning
-      service.setCharacteristic(this.Characteristic.ConfiguredName, schema.code);
+      service.setCharacteristic(this.Characteristic.ConfiguredName, name);
     }
 
     service.getCharacteristic(this.Characteristic.On)

@@ -9,13 +9,18 @@ export default class ValveAccessory extends BaseAccessory {
       return;
     }
 
-    const service = this.accessory.getService(schema.code)
-      || this.accessory.addService(this.Service.Valve, schema.code, schema.code);
+    let name = this.device.name;
+    if (schema.code !== 'switch') {
+      name += ` - ${schema.code.replace('switch_', '')}`;
+    }
 
-    service.setCharacteristic(this.Characteristic.Name, schema.code);
+    const service = this.accessory.getService(schema.code)
+      || this.accessory.addService(this.Service.Valve, name, schema.code);
+
+    service.setCharacteristic(this.Characteristic.Name, name);
     if (!service.testCharacteristic(this.Characteristic.ConfiguredName)) {
       service.addOptionalCharacteristic(this.Characteristic.ConfiguredName); // silence warning
-      service.setCharacteristic(this.Characteristic.ConfiguredName, schema.code);
+      service.setCharacteristic(this.Characteristic.ConfiguredName, name);
     }
     service.setCharacteristic(this.Characteristic.ValveType, this.Characteristic.ValveType.IRRIGATION);
 

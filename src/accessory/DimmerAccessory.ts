@@ -46,13 +46,15 @@ export default class DimmerAccessory extends BaseAccessory {
         this.accessory.removeService(oldService);
       }
 
-      const service = this.accessory.getService(schema.code)
-        || this.accessory.addService(this.Service.Lightbulb, schema.code, schema.code);
+      const name = `${this.device.name} - ${index}`;
 
-      service.setCharacteristic(this.Characteristic.Name, schema.code);
+      const service = this.accessory.getService(schema.code)
+        || this.accessory.addService(this.Service.Lightbulb, name, schema.code);
+
+      service.setCharacteristic(this.Characteristic.Name, name);
       if (!service.testCharacteristic(this.Characteristic.ConfiguredName)) {
         service.addOptionalCharacteristic(this.Characteristic.ConfiguredName); // silence warning
-        service.setCharacteristic(this.Characteristic.ConfiguredName, schema.code);
+        service.setCharacteristic(this.Characteristic.ConfiguredName, name);
       }
 
       this.configureOn(service, index);
