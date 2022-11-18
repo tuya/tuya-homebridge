@@ -71,9 +71,14 @@ export default class ThermostatAccessory extends BaseAccessory {
         }
 
         const status = this.getStatus(schema.code)!;
-        if (status.value === 'hot' || status.value === 'opened') {
+        if (status.value === 'hot' || status.value === 'opened' || status.value === 'heating') {
           return this.Characteristic.CurrentHeatingCoolingState.HEAT;
-        } else if (status.value === 'cold' || status.value === 'eco') {
+        } else if (
+          status.value === 'cold' ||
+          status.value === 'eco' ||
+          status.value === 'idle' ||
+          status.value === 'window_opened'
+        ) {
           return this.Characteristic.CurrentHeatingCoolingState.COOL;
         }
         // Don't know how to display unsupported work mode.
