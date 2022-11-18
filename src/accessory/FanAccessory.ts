@@ -17,6 +17,8 @@ export default class FanAccessory extends BaseAccessory {
       this.configureRotationSpeedOn();
     }
 
+    this.configureRotationDirection();
+
     this.configureLightOn();
     this.configureLightBrightness();
   }
@@ -54,6 +56,10 @@ export default class FanAccessory extends BaseAccessory {
     return undefined;
   }
 
+  getFanDirection() {
+    return this.getSchema('fan_direction');
+  }
+
   getLightOnSchema() {
     return this.getSchema('light')
       || this.getSchema('switch_led');
@@ -66,16 +72,21 @@ export default class FanAccessory extends BaseAccessory {
 
   configureActive() {
     const schema = this.getFanActiveSchema()!;
+    if (!schema) {
+      return;
+    }
+
+    const { ACTIVE, INACTIVE } = this.Characteristic.Active;
     this.fanService().getCharacteristic(this.Characteristic.Active)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        return status.value as boolean;
+        return status.value as boolean ? ACTIVE : INACTIVE;
       })
       .onSet(value => {
         const status = this.getStatus(schema.code)!;
         this.sendCommands([{
           code: status.code,
-          value: (value === this.Characteristic.Active.ACTIVE) ? true : false,
+          value: (value === ACTIVE) ? true : false,
         }], true);
       });
   }
@@ -132,6 +143,23 @@ export default class FanAccessory extends BaseAccessory {
         this.sendCommands([{ code: status.code, value: (value > 50) ? true : false }], true);
       })
       .setProps(props);
+  }
+
+  configureRotationDirection() {
+    const schema = this.getFanDirection();
+    if (!schema) {
+      return;
+    }
+
+    const { CLOCKWISE, COUNTER_CLOCKWISE } = this.Characteristic.RotationDirection;
+    this.fanService().getCharacteristic(this.Characteristic.RotationDirection)
+      .onGet(() => {
+        const status = this.getStatus(schema.code)!;
+        return (status.value !== 'reverse') ? CLOCKWISE : COUNTER_CLOCKWISE;
+      })
+      .onSet(value => {
+        this.sendCommands([{ code: schema.code, value: (value === CLOCKWISE) ? 'forward' : 'reverse' }]);
+      });
   }
 
   configureLightOn() {
