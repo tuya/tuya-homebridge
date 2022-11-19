@@ -1,7 +1,7 @@
 import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
-import { limit } from '../util/util';
+import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 
 const SCHEMA_CODE = {
@@ -89,13 +89,17 @@ export default class FanAccessory extends BaseAccessory {
 
   configureRotationSpeed() {
     const schema = this.getFanSpeedSchema()!;
+    const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
     this.fanService().getCharacteristic(this.Characteristic.RotationSpeed)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        return limit(status.value as number, 0, 100);
+        const value = Math.round(remap(status.value as number, min, max, 0, 100));
+        return limit(value, 0, 100);
       })
       .onSet(value => {
-        this.sendCommands([{ code: schema.code, value: value as number }], true);
+        let speed = Math.round(remap(value as number, 0, 100, min, max));
+        speed = limit(speed, min, max);
+        this.sendCommands([{ code: schema.code, value: speed }], true);
       });
   }
 
@@ -185,18 +189,19 @@ export default class FanAccessory extends BaseAccessory {
       return;
     }
 
-    const property = schema.property as TuyaDeviceSchemaIntegerProperty;
+    const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
     this.lightService().getCharacteristic(this.Characteristic.Brightness)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        const value = Math.floor(100 * (status.value as number) / property.max);
+        const value = Math.round(remap(status.value as number, 0, max, 0, 100));
         return limit(value, 0, 100);
       })
       .onSet(value => {
-        const status = this.getStatus(schema.code)!;
+        let brightness = Math.round(remap(value as number, 0, 100, 0, max));
+        brightness = limit(brightness, min, max);
         this.sendCommands([{
-          code: status.code,
-          value: Math.floor((value as number) * property.max / 100),
+          code: schema.code,
+          value: brightness,
         }], true);
       });
   }
