@@ -124,7 +124,12 @@ export default class HumidifierAccessory extends BaseAccessory {
   }
 
   setSprayModeToHumidity() {
-    this.sendCommands([{ code: 'spray_mode', value: 'humidity' }]);
+    const schema = this.getSchema('spray_mode');
+    if (!schema) {
+      this.log.debug('Spray mode not supported.');
+      return;
+    }
+    this.sendCommands([{ code: schema.code, value: 'humidity' }]);
   }
 
 }
