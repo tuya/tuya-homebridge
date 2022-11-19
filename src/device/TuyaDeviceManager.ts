@@ -148,7 +148,7 @@ export default class TuyaDeviceManager extends EventEmitter {
           }
 
           // TODO failed if request to quickly
-          await new Promise(resolve => setTimeout(resolve, 3000));
+          await new Promise(resolve => setTimeout(resolve, 10000));
 
           const device = await this.updateDevice(devId);
           if (!device) {
