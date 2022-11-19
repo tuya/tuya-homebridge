@@ -2,23 +2,41 @@ import { PlatformAccessory } from 'homebridge';
 import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
+const SCHEMA_CODE = {
+  CURRENT_DOOR_STATE: ['doorcontact_state'],
+  TARGET_DOOR_STATE: ['switch_1'],
+};
+
 export default class GarageDoorAccessory extends BaseAccessory {
 
   constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
     super(platform, accessory);
 
-    const service = this.accessory.getService(this.Service.GarageDoorOpener)
-      || this.accessory.addService(this.Service.GarageDoorOpener);
+    this.configureCurrentDoorState();
+    this.configureTargetDoorState();
+  }
 
+  requiredSchema() {
+    return [SCHEMA_CODE.TARGET_DOOR_STATE];
+  }
+
+  mainService() {
+    return this.accessory.getService(this.Service.GarageDoorOpener)
+      || this.accessory.addService(this.Service.GarageDoorOpener);
+  }
+
+  configureCurrentDoorState() {
     const { OPEN, CLOSED, OPENING, CLOSING, STOPPED } = this.Characteristic.CurrentDoorState;
-    service.getCharacteristic(this.Characteristic.CurrentDoorState)
+    this.mainService().getCharacteristic(this.Characteristic.CurrentDoorState)
       .onGet(() => {
-        const currentStatus = this.getStatus('doorcontact_state');
-        const targetStatus = this.getStatus('switch_1');
-        if (!currentStatus || !targetStatus) {
+        const currentSchema = this.getSchema(...SCHEMA_CODE.CURRENT_DOOR_STATE);
+        const targetSchema = this.getSchema(...SCHEMA_CODE.TARGET_DOOR_STATE);
+        if (!currentSchema || !targetSchema) {
           return STOPPED;
         }
 
+        const currentStatus = this.getStatus(currentSchema.code)!;
+        const targetStatus = this.getStatus(targetSchema.code)!;
         if (currentStatus.value === true && targetStatus.value === true) {
           return OPEN;
         } else if (currentStatus.value === false && targetStatus.value === false) {
@@ -31,21 +49,25 @@ export default class GarageDoorAccessory extends BaseAccessory {
 
         return STOPPED;
       });
-
-    if (this.getStatus('switch_1')) {
-      service.getCharacteristic(this.Characteristic.TargetDoorState)
-        .onGet(() => {
-          const status = this.getStatus('switch_1')!;
-          return status.value ? OPEN : CLOSED;
-        })
-        .onSet(value => {
-          this.sendCommands([{
-            code: 'switch_1',
-            value: (value === OPEN) ? true : false,
-          }]);
-        });
-    }
-
   }
 
+  configureTargetDoorState() {
+    const schema = this.getSchema(...SCHEMA_CODE.TARGET_DOOR_STATE);
+    if (!schema) {
+      return;
+    }
+
+    const { OPEN, CLOSED } = this.Characteristic.TargetDoorState;
+    this.mainService().getCharacteristic(this.Characteristic.TargetDoorState)
+      .onGet(() => {
+        const status = this.getStatus(schema.code)!;
+        return status.value as boolean ? OPEN : CLOSED;
+      })
+      .onSet(value => {
+        this.sendCommands([{
+          code: schema.code,
+          value: (value === OPEN) ? true : false,
+        }]);
+      });
+  }
 }

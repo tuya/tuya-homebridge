@@ -1,7 +1,15 @@
 import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
 
+const SCHEMA_CODE = {
+  ON: ['switch', 'switch_1'],
+};
+
 export default class ValveAccessory extends BaseAccessory {
+
+  requiredSchema() {
+    return [SCHEMA_CODE.ON];
+  }
 
   configureService(schema: TuyaDeviceSchema) {
     if (!schema.code.startsWith('switch')

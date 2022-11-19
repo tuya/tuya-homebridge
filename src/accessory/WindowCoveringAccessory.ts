@@ -1,6 +1,7 @@
 import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
+import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 
 export default class WindowCoveringAccessory extends BaseAccessory {
@@ -34,29 +35,26 @@ export default class WindowCoveringAccessory extends BaseAccessory {
 
         const state = this.getCurrentPosition()
           || this.getTargetPosition();
-        let value = Math.max(0, state?.value as number);
-        value = Math.min(100, value);
-        return value;
+        return limit(state!.value as number, 0, 100);
       });
   }
 
   configurePositionState() {
+    const { DECREASING, INCREASING, STOPPED } = this.Characteristic.PositionState;
     this.mainService().getCharacteristic(this.Characteristic.PositionState)
       .onGet(() => {
         const state = this.getWorkState();
         if (!state) {
-          return this.Characteristic.PositionState.STOPPED;
+          return STOPPED;
         }
 
         const current = this.getCurrentPosition();
         const target = this.getTargetPosition();
         if (current?.value === target?.value) {
-          return this.Characteristic.PositionState.STOPPED;
+          return STOPPED;
         }
 
-        return (state.value === 'opening') ?
-          this.Characteristic.PositionState.INCREASING :
-          this.Characteristic.PositionState.DECREASING;
+        return (state.value === 'opening') ? INCREASING : DECREASING;
       });
   }
 
@@ -75,9 +73,7 @@ export default class WindowCoveringAccessory extends BaseAccessory {
         }
 
         const state = this.getTargetPosition();
-        let value = Math.max(0, state?.value as number);
-        value = Math.min(100, value);
-        return value;
+        return limit(state!.value as number, 0, 100);
       })
       .onSet(value => {
         const commands: TuyaDeviceStatus[] = [];

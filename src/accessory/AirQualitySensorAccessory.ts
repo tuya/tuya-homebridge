@@ -1,64 +1,96 @@
 import { PlatformAccessory } from 'homebridge';
 import { TuyaPlatform } from '../platform';
+import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+
+const SCHEMA_CODE = {
+  PM2_5: ['pm25_value'],
+  PM10: ['pm10_value'],
+  VOC: ['voc_value'],
+};
 
 export default class AirQualitySensorAccessory extends BaseAccessory {
 
   constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
     super(platform, accessory);
 
-    const service = this.accessory.getService(this.Service.AirQualitySensor)
-      || this.accessory.addService(this.Service.AirQualitySensor);
-
-    service.getCharacteristic(this.Characteristic.AirQuality)
-      .onGet(() => {
-        const status = this.getStatus('pm25_value');
-        if (status) {
-          let pm25 = Math.max(0, status?.value as number);
-          pm25 = Math.min(1000, pm25);
-          if (pm25 <= 50) {
-            return this.Characteristic.AirQuality.GOOD;
-          } else if (pm25 <= 100) {
-            return this.Characteristic.AirQuality.FAIR;
-          } else if (pm25 <= 200) {
-            return this.Characteristic.AirQuality.INFERIOR;
-          } else {
-            return this.Characteristic.AirQuality.POOR;
-          }
-        }
-
-        return this.Characteristic.AirQuality.UNKNOWN;
-      });
-
-    if (this.getStatus('pm25_value')) {
-      service.getCharacteristic(this.Characteristic.PM2_5Density)
-        .onGet(() => {
-          const status = this.getStatus('pm25_value');
-          let pm25 = Math.max(0, status?.value as number);
-          pm25 = Math.min(1000, pm25);
-          return pm25;
-        });
-    }
-
-    if (this.getStatus('pm10')) {
-      service.getCharacteristic(this.Characteristic.PM10Density)
-        .onGet(() => {
-          const status = this.getStatus('pm10');
-          let pm25 = Math.max(0, status?.value as number);
-          pm25 = Math.min(1000, pm25);
-          return pm25;
-        });
-    }
-
-    if (this.getStatus('voc_value')) {
-      service.getCharacteristic(this.Characteristic.VOCDensity)
-        .onGet(() => {
-          const status = this.getStatus('voc_value');
-          let voc = Math.max(0, status?.value as number);
-          voc = Math.min(1000, voc);
-          return voc;
-        });
-    }
+    this.configureAirQuality();
+    this.configurePM2_5Density();
+    this.configurePM10Density();
+    this.configureVOCDensity();
   }
 
+  requiredSchema() {
+    return [SCHEMA_CODE.PM2_5];
+  }
+
+  mainService() {
+    return this.accessory.getService(this.Service.AirQualitySensor)
+      || this.accessory.addService(this.Service.AirQualitySensor);
+  }
+
+  configureAirQuality() {
+    const schema = this.getSchema(...SCHEMA_CODE.PM2_5);
+    if (!schema) {
+      return;
+    }
+
+    const { GOOD, FAIR, INFERIOR, POOR } = this.Characteristic.AirQuality;
+    this.mainService().getCharacteristic(this.Characteristic.AirQuality)
+      .onGet(() => {
+        const status = this.getStatus(schema.code)!;
+        const value = limit(status.value as number, 0, 1000);
+        if (value <= 50) {
+          return GOOD;
+        } else if (value <= 100) {
+          return FAIR;
+        } else if (value <= 200) {
+          return INFERIOR;
+        } else {
+          return POOR;
+        }
+      });
+  }
+
+  configurePM2_5Density() {
+    const schema = this.getSchema(...SCHEMA_CODE.PM2_5);
+    if (!schema) {
+      return;
+    }
+
+    this.mainService().getCharacteristic(this.Characteristic.PM2_5Density)
+      .onGet(() => {
+        const status = this.getStatus(schema.code)!;
+        const value = limit(status.value as number, 0, 1000);
+        return value;
+      });
+  }
+
+  configurePM10Density() {
+    const schema = this.getSchema(...SCHEMA_CODE.PM10);
+    if (!schema) {
+      return;
+    }
+
+    this.mainService().getCharacteristic(this.Characteristic.PM10Density)
+      .onGet(() => {
+        const status = this.getStatus(schema.code)!;
+        const value = limit(status.value as number, 0, 1000);
+        return value;
+      });
+  }
+
+  configureVOCDensity() {
+    const schema = this.getSchema(...SCHEMA_CODE.VOC);
+    if (!schema) {
+      return;
+    }
+
+    this.mainService().getCharacteristic(this.Characteristic.VOCDensity)
+      .onGet(() => {
+        const status = this.getStatus(schema.code)!;
+        const value = limit(status.value as number, 0, 1000);
+        return value;
+      });
+  }
 }

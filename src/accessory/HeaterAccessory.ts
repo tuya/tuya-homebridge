@@ -2,7 +2,18 @@
 import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaIntegerProperty } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
+import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+
+const SCHEMA_CODE = {
+  ACTIVE: ['switch'],
+  WORK_STATE: ['work_state'],
+  CURRENT_TEMP: ['temp_current'],
+  TARGET_TEMP: ['temp_set'],
+  LOCK: ['lock'],
+  SWING: ['shake'],
+  TEMP_UNIT_CONVERT: ['temp_unit_convert'],
+};
 
 export default class HeaterAccessory extends BaseAccessory {
 
@@ -19,6 +30,10 @@ export default class HeaterAccessory extends BaseAccessory {
     this.configureTempDisplayUnits();
   }
 
+  requiredSchema() {
+    return [SCHEMA_CODE.ACTIVE];
+  }
+
   mainService() {
     return this.accessory.getService(this.Service.HeaterCooler)
       || this.accessory.addService(this.Service.HeaterCooler);
@@ -26,20 +41,25 @@ export default class HeaterAccessory extends BaseAccessory {
 
 
   configureActive() {
+    const schema = this.getSchema(...SCHEMA_CODE.ACTIVE);
+    if (!schema) {
+      return;
+    }
+
     const { ACTIVE, INACTIVE } = this.Characteristic.Active;
     this.mainService().getCharacteristic(this.Characteristic.Active)
       .onGet(() => {
-        const status = this.getStatus('switch');
-        return (status?.value as boolean) ? ACTIVE : INACTIVE;
+        const status = this.getStatus(schema.code)!;
+        return (status.value as boolean) ? ACTIVE : INACTIVE;
       })
       .onSet(value => {
-        this.sendCommands([{ code: 'switch', value: (value === ACTIVE) ? true : false }]);
+        this.sendCommands([{ code: schema.code, value: (value === ACTIVE) ? true : false }]);
       });
   }
 
   configureCurrentState() {
+    const schema = this.getSchema(...SCHEMA_CODE.WORK_STATE);
     const { INACTIVE, IDLE, HEATING } = this.Characteristic.CurrentHeaterCoolerState;
-    const schema = this.getSchema('work_state');
     this.mainService().getCharacteristic(this.Characteristic.CurrentHeaterCoolerState)
       .onGet(() => {
         if (!schema) {
@@ -70,7 +90,7 @@ export default class HeaterAccessory extends BaseAccessory {
   }
 
   configureCurrentTemp() {
-    const schema = this.getSchema('temp_current');
+    const schema = this.getSchema(...SCHEMA_CODE.CURRENT_TEMP);
     if (!schema) {
       this.log.warn('CurrentTemperature not supported for devId:', this.device.id);
       return;
@@ -88,20 +108,19 @@ export default class HeaterAccessory extends BaseAccessory {
     this.mainService().getCharacteristic(this.Characteristic.CurrentTemperature)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        let temp = status.value as number / multiple;
-        temp = Math.min(props.maxValue, temp);
-        temp = Math.max(props.minValue, temp);
-        return temp;
+        const temp = status.value as number / multiple;
+        return limit(temp, props.minValue, props.maxValue);
       })
       .setProps(props);
   }
 
   configureLock() {
-    const { CONTROL_LOCK_DISABLED, CONTROL_LOCK_ENABLED } = this.Characteristic.LockPhysicalControls;
-    const schema = this.getSchema('lock');
+    const schema = this.getSchema(...SCHEMA_CODE.LOCK);
     if (!schema) {
       return;
     }
+
+    const { CONTROL_LOCK_DISABLED, CONTROL_LOCK_ENABLED } = this.Characteristic.LockPhysicalControls;
     this.mainService().getCharacteristic(this.Characteristic.LockPhysicalControls)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
@@ -113,11 +132,12 @@ export default class HeaterAccessory extends BaseAccessory {
   }
 
   configureSwing() {
-    const { SWING_DISABLED, SWING_ENABLED } = this.Characteristic.SwingMode;
-    const schema = this.getSchema('shake');
+    const schema = this.getSchema(...SCHEMA_CODE.SWING);
     if (!schema) {
       return;
     }
+
+    const { SWING_DISABLED, SWING_ENABLED } = this.Characteristic.SwingMode;
     this.mainService().getCharacteristic(this.Characteristic.SwingMode)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
@@ -129,7 +149,7 @@ export default class HeaterAccessory extends BaseAccessory {
   }
 
   configureHeatingThreshouldTemp() {
-    const schema = this.getSchema('temp_set');
+    const schema = this.getSchema(...SCHEMA_CODE.TARGET_TEMP);
     if (!schema) {
       return;
     }
@@ -141,15 +161,13 @@ export default class HeaterAccessory extends BaseAccessory {
       maxValue: Math.min(25, property.max / multiple),
       minStep: Math.max(0.1, property.step / multiple),
     };
-    this.log.debug('Set props for CurrentTemperature:', props);
+    this.log.debug('Set props for HeatingThresholdTemperature:', props);
 
     this.mainService().getCharacteristic(this.Characteristic.HeatingThresholdTemperature)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        let temp = status.value as number / multiple;
-        temp = Math.min(props.maxValue, temp);
-        temp = Math.max(props.minValue, temp);
-        return temp;
+        const temp = status.value as number / multiple;
+        return limit(temp, props.minValue, props.maxValue);
       })
       .onSet(value => {
         this.sendCommands([{ code: schema.code, value: (value as number) * multiple}]);
@@ -158,7 +176,7 @@ export default class HeaterAccessory extends BaseAccessory {
   }
 
   configureTempDisplayUnits() {
-    const schema = this.getSchema('temp_unit_convert');
+    const schema = this.getSchema(...SCHEMA_CODE.TEMP_UNIT_CONVERT);
     if (!schema) {
       return;
     }

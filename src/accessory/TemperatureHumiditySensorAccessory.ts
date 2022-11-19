@@ -1,7 +1,12 @@
 import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaIntegerProperty } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
+import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+
+const SCHEMA_CODE = {
+  SENSOR_STATUS: ['va_temperature', 'va_humidity', 'humidity_value'],
+};
 
 export default class TemperatureHumiditySensorAccessory extends BaseAccessory {
 
@@ -10,6 +15,10 @@ export default class TemperatureHumiditySensorAccessory extends BaseAccessory {
 
     this.configureTemperatureSensor();
     this.configureHumiditySensor();
+  }
+
+  requiredSchema() {
+    return [SCHEMA_CODE.SENSOR_STATUS];
   }
 
   configureTemperatureSensor() {
@@ -26,19 +35,15 @@ export default class TemperatureHumiditySensorAccessory extends BaseAccessory {
     const multiple = Math.pow(10, property ? property.scale : 0);
     service.getCharacteristic(this.Characteristic.CurrentTemperature)
       .onGet(() => {
-        const status = this.getStatus(schema.code);
+        const status = this.getStatus(schema.code)!;
         // this.log.debug('CurrentTemperature:', 'property =', property, 'multiple =', multiple, 'status =', status);
-        let temperature = status!.value as number / multiple;
-        temperature = Math.max(-270, temperature);
-        temperature = Math.min(100, temperature);
-        return temperature;
+        return limit(status.value as number / multiple, -270, 100);
       });
 
   }
 
   configureHumiditySensor() {
-    const schema = this.getSchema('va_humidity')
-      || this.getSchema('humidity_value');
+    const schema = this.getSchema('va_humidity', 'humidity_value');
     if (!schema) {
       this.log.warn('HumiditySensor not supported.');
       return;
@@ -51,12 +56,9 @@ export default class TemperatureHumiditySensorAccessory extends BaseAccessory {
     const multiple = Math.pow(10, property ? property.scale : 0);
     service.getCharacteristic(this.Characteristic.CurrentRelativeHumidity)
       .onGet(() => {
-        const status = this.getStatus(schema.code);
+        const status = this.getStatus(schema.code)!;
         // this.log.debug('CurrentRelativeHumidity:', 'property =', property, 'multiple =', multiple, 'status =', status);
-        let humidity = Math.floor(status!.value as number / multiple);
-        humidity = Math.max(0, humidity);
-        humidity = Math.min(100, humidity);
-        return humidity;
+        return limit(status.value as number / multiple, 0, 100);
       });
 
   }

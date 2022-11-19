@@ -1,8 +1,13 @@
 import { PlatformAccessory, Service } from 'homebridge';
 import { TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
-import BaseAccessory from './BaseAccessory';
 import { remap, limit } from '../util/util';
+import BaseAccessory from './BaseAccessory';
+
+const SCHEMA_CODE = {
+  ON: ['switch', 'switch_led', 'switch_1', 'switch_led_1'],
+  BRIGHTNESS: ['bright_value', 'bright_value_1'],
+};
 
 export default class DimmerAccessory extends BaseAccessory {
 
@@ -15,13 +20,15 @@ export default class DimmerAccessory extends BaseAccessory {
     this.configure();
   }
 
+  requiredSchema() {
+    return [SCHEMA_CODE.ON, SCHEMA_CODE.BRIGHTNESS];
+  }
+
   getOnSchema(index: number) {
     if (index === 0) {
-      return this.getSchema('switch')
-        || this.getSchema('switch_led');
+      return this.getSchema('switch', 'switch_led');
     }
-    return this.getSchema(`switch_${index}`)
-      || this.getSchema(`switch_led_${index}`);
+    return this.getSchema(`switch_${index}`, `switch_led_${index}`);
   }
 
   getBrightnessSchema(index: number) {
@@ -34,19 +41,19 @@ export default class DimmerAccessory extends BaseAccessory {
 
   configure() {
 
+    const oldService = this.accessory.getService(this.Service.Lightbulb);
+    if (oldService && oldService?.subtype === undefined) {
+      this.platform.log.warn('Remove old service:', oldService.UUID);
+      this.accessory.removeService(oldService);
+    }
+
     for (let index = 0; index <= 3; index++) {
       const schema = this.getBrightnessSchema(index);
       if (!schema) {
         continue;
       }
 
-      const oldService = this.accessory.getService(this.Service.Lightbulb);
-      if (oldService && oldService?.subtype === undefined) {
-        this.platform.log.warn('Remove old service:', oldService.UUID);
-        this.accessory.removeService(oldService);
-      }
-
-      const name = `${this.device.name} - ${index}`;
+      const name = (index === 0) ? this.device.name : `${this.device.name} - ${index}`;
 
       const service = this.accessory.getService(schema.code)
         || this.accessory.addService(this.Service.Lightbulb, name, schema.code);
@@ -85,7 +92,7 @@ export default class DimmerAccessory extends BaseAccessory {
       return;
     }
 
-    const { max } = schema.property as TuyaDeviceSchemaIntegerProperty;
+    const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
     const range = max; // not max - min
     const props = {
       minValue: 0,
@@ -108,6 +115,7 @@ export default class DimmerAccessory extends BaseAccessory {
         const status = this.getStatus(schema.code)!;
         let value = status.value as number;
         value = remap(value, 0, range, 0, 100);
+        value = Math.round(value);
         value = limit(value, props.minValue, props.maxValue);
         return value;
       })
@@ -115,7 +123,8 @@ export default class DimmerAccessory extends BaseAccessory {
         this.log.debug(`Characteristic.Brightness set to: ${value}`);
         let brightValue = value as number;
         brightValue = remap(brightValue, 0, 100, 0, range);
-        brightValue = Math.floor(brightValue);
+        brightValue = Math.round(brightValue);
+        brightValue = limit(brightValue, min, max);
         this.sendCommands([{ code: schema.code, value: brightValue }], true);
       }).setProps(props);
 

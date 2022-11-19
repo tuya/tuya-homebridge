@@ -115,8 +115,15 @@ export default class BaseAccessory {
   }
 
 
-  getSchema(code: string) {
-    return this.device.schema.find(schema => schema.code === code);
+  getSchema(...codes: string[]) {
+    for (const code of codes) {
+      const schema = this.device.schema.find(schema => schema.code === code);
+      if (!schema) {
+        continue;
+      }
+      return schema;
+    }
+    return undefined;
   }
 
   getStatus(code: string) {
@@ -152,6 +159,27 @@ export default class BaseAccessory {
     this.debounceSendCommands();
   }
 
+  checkRequirements() {
+    let result = true;
+    for (const codes of this.requiredSchema()) {
+      const schema = this.getSchema(...codes);
+      if (schema) {
+        continue;
+      }
+      this.log.warn('"%s" is missing one of the required schema: %s', this.device.name, codes);
+      result = false;
+    }
+
+    if (!result) {
+      this.log.warn('Existing schema: %o', this.device.schema);
+    }
+
+    return result;
+  }
+
+  requiredSchema(): string[][] {
+    return [];
+  }
 
   configureService(schema: TuyaDeviceSchema) {
 

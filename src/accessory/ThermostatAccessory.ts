@@ -1,7 +1,17 @@
 import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
+import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+
+const SCHEMA_CODE = {
+  ON: ['switch'],
+  CURRENT_MODE: ['work_state', 'mode'],
+  TARGET_MODE: ['mode'],
+  CURRENT_TEMP: ['temp_current', 'temp_set'],
+  TARGET_TEMP: ['temp_set'],
+  TEMP_UNIT_CONVERT: ['temp_unit_convert'],
+};
 
 export default class ThermostatAccessory extends BaseAccessory {
   constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
@@ -12,7 +22,10 @@ export default class ThermostatAccessory extends BaseAccessory {
     this.configureCurrentTemp();
     this.configureTargetTemp();
     this.configureTempDisplayUnits();
+  }
 
+  requiredSchema() {
+    return [SCHEMA_CODE.CURRENT_TEMP, SCHEMA_CODE.TARGET_TEMP];
   }
 
   mainService() {
@@ -20,91 +33,69 @@ export default class ThermostatAccessory extends BaseAccessory {
       || this.accessory.addService(this.Service.Thermostat);
   }
 
-  getCurrentModeSchema() {
-    return this.getSchema('work_state')
-    || this.getSchema('mode'); // fallback
-  }
-
-  getTargetModeSchema() {
-    return this.getSchema('mode');
-  }
-
-  getCurrentTempSchema() {
-    return this.getSchema('temp_current')
-      || this.getSchema('temp_set'); // fallback
-  }
-
-  getTargetTempSchema() {
-    return this.getSchema('temp_set');
-  }
-
-  getTempUnitConvertSchema() {
-    return this.getSchema('temp_unit_convert');
-  }
-
-
   configureCurrentState() {
+
+    const { OFF, HEAT, COOL } = this.Characteristic.CurrentHeatingCoolingState;
     this.mainService().getCharacteristic(this.Characteristic.CurrentHeatingCoolingState)
       .onGet(() => {
         const on = this.getStatus('switch');
         if (on && on.value === false) {
-          return this.Characteristic.CurrentHeatingCoolingState.OFF;
+          return OFF;
         }
 
-        const schema = this.getCurrentModeSchema();
+        const schema = this.getSchema(...SCHEMA_CODE.CURRENT_MODE);
         if (!schema) {
           // If don't support mode, compare current and target temp.
-          const currentSchema = this.getCurrentTempSchema();
-          const targetSchema = this.getTargetTempSchema();
+          const currentSchema = this.getSchema(...SCHEMA_CODE.CURRENT_TEMP);
+          const targetSchema = this.getSchema(...SCHEMA_CODE.TARGET_TEMP);
           if (!currentSchema || !targetSchema) {
-            return this.Characteristic.CurrentHeatingCoolingState.OFF;
+            return OFF;
           }
           const current = this.getStatus(currentSchema.code)!;
           const target = this.getStatus(targetSchema.code)!;
           if (target.value > current.value) {
-            return this.Characteristic.CurrentHeatingCoolingState.HEAT;
+            return HEAT;
           } else if (target.value < current.value) {
-            return this.Characteristic.CurrentHeatingCoolingState.COOL;
+            return COOL;
           } else {
-            return this.Characteristic.CurrentHeatingCoolingState.OFF;
+            return OFF;
           }
         }
 
         const status = this.getStatus(schema.code)!;
         if (status.value === 'hot' || status.value === 'opened' || status.value === 'heating') {
-          return this.Characteristic.CurrentHeatingCoolingState.HEAT;
+          return HEAT;
         } else if (
           status.value === 'cold' ||
           status.value === 'eco' ||
           status.value === 'idle' ||
           status.value === 'window_opened'
         ) {
-          return this.Characteristic.CurrentHeatingCoolingState.COOL;
+          return COOL;
         }
         // Don't know how to display unsupported work mode.
-        return this.Characteristic.CurrentHeatingCoolingState.OFF;
+        return OFF;
       });
 
   }
 
   configureTargetState() {
-    const validValues = [
-      this.Characteristic.TargetHeatingCoolingState.AUTO,
-    ];
+    const { OFF, HEAT, COOL, AUTO } = this.Characteristic.TargetHeatingCoolingState;
+    const validValues = [AUTO];
 
     // Thermostat valve may not support 'Power Off'
     if (this.getStatus('switch')) {
-      validValues.push(this.Characteristic.TargetHeatingCoolingState.OFF);
+      validValues.push(OFF);
     }
 
-    const schema = this.getTargetModeSchema();
+    const schema = this.getSchema(...SCHEMA_CODE.TARGET_MODE);
     const property = schema?.property as TuyaDeviceSchemaEnumProperty;
     if (property) {
       if (property.range.includes('hot')) {
-        validValues.push(this.Characteristic.TargetHeatingCoolingState.HEAT);
+        validValues.push(HEAT);
       }
       if (property.range.includes('cold') || property.range.includes('eco')) {
-        validValues.push(this.Characteristic.TargetHeatingCoolingState.COOL);
+        validValues.push(COOL);
       }
     }
 
@@ -112,25 +103,25 @@ export default class ThermostatAccessory extends BaseAccessory {
       .onGet(() => {
         const on = this.getStatus('switch');
         if (on && on.value === false) {
-          return this.Characteristic.TargetHeatingCoolingState.OFF;
+          return OFF;
         }
 
         if (!schema) {
           // If don't support mode, display auto.
-          return this.Characteristic.TargetHeatingCoolingState.AUTO;
+          return AUTO;
         }
 
         const status = this.getStatus(schema.code)!;
         if (status.value === 'hot') {
-          return this.Characteristic.TargetHeatingCoolingState.HEAT;
+          return HEAT;
         } else if (status.value === 'cold' || status.value === 'eco') {
-          return this.Characteristic.TargetHeatingCoolingState.COOL;
+          return COOL;
         } else if (status.value === 'auto' || status.value === 'temp_auto') {
-          return this.Characteristic.TargetHeatingCoolingState.AUTO;
+          return AUTO;
         }
 
         // Don't know how to display unsupported mode.
-        return this.Characteristic.TargetHeatingCoolingState.AUTO;
+        return AUTO;
       })
       .onSet(value => {
         const commands: TuyaDeviceStatus[] = [];
@@ -139,22 +130,20 @@ export default class ThermostatAccessory extends BaseAccessory {
         if (this.getStatus('switch')) {
           commands.push({
             code: 'switch',
-            value: (value === this.Characteristic.TargetHeatingCoolingState.OFF) ? false : true,
+            value: (value === OFF) ? false : true,
           });
         }
 
         if (schema) {
-          if (value === this.Characteristic.TargetHeatingCoolingState.HEAT
-            && property.range.includes('hot')) {
+          if ((value === HEAT) && property.range.includes('hot')) {
             commands.push({ code: schema.code, value: 'hot' });
-          } else if (value === this.Characteristic.TargetHeatingCoolingState.COOL) {
+          } else if (value === COOL) {
             if (property.range.includes('eco')) {
               commands.push({ code: schema.code, value: 'eco' });
             } else if (property.range.includes('cold')) {
               commands.push({ code: schema.code, value: 'eco' });
             }
-          } else if (value === this.Characteristic.TargetHeatingCoolingState.AUTO
-            && property.range.includes('auto')) {
+          } else if ((value === AUTO) && property.range.includes('auto')) {
             commands.push({ code: schema.code, value: 'auto' });
           }
         }
@@ -168,7 +157,7 @@ export default class ThermostatAccessory extends BaseAccessory {
   }
 
   configureCurrentTemp() {
-    const schema = this.getCurrentTempSchema();
+    const schema = this.getSchema(...SCHEMA_CODE.CURRENT_TEMP);
     if (!schema) {
       this.log.warn('CurrentTemperature not supported for devId:', this.device.id);
       return;
@@ -186,17 +175,15 @@ export default class ThermostatAccessory extends BaseAccessory {
     this.mainService().getCharacteristic(this.Characteristic.CurrentTemperature)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        let temp = status.value as number / multiple;
-        temp = Math.min(props.maxValue, temp);
-        temp = Math.max(props.minValue, temp);
-        return temp;
+        const temp = status.value as number / multiple;
+        return limit(temp, props.minValue, props.maxValue);
       })
       .setProps(props);
 
   }
 
   configureTargetTemp() {
-    const schema = this.getTargetTempSchema();
+    const schema = this.getSchema(...SCHEMA_CODE.TARGET_TEMP);
     if (!schema) {
       this.log.warn('TargetTemperature not supported for devId:', this.device.id);
       return;
@@ -219,10 +206,8 @@ export default class ThermostatAccessory extends BaseAccessory {
     this.mainService().getCharacteristic(this.Characteristic.TargetTemperature)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        let temp = status.value as number / multiple;
-        temp = Math.min(props.maxValue, temp);
-        temp = Math.max(props.minValue, temp);
-        return temp;
+        const temp = status.value as number / multiple;
+        return limit(temp, props.minValue, props.maxValue);
       })
       .onSet(value => {
         this.sendCommands([{
@@ -235,21 +220,21 @@ export default class ThermostatAccessory extends BaseAccessory {
   }
 
   configureTempDisplayUnits() {
-    const schema = this.getTempUnitConvertSchema();
+    const schema = this.getSchema(...SCHEMA_CODE.TEMP_UNIT_CONVERT);
     if (!schema) {
       return;
     }
+
+    const { CELSIUS, FAHRENHEIT } = this.Characteristic.TemperatureDisplayUnits;
     this.mainService().getCharacteristic(this.Characteristic.TemperatureDisplayUnits)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        return (status.value === 'c') ?
-          this.Characteristic.TemperatureDisplayUnits.CELSIUS :
-          this.Characteristic.TemperatureDisplayUnits.FAHRENHEIT;
+        return (status.value === 'c') ? CELSIUS : FAHRENHEIT;
       })
       .onSet(value => {
         this.sendCommands([{
           code: schema.code,
-          value: (value === this.Characteristic.TemperatureDisplayUnits.CELSIUS) ? 'c':'f',
+          value: (value === CELSIUS) ? 'c':'f',
         }]);
       });
   }

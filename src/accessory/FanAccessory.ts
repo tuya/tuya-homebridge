@@ -1,7 +1,17 @@
 import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
+import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+
+const SCHEMA_CODE = {
+  FAN_ACTIVE: ['switch_fan', 'fan_switch', 'switch'],
+  FAN_DIRECTION: ['fan_direction'],
+  FAN_SPEED: ['fan_speed'],
+  FAN_SPEED_ENUM: ['fan_speed_enum', 'fan_speed'],
+  LIGHT_ON: ['light', 'switch_led'],
+  LIGHT_BRIGHTNESS: ['bright_value'],
+};
 
 export default class FanAccessory extends BaseAccessory {
 
@@ -23,6 +33,11 @@ export default class FanAccessory extends BaseAccessory {
     this.configureLightBrightness();
   }
 
+  requiredSchema() {
+    return [SCHEMA_CODE.FAN_ACTIVE];
+  }
+
+
   fanService() {
     return this.accessory.getService(this.Service.Fanv2)
       || this.accessory.addService(this.Service.Fanv2);
@@ -33,14 +48,9 @@ export default class FanAccessory extends BaseAccessory {
     || this.accessory.addService(this.Service.Lightbulb);
   }
 
-  getFanActiveSchema() {
-    return this.getSchema('switch_fan')
-      || this.getSchema('fan_switch')
-      || this.getSchema('switch');
-  }
 
   getFanSpeedSchema() {
-    const schema = this.getSchema('fan_speed');
+    const schema = this.getSchema(...SCHEMA_CODE.FAN_SPEED);
     if (schema && schema.type === TuyaDeviceSchemaType.Integer) {
       return schema;
     }
@@ -48,30 +58,16 @@ export default class FanAccessory extends BaseAccessory {
   }
 
   getFanSpeedLevelSchema() {
-    const schema = this.getSchema('fan_speed_enum')
-      || this.getSchema('fan_speed');
+    const schema = this.getSchema(...SCHEMA_CODE.FAN_SPEED_ENUM);
     if (schema && schema.type === TuyaDeviceSchemaType.Enum) {
       return schema;
     }
     return undefined;
   }
 
-  getFanDirection() {
-    return this.getSchema('fan_direction');
-  }
-
-  getLightOnSchema() {
-    return this.getSchema('light')
-      || this.getSchema('switch_led');
-  }
-
-  getLightBrightnessSchema() {
-    return this.getSchema('bright_value');
-  }
-
 
   configureActive() {
-    const schema = this.getFanActiveSchema()!;
+    const schema = this.getSchema(...SCHEMA_CODE.FAN_ACTIVE);
     if (!schema) {
       return;
     }
@@ -96,9 +92,7 @@ export default class FanAccessory extends BaseAccessory {
     this.fanService().getCharacteristic(this.Characteristic.RotationSpeed)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        let value = Math.max(0, status.value as number);
-        value = Math.min(100, value);
-        return value;
+        return limit(status.value as number, 0, 100);
       })
       .onSet(value => {
         this.sendCommands([{ code: schema.code, value: value as number }], true);
@@ -129,7 +123,11 @@ export default class FanAccessory extends BaseAccessory {
   }
 
   configureRotationSpeedOn() {
-    const schema = this.getFanActiveSchema()!;
+    const schema = this.getSchema(...SCHEMA_CODE.FAN_ACTIVE);
+    if (!schema) {
+      return;
+    }
+
     const props = { minValue: 0, maxValue: 100, minStep: 100};
     this.log.debug('Set props for RotationSpeed:', props);
 
@@ -146,7 +144,7 @@ export default class FanAccessory extends BaseAccessory {
   }
 
   configureRotationDirection() {
-    const schema = this.getFanDirection();
+    const schema = this.getSchema(...SCHEMA_CODE.FAN_DIRECTION);
     if (!schema) {
       return;
     }
@@ -163,7 +161,7 @@ export default class FanAccessory extends BaseAccessory {
   }
 
   configureLightOn() {
-    const schema = this.getLightOnSchema();
+    const schema = this.getSchema(...SCHEMA_CODE.LIGHT_ON);
     if (!schema) {
       return;
     }
@@ -182,7 +180,7 @@ export default class FanAccessory extends BaseAccessory {
   }
 
   configureLightBrightness() {
-    const schema = this.getLightBrightnessSchema();
+    const schema = this.getSchema(...SCHEMA_CODE.LIGHT_BRIGHTNESS);
     if (!schema) {
       return;
     }
@@ -191,10 +189,8 @@ export default class FanAccessory extends BaseAccessory {
     this.lightService().getCharacteristic(this.Characteristic.Brightness)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        let value = Math.floor(100 * (status.value as number) / property.max);
-        value = Math.max(0, value);
-        value = Math.min(100, value);
-        return value;
+        const value = Math.floor(100 * (status.value as number) / property.max);
+        return limit(value, 0, 100);
       })
       .onSet(value => {
         const status = this.getStatus(schema.code)!;

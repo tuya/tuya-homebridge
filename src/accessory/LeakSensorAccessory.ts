@@ -2,11 +2,16 @@ import { PlatformAccessory } from 'homebridge';
 import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
+const SCHEMA_CODE = {
+  LEAK: ['gas_sensor_status', 'gas_sensor_state', 'ch4_sensor_state', 'watersensor_state'],
+};
+
 export default class LeakSensor extends BaseAccessory {
 
   constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
     super(platform, accessory);
 
+    const { LEAK_NOT_DETECTED, LEAK_DETECTED } = this.Characteristic.LeakDetected;
     const service = this.accessory.getService(this.Service.LeakSensor)
       || this.accessory.addService(this.Service.LeakSensor);
 
@@ -20,12 +25,16 @@ export default class LeakSensor extends BaseAccessory {
         if ((gas && (gas.value === 'alarm' || gas.value === '1'))
           || (ch4 && ch4.value === 'alarm')
           || (water && water.value === 'alarm')) {
-          return this.Characteristic.LeakDetected.LEAK_DETECTED;
+          return LEAK_DETECTED;
         } else {
-          return this.Characteristic.LeakDetected.LEAK_NOT_DETECTED;
+          return LEAK_NOT_DETECTED;
         }
       });
 
+  }
+
+  requiredSchema() {
+    return [SCHEMA_CODE.LEAK];
   }
 
 }

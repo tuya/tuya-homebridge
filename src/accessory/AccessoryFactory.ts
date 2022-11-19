@@ -35,7 +35,7 @@ export default class AccessoryFactory {
     device: TuyaDevice,
   ): BaseAccessory {
 
-    let handler;
+    let handler : BaseAccessory | undefined;
     switch (device.category) {
       case 'kj':
         // TODO AirPurifierAccessory
@@ -126,8 +126,12 @@ export default class AccessoryFactory {
     }
 
     if (!handler) {
-      platform.log.warn(`Create accessory using legacy mode: ${device.name}.`);
       handler = LegacyAccessoryFactory.createAccessory(platform, accessory, device);
+      handler && platform.log.warn(`Create accessory using legacy mode: ${device.name}.`);
+    }
+
+    if (handler && handler.checkRequirements && !handler.checkRequirements()) {
+      handler = undefined;
     }
 
     if (!handler) {
