@@ -36,12 +36,12 @@ export default class SwitchAccessory extends BaseAccessory {
     }
 
     service.getCharacteristic(this.Characteristic.On)
-      .onGet(async () => {
+      .onGet(() => {
         const status = this.getStatus(schema.code);
         return status!.value as boolean;
       })
-      .onSet(async (value) => {
-        await this.sendCommands([{
+      .onSet((value) => {
+        this.sendCommands([{
           code: schema.code,
           value: value as boolean,
         }]);

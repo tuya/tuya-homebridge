@@ -5,6 +5,7 @@ import { debounce } from 'debounce';
 
 import { TuyaDeviceSchema, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
+import { limit } from '../util/util';
 
 const MANUFACTURER = 'Tuya Inc.';
 
@@ -40,7 +41,7 @@ export default class BaseAccessory {
 
   addAccessoryInfoService() {
     const service = this.accessory.getService(this.Service.AccessoryInformation)
-    || this.accessory.addService(this.Service.AccessoryInformation);
+      || this.accessory.addService(this.Service.AccessoryInformation);
 
     service
       .setCharacteristic(this.Characteristic.Manufacturer, MANUFACTURER)
@@ -56,6 +57,7 @@ export default class BaseAccessory {
       return;
     }
 
+    const { BATTERY_LEVEL_NORMAL, BATTERY_LEVEL_LOW} = this.Characteristic.StatusLowBattery;
     const service = this.accessory.getService(this.Service.Battery)
       || this.accessory.addService(this.Service.Battery);
 
@@ -64,37 +66,29 @@ export default class BaseAccessory {
         .onGet(() => {
           let status = this.getBatteryState();
           if (status) {
-            return (status!.value === 'low') ?
-              this.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW :
-              this.Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL;
+            return (status!.value === 'low') ? BATTERY_LEVEL_LOW : BATTERY_LEVEL_NORMAL;
           }
 
           // fallback
           status = this.getBatteryPercentage();
-          return (status!.value as number <= 20) ?
-            this.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW :
-            this.Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL;
-
+          return (status!.value as number <= 20) ? BATTERY_LEVEL_LOW : BATTERY_LEVEL_NORMAL;
         });
     }
 
     if (this.getBatteryPercentage()) {
       service.getCharacteristic(this.Characteristic.BatteryLevel)
         .onGet(() => {
-          const status = this.getBatteryPercentage();
-          let percent = Math.max(0, status!.value as number);
-          percent = Math.min(100, percent);
-          return percent;
+          const status = this.getBatteryPercentage()!;
+          return limit(status.value as number, 0, 100);
         });
     }
 
     if (this.getChargeState()) {
+      const { NOT_CHARGING, CHARGING } = this.Characteristic.ChargingState;
       service.getCharacteristic(this.Characteristic.ChargingState)
         .onGet(() => {
           const status = this.getChargeState();
-          return (status?.value as boolean) ?
-            this.Characteristic.ChargingState.CHARGING :
-            this.Characteristic.ChargingState.NOT_CHARGING;
+          return (status?.value as boolean) ? CHARGING : NOT_CHARGING;
         });
     }
   }
