@@ -1,7 +1,8 @@
 import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
-import { limit } from '../util/util';
+import { kelvinToHSV, kelvinToMired, miredToKelvin } from '../util/color';
+import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 
 const SCHEMA_CODE = {
@@ -11,6 +12,8 @@ const SCHEMA_CODE = {
   COLOR: ['colour_data', 'colour_data_v2'],
   WORK_MODE: ['work_mode'],
 };
+
+const DEFAULT_COLOR_TEMPERATURE_KELVIN = 6500;
 
 enum LightAccessoryType {
   Unknown = -1,
@@ -167,7 +170,8 @@ export default class LightAccessory extends BaseAccessory {
 
         // Color mode, get brightness from hsv
         if (this.inColorMode()) {
-          const { max } = (this.getSchema(...SCHEMA_CODE.COLOR)?.property as TuyaDeviceSchemaColorProperty).v;
+          const schema = this.getSchema(...SCHEMA_CODE.COLOR)!;
+          const { max } = (schema.property as TuyaDeviceSchemaColorProperty).v;
           const status = this.getColorValue().v;
           const value = Math.floor(100 * status / max);
           return limit(value, 0, 100);
@@ -184,8 +188,8 @@ export default class LightAccessory extends BaseAccessory {
 
         // Color mode, set brightness to hsv
         if (this.inColorMode()) {
-          const { min, max } = (this.getSchema(...SCHEMA_CODE.COLOR)?.property as TuyaDeviceSchemaColorProperty).v;
           const colorSchema = this.getSchema(...SCHEMA_CODE.COLOR)!;
+          const { min, max } = (colorSchema.property as TuyaDeviceSchemaColorProperty).v;
           const colorValue = this.getColorValue();
           colorValue.v = Math.floor(value as number * max / 100);
           colorValue.v = limit(colorValue.v, min, max);
@@ -206,18 +210,23 @@ export default class LightAccessory extends BaseAccessory {
     const type = this.getAccessoryType();
     const props = { minValue: 140, maxValue: 500, minStep: 1 };
 
+    if (type === LightAccessoryType.RGBC) {
+      props.minValue = props.maxValue = Math.floor(kelvinToMired(DEFAULT_COLOR_TEMPERATURE_KELVIN));
+    }
+
     const service = this.getLightService();
     service.getCharacteristic(this.Characteristic.ColorTemperature)
       .onGet(() => {
         if (type === LightAccessoryType.RGBC) {
-          return 153;
+          return props.minValue;
         }
 
         const schema = this.getSchema(...SCHEMA_CODE.COLOR_TEMP)!;
         const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
         const status = this.getStatus(schema.code)!;
-        const miredValue = Math.floor(1000000 / ((status.value as number - min) * (7142 - 2000) / (max - min) + 2000));
-        return limit(miredValue, 140, 500);
+        const kelvin = remap(status.value as number, min, max, miredToKelvin(props.maxValue), miredToKelvin(props.minValue));
+        const mired = Math.floor(kelvinToMired(kelvin));
+        return limit(mired, props.minValue, props.maxValue);
       })
       .onSet((value) => {
         this.log.debug(`Characteristic.ColorTemperature set to: ${value}`);
@@ -231,7 +240,8 @@ export default class LightAccessory extends BaseAccessory {
         if (type !== LightAccessoryType.RGBC) {
           const schema = this.getSchema(...SCHEMA_CODE.COLOR_TEMP)!;
           const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
-          const temp = Math.floor((1000000 / (value as number) - 2000) * (max - min) / (7142 - 2000) + min);
+          const kelvin = miredToKelvin(value as number);
+          const temp = Math.floor(remap(kelvin, miredToKelvin(props.maxValue), miredToKelvin(props.minValue), min, max));
           commands.push({ code: schema.code, value: temp });
         }
 
@@ -247,9 +257,8 @@ export default class LightAccessory extends BaseAccessory {
     const { min, max } = (colorSchema.property as TuyaDeviceSchemaColorProperty).h;
     service.getCharacteristic(this.Characteristic.Hue)
       .onGet(() => {
-        // White mode, return fixed Hue 0
         if (this.inWhiteMode()) {
-          return 0;
+          return kelvinToHSV(DEFAULT_COLOR_TEMPERATURE_KELVIN)!.h;
         }
 
         const hue = Math.floor(360 * this.getColorValue().h / max);
@@ -280,9 +289,8 @@ export default class LightAccessory extends BaseAccessory {
     const { min, max } = (colorSchema.property as TuyaDeviceSchemaColorProperty).s;
     service.getCharacteristic(this.Characteristic.Saturation)
       .onGet(() => {
-        // White mode, return fixed Saturation 0
         if (this.inWhiteMode()) {
-          return 0;
+          return kelvinToHSV(DEFAULT_COLOR_TEMPERATURE_KELVIN)!.s;
         }
 
         const saturation = Math.floor(100 * this.getColorValue().s / max);
