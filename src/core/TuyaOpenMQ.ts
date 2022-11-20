@@ -4,7 +4,7 @@ import Crypto from 'crypto';
 import CryptoJS from 'crypto-js';
 
 import TuyaOpenAPI from './TuyaOpenAPI';
-import Logger from '../util/Logger';
+import Logger, { PrefixLogger } from '../util/Logger';
 
 const GCM_TAG_LENGTH = 16;
 
@@ -38,7 +38,7 @@ export default class TuyaOpenMQ {
     public api: TuyaOpenAPI,
     public log: Logger = console,
   ) {
-
+    this.log = new PrefixLogger(log, TuyaOpenMQ.name);
   }
 
   start() {
@@ -60,12 +60,12 @@ export default class TuyaOpenMQ {
 
     const res = await this._getMQConfig('mqtt');
     if (res.success === false) {
-      this.log.warn('[TuyaOpenMQ] Get MQTT config failed. code = %s, msg = %s', res.code, res.msg);
+      this.log.warn('Get MQTT config failed. code = %s, msg = %s', res.code, res.msg);
       return;
     }
 
     const { url, client_id, username, password, expire_time, source_topic } = res.result;
-    this.log.debug('[TuyaOpenMQ] connecting to:', url);
+    this.log.debug('Connecting to:', url);
     const client = mqtt.connect(url, {
       clientId: client_id,
       username: username,
@@ -98,15 +98,15 @@ export default class TuyaOpenMQ {
   }
 
   _onConnect() {
-    this.log.debug('[TuyaOpenMQ] connected');
+    this.log.debug('Connected');
   }
 
   _onError(error: Error) {
-    this.log.error('[TuyaOpenMQ] error:', error);
+    this.log.error('Error:', error);
   }
 
   _onEnd() {
-    this.log.debug('[TuyaOpenMQ] end');
+    this.log.debug('End');
   }
 
   private lastPayload?;
@@ -114,19 +114,19 @@ export default class TuyaOpenMQ {
     const { protocol, data, t } = JSON.parse(payload.toString());
     const messageData = this._decodeMQMessage(data, this.config!.password, t);
     if (!messageData) {
-      this.log.warn('[TuyaOpenMQ] Message decode failed:', payload.toString());
+      this.log.warn('Message decode failed:', payload.toString());
       return;
     }
     let message = JSON.parse(messageData);
-    this.log.debug('[TuyaOpenMQ] onMessage:\ntopic = %s\nprotocol = %s\nmessage = %s', topic, protocol, JSON.stringify(message, null, 2));
+    this.log.debug('onMessage:\ntopic = %s\nprotocol = %s\nmessage = %s', topic, protocol, JSON.stringify(message, null, 2));
 
     // Check message order
     const currentPayload = { protocol, message, t };
     if (protocol === 4 && this.lastPayload && t < this.lastPayload.t) {
-      this.log.warn('[TuyaOpenMQ] Message received with wrong order.');
-      this.log.warn('[TuyaOpenMQ] LastMessage: dataId = %s, t = %s', this.lastPayload.message['dataId'], this.lastPayload.t);
-      this.log.warn('[TuyaOpenMQ] CurrentMessage: dataId = %s, t = %s', message['dataId'], t);
-      this.log.warn('[TuyaOpenMQ] Fallback to use API fetching the latest device status.');
+      this.log.warn('Message received with wrong order.');
+      this.log.warn('LastMessage: dataId = %s, t = %s', this.lastPayload.message['dataId'], this.lastPayload.t);
+      this.log.warn('CurrentMessage: dataId = %s, t = %s', message['dataId'], t);
+      this.log.warn('Fallback to use API fetching the latest device status.');
       const devId = message['devId'];
       const res = await this.api.get(`/v1.0/iot-03/devices/${devId}/status`);
       if (res.success === false) {

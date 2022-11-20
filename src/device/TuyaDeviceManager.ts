@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import TuyaOpenAPI from '../core/TuyaOpenAPI';
 import TuyaOpenMQ from '../core/TuyaOpenMQ';
+import Logger, { PrefixLogger } from '../util/Logger';
 import TuyaDevice, { TuyaDeviceSchema, TuyaDeviceSchemaMode, TuyaDeviceSchemaProperty, TuyaDeviceStatus } from './TuyaDevice';
 
 enum Events {
@@ -22,13 +23,17 @@ export default class TuyaDeviceManager extends EventEmitter {
   public mq: TuyaOpenMQ;
   public ownerIDs: string[] = [];
   public devices: TuyaDevice[] = [];
-  public log = this.api.log;
+  public log: Logger;
 
   constructor(
     public api: TuyaOpenAPI,
   ) {
     super();
-    this.mq = new TuyaOpenMQ(api, api.log);
+
+    const log = (this.api.log as PrefixLogger).log;
+    this.log = new PrefixLogger(log, TuyaDeviceManager.name);
+
+    this.mq = new TuyaOpenMQ(api, log);
     this.mq.addMessageListener(this.onMQTTMessage.bind(this));
   }
 
@@ -75,7 +80,7 @@ export default class TuyaDeviceManager extends EventEmitter {
     // const res = await this.api.get(`/v1.2/iot-03/devices/${deviceID}/specification`);
     const res = await this.api.get(`/v1.0/devices/${deviceID}/specifications`);
     if (res.success === false) {
-      this.log.warn('[TuyaDeviceManager] Get device specification failed. devId = %s, code = %s, msg = %s', deviceID, res.code, res.msg);
+      this.log.warn('Get device specification failed. devId = %s, code = %s, msg = %s', deviceID, res.code, res.msg);
       return [];
     }
 
@@ -143,7 +148,7 @@ export default class TuyaDeviceManager extends EventEmitter {
         if (bizCode === 'bindUser') {
           const { ownerId } = bizData;
           if (!this.ownerIDs.includes(ownerId)) {
-            this.log.warn('[TuyaDeviceManager] Update devId = %s not included in your ownerIDs. Skip.', devId);
+            this.log.warn('Update devId = %s not included in your ownerIDs. Skip.', devId);
             return;
           }
 
@@ -174,7 +179,7 @@ export default class TuyaDeviceManager extends EventEmitter {
         } else if (bizCode === 'delete') {
           const { ownerId } = bizData;
           if (!this.ownerIDs.includes(ownerId)) {
-            this.log.warn('[TuyaDeviceManager] Remove devId = %s not included in your ownerIDs. Skip.', devId);
+            this.log.warn('Remove devId = %s not included in your ownerIDs. Skip.', devId);
             return;
           }
 
@@ -185,12 +190,12 @@ export default class TuyaDeviceManager extends EventEmitter {
           this.devices.splice(this.devices.indexOf(device), 1);
           this.emit(Events.DEVICE_DELETE, devId);
         } else {
-          this.log.warn('[TuyaDeviceManager] Unhandled mqtt message: bizCode = %s, bizData = %o', bizCode, bizData);
+          this.log.warn('Unhandled mqtt message: bizCode = %s, bizData = %o', bizCode, bizData);
         }
         break;
       }
       default:
-        this.log.warn('[TuyaDeviceManager] Unhandled mqtt message: protocol = %s, message = %o', protocol, message);
+        this.log.warn('Unhandled mqtt message: protocol = %s, message = %o', protocol, message);
         break;
     }
   }

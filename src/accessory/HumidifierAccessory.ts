@@ -105,7 +105,7 @@ export default class HumidifierAccessory extends BaseAccessory {
       || this.accessory.addService(this.Service.TemperatureSensor);
     const schema = this.getSchema('temp_current');
     if (!schema) {
-      this.platform.log.warn('TemperatureSensor not supported.');
+      this.log.warn('TemperatureSensor not supported.');
       return;
     }
     const property = schema.property as TuyaDeviceSchemaIntegerProperty;

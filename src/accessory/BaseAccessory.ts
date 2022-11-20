@@ -6,6 +6,7 @@ import { debounce } from 'debounce';
 import { TuyaDeviceSchema, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
+import { PrefixLogger } from '../util/Logger';
 
 const MANUFACTURER = 'Tuya Inc.';
 
@@ -21,7 +22,7 @@ export default class BaseAccessory {
 
   public deviceManager = this.platform.deviceManager!;
   public device = this.deviceManager.getDevice(this.accessory.context.deviceID)!;
-  public log = this.platform.log;
+  public log = new PrefixLogger(this.platform.log, this.device.name.length > 0 ? this.device.name : this.device.id);
 
   constructor(
     public readonly platform: TuyaPlatform,
@@ -160,7 +161,7 @@ export default class BaseAccessory {
       if (schema) {
         continue;
       }
-      this.log.warn('"%s" is missing one of the required schema: %s', this.device.name, codes);
+      this.log.warn('Missing one of the required schema: %s', codes);
       result = false;
     }
 
@@ -191,8 +192,8 @@ export default class BaseAccessory {
         if (characteristic.value === newValue) {
           continue;
         }
-        this.log.debug('Update value %o => %o for devId = %o service = %o, subtype = %o, characteristic = %o',
-          characteristic.value, newValue, this.device.id, service.UUID, service.subtype, characteristic.UUID);
+        this.log.debug('Update value %o => %o for service = %o, subtype = %o, characteristic = %o',
+          characteristic.value, newValue, service.UUID, service.subtype, characteristic.UUID);
         characteristic.updateValue(newValue);
       }
     }

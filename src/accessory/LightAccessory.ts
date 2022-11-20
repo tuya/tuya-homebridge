@@ -40,7 +40,6 @@ export default class LightAccessory extends BaseAccessory {
   ) {
     super(platform, accessory);
 
-    // platform.log.debug(`${JSON.stringify(this.device.functions)}, ${JSON.stringify(this.device.status)}`);
     switch (this.getAccessoryType()) {
       case LightAccessoryType.Normal:
         this.configureOn();

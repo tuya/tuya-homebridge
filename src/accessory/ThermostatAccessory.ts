@@ -159,7 +159,7 @@ export default class ThermostatAccessory extends BaseAccessory {
   configureCurrentTemp() {
     const schema = this.getSchema(...SCHEMA_CODE.CURRENT_TEMP);
     if (!schema) {
-      this.log.warn('CurrentTemperature not supported for devId:', this.device.id);
+      this.log.warn('CurrentTemperature not supported.');
       return;
     }
 
@@ -185,7 +185,7 @@ export default class ThermostatAccessory extends BaseAccessory {
   configureTargetTemp() {
     const schema = this.getSchema(...SCHEMA_CODE.TARGET_TEMP);
     if (!schema) {
-      this.log.warn('TargetTemperature not supported for devId:', this.device.id);
+      this.log.warn('TargetTemperature not supported.');
       return;
     }
 
@@ -197,7 +197,7 @@ export default class ThermostatAccessory extends BaseAccessory {
       minStep: Math.max(0.1, property.step / multiple),
     };
     if (props.maxValue <= props.minValue) {
-      this.log.warn('The device %s seems have a wrong schema: %o, props will be reset to the default value.', this.device.id, schema);
+      this.log.warn('Invalid schema: %o, props will be reset to the default value.', schema);
       multiple = 1;
       props = { minValue: 10, maxValue: 38, minStep: 1 };
     }

@@ -92,7 +92,7 @@ export default class HeaterAccessory extends BaseAccessory {
   configureCurrentTemp() {
     const schema = this.getSchema(...SCHEMA_CODE.CURRENT_TEMP);
     if (!schema) {
-      this.log.warn('CurrentTemperature not supported for devId:', this.device.id);
+      this.log.warn('CurrentTemperature not supported');
       return;
     }
 
