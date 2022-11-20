@@ -219,6 +219,7 @@ export default class LightAccessory extends BaseAccessory {
     if (type === LightAccessoryType.RGBC) {
       props.minValue = props.maxValue = Math.floor(kelvinToMired(DEFAULT_COLOR_TEMPERATURE_KELVIN));
     }
+    this.log.debug('Set props for ColorTemperature:', props);
 
     const service = this.getLightService();
     service.getCharacteristic(this.Characteristic.ColorTemperature)
