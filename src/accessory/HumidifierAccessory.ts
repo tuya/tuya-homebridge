@@ -131,16 +131,16 @@ export default class HumidifierAccessory extends BaseAccessory {
       this.platform.log.warn('Mode setting is not supported.');
       return;
     }
-    /*
+
     const service = this.accessory.getService(this.Service.Fan)
       || this.accessory.addService(this.Service.Fan);
 
-    service.setCharacteristic(this.Characteristic.Name, 'Mode');*
+    service.setCharacteristic(this.Characteristic.Name, 'Mode');
     service.getCharacteristic(this.Characteristic.On).onGet(() => {
       const status = this.getStatus('switch');
       return status?.value as boolean;
-    });*/
-    const service = this.mainService();
+    });
+    // const service = this.mainService();
 
     service.getCharacteristic(this.Characteristic.RotationSpeed)
       .onGet(() => {
