@@ -103,7 +103,7 @@ export default class TuyaDeviceManager extends EventEmitter {
       let property: TuyaDeviceSchemaProperty;
       try {
         property = JSON.parse(values);
-        schemas[code] = { code, mode, type, values, property };
+        schemas[code] = { code, mode, type, property };
       } catch (error) {
         this.log.error(error);
       }

@@ -27,7 +27,6 @@ import HumanPresenceSensorAccessory from './HumanPresenceSensorAccessory';
 import HumidifierAccessory from './HumidifierAccessory';
 import AirPurifierAccessory from './AirPurifierAccessory';
 
-import LegacyAccessoryFactory from './LegacyAccessoryFactory';
 
 export default class AccessoryFactory {
   static createAccessory(
@@ -124,11 +123,6 @@ export default class AccessoryFactory {
         handler = new HumidifierAccessory(platform, accessory);
         break;
 
-    }
-
-    if (!handler) {
-      handler = LegacyAccessoryFactory.createAccessory(platform, accessory, device);
-      handler && platform.log.warn(`Create accessory using legacy mode: ${device.name}.`);
     }
 
     if (handler && handler.checkRequirements && !handler.checkRequirements()) {

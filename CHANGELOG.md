@@ -54,7 +54,7 @@ This version has been completely rewritten in TypeScript, brings a lot of bug fi
 
 ### Changed
 - Rewritten in TypeScript, brings benefits of type checking, smart code hints, etc.
-- Reimplement accessory logics. More friendly for accessory developers. Legacy accessory code moved to `src/accessory/legacy/` folder.
+- Reimplement accessory logics. More friendly for accessory developers.
 - Update device info list polling logic. Less API errors.
 - Now `Manufactor`, `Serial Number` and `Model` will be correctly displayed in HomeKit.
 - All devices will be shown in HomeKit by default (Including unsupported device).

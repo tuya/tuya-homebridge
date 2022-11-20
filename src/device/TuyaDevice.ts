@@ -41,8 +41,7 @@ export type TuyaDeviceSchema = {
   // name: string;
   mode: TuyaDeviceSchemaMode;
   type: TuyaDeviceSchemaType;
-  values: string;
-  property: TuyaDeviceSchemaProperty; // JSON.parse(schema.values);
+  property: TuyaDeviceSchemaProperty;
 };
 
 export type TuyaDeviceStatus = {
