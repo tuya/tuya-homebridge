@@ -8,7 +8,7 @@ const SCHEMA_CODE = {
   FAN_ACTIVE: ['switch_fan', 'fan_switch', 'switch'],
   FAN_DIRECTION: ['fan_direction'],
   FAN_SPEED: ['fan_speed'],
-  FAN_SPEED_ENUM: ['fan_speed_enum', 'fan_speed'],
+  FAN_SPEED_LEVEL: ['fan_speed_enum', 'fan_speed'],
   LIGHT_ON: ['light', 'switch_led'],
   LIGHT_BRIGHTNESS: ['bright_value'],
 };
@@ -58,7 +58,7 @@ export default class FanAccessory extends BaseAccessory {
   }
 
   getFanSpeedLevelSchema() {
-    const schema = this.getSchema(...SCHEMA_CODE.FAN_SPEED_ENUM);
+    const schema = this.getSchema(...SCHEMA_CODE.FAN_SPEED_LEVEL);
     if (schema && schema.type === TuyaDeviceSchemaType.Enum) {
       return schema;
     }
@@ -79,9 +79,8 @@ export default class FanAccessory extends BaseAccessory {
         return status.value as boolean ? ACTIVE : INACTIVE;
       })
       .onSet(value => {
-        const status = this.getStatus(schema.code)!;
         this.sendCommands([{
-          code: status.code,
+          code: schema.code,
           value: (value === ACTIVE) ? true : false,
         }], true);
       });
@@ -141,8 +140,7 @@ export default class FanAccessory extends BaseAccessory {
         return (status.value as boolean) ? 100 : 0;
       })
       .onSet(value => {
-        const status = this.getStatus(schema.code)!;
-        this.sendCommands([{ code: status.code, value: (value > 50) ? true : false }], true);
+        this.sendCommands([{ code: schema.code, value: (value > 50) ? true : false }], true);
       })
       .setProps(props);
   }

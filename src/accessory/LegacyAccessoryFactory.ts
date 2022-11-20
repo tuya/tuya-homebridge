@@ -3,8 +3,6 @@ import TuyaDevice, { TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
-import AirPurifierAccessory from './legacy/air_purifier_accessory';
-
 class LegacyAccessoryWrapper {
 
   constructor(
@@ -36,11 +34,11 @@ export default class LegacyAccessoryFactory {
     device['functions'] = device.schema;
 
     let handler;
-    switch (device.category) {
-      case 'kj':
-        handler = new AirPurifierAccessory(platform, accessory, device);
-        break;
-    }
+    // switch (device.category) {
+    //   case 'xxx':
+    //     handler = new XXXAccessory(platform, accessory, device);
+    //     break;
+    // }
 
     if (handler) {
       handler = new LegacyAccessoryWrapper(handler, device) as unknown as BaseAccessory;

@@ -25,6 +25,7 @@ import MotionSensorAccessory from './MotionSensorAccessory';
 import AirQualitySensorAccessory from './AirQualitySensorAccessory';
 import HumanPresenceSensorAccessory from './HumanPresenceSensorAccessory';
 import HumidifierAccessory from './HumidifierAccessory';
+import AirPurifierAccessory from './AirPurifierAccessory';
 
 import LegacyAccessoryFactory from './LegacyAccessoryFactory';
 
@@ -38,7 +39,7 @@ export default class AccessoryFactory {
     let handler : BaseAccessory | undefined;
     switch (device.category) {
       case 'kj':
-        // TODO AirPurifierAccessory
+        handler = new AirPurifierAccessory(platform, accessory);
         break;
       case 'dj':
       case 'xdd':
