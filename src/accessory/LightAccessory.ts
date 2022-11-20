@@ -167,27 +167,30 @@ export default class LightAccessory extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.Brightness)
       .onGet(() => {
-
-        // Color mode, get brightness from hsv
         if (this.inColorMode()) {
+          // Color mode, get brightness from `color_data.v`
           const schema = this.getSchema(...SCHEMA_CODE.COLOR)!;
           const { max } = (schema.property as TuyaDeviceSchemaColorProperty).v;
           const status = this.getColorValue().v;
           const value = Math.floor(100 * status / max);
           return limit(value, 0, 100);
+        } else if (this.inWhiteMode()) {
+          // White mode, get brightness from `brightness_value`
+          const schema = this.getSchema(...SCHEMA_CODE.BRIGHTNESS)!;
+          const { max } = schema.property as TuyaDeviceSchemaIntegerProperty;
+          const status = this.getStatus(schema.code)!;
+          const value = Math.floor(100 * (status.value as number) / max);
+          return limit(value, 0, 100);
+        } else {
+          // Unsupported mode
+          return 100;
         }
 
-        const schema = this.getSchema(...SCHEMA_CODE.BRIGHTNESS)!;
-        const { max } = schema.property as TuyaDeviceSchemaIntegerProperty;
-        const status = this.getStatus(schema.code)!;
-        const value = Math.floor(100 * (status.value as number) / max);
-        return limit(value, 0, 100);
       })
       .onSet((value) => {
         this.log.debug(`Characteristic.Brightness set to: ${value}`);
-
-        // Color mode, set brightness to hsv
         if (this.inColorMode()) {
+          // Color mode, set brightness to `color_data.v`
           const colorSchema = this.getSchema(...SCHEMA_CODE.COLOR)!;
           const { min, max } = (colorSchema.property as TuyaDeviceSchemaColorProperty).v;
           const colorValue = this.getColorValue();
@@ -195,13 +198,16 @@ export default class LightAccessory extends BaseAccessory {
           colorValue.v = limit(colorValue.v, min, max);
           this.sendCommands([{ code: colorSchema.code, value: JSON.stringify(colorValue) }], true);
           return;
+        } else if (this.inWhiteMode()) {
+          // White mode, set brightness to `brightness_value`
+          const brightSchema = this.getSchema(...SCHEMA_CODE.BRIGHTNESS)!;
+          const { min, max } = brightSchema.property as TuyaDeviceSchemaIntegerProperty;
+          let brightValue = Math.floor(value as number * max / 100);
+          brightValue = limit(brightValue, min, max);
+          this.sendCommands([{ code: brightSchema.code, value: brightValue }], true);
+        } else {
+          // Unsupported mode
         }
-
-        const brightSchema = this.getSchema(...SCHEMA_CODE.BRIGHTNESS)!;
-        const { min, max } = brightSchema.property as TuyaDeviceSchemaIntegerProperty;
-        let brightValue = Math.floor(value as number * max / 100);
-        brightValue = limit(brightValue, min, max);
-        this.sendCommands([{ code: brightSchema.code, value: brightValue }], true);
       });
 
   }
