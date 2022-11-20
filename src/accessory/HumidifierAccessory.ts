@@ -1,6 +1,7 @@
 import { PlatformAccessory } from 'homebridge';
 import { TuyaPlatform } from '../platform';
 import { TuyaDeviceSchemaIntegerProperty } from '../device/TuyaDevice';
+import { remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 
 export default class HumidifierAccessory extends BaseAccessory {
@@ -14,6 +15,7 @@ export default class HumidifierAccessory extends BaseAccessory {
     this.configureCurrentRelativeHumidity();
     this.configureRelativeHumidityHumidifierThreshold();
     this.configureTemperatureSensor();
+    this.configureRotationSpeed();
   }
 
   mainService() {
@@ -121,6 +123,51 @@ export default class HumidifierAccessory extends BaseAccessory {
         return temperature;
       });
 
+  }
+
+  configureRotationSpeed() {
+    const schema = this.getSchema('mode');
+    if (!schema) {
+      this.platform.log.warn('Mode setting is not supported.');
+      return;
+    }
+    /*
+    const service = this.accessory.getService(this.Service.Fan)
+      || this.accessory.addService(this.Service.Fan);
+
+    service.setCharacteristic(this.Characteristic.Name, 'Mode');*
+    service.getCharacteristic(this.Characteristic.On).onGet(() => {
+      const status = this.getStatus('switch');
+      return status?.value as boolean;
+    });*/
+    const service = this.mainService();
+
+    service.getCharacteristic(this.Characteristic.RotationSpeed)
+      .onGet(() => {
+        const status = this.getStatus(schema.code)!;
+        let v = 3;
+        switch (status.value as string) {
+          case 'small':
+            v = 1;
+            break;
+          case 'middle':
+            v = 2;
+            break;
+        }
+        return remap(v, 0, 3, 0, 100);
+      }).onSet(v => {
+        v = Math.round(remap(v as number, 0, 100, 0, 3));
+        let mode = 'small';
+        switch (v) {
+          case 2:
+            mode = 'middle';
+            break;
+          case 3:
+            mode = 'large';
+            break;
+        }
+        this.sendCommands([{ code: schema.code, value: mode }]);
+      });
   }
 
   setSprayModeToHumidity() {
