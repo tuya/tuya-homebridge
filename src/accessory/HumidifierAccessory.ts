@@ -128,7 +128,7 @@ export default class HumidifierAccessory extends BaseAccessory {
   configureRotationSpeed() {
     const schema = this.getSchema('mode');
     if (!schema) {
-      this.platform.log.warn('Mode setting is not supported.');
+      this.log.warn('Mode setting is not supported.');
       return;
     }
 
