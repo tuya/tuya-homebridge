@@ -3,7 +3,7 @@
 import { PlatformAccessory, Service, Characteristic } from 'homebridge';
 import { debounce } from 'debounce';
 
-import { TuyaDeviceSchema, TuyaDeviceStatus } from '../device/TuyaDevice';
+import { TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
 import { PrefixLogger } from '../util/Logger';
@@ -32,12 +32,7 @@ export default class BaseAccessory {
     this.addAccessoryInfoService();
     this.addBatteryService();
 
-    for (const schema of this.device.schema) {
-      this.configureService(schema);
-    }
-
     this.onDeviceStatusUpdate(this.device.status);
-
   }
 
   addAccessoryInfoService() {
@@ -58,7 +53,7 @@ export default class BaseAccessory {
       return;
     }
 
-    const { BATTERY_LEVEL_NORMAL, BATTERY_LEVEL_LOW} = this.Characteristic.StatusLowBattery;
+    const { BATTERY_LEVEL_NORMAL, BATTERY_LEVEL_LOW } = this.Characteristic.StatusLowBattery;
     const service = this.accessory.getService(this.Service.Battery)
       || this.accessory.addService(this.Service.Battery);
 
@@ -176,9 +171,6 @@ export default class BaseAccessory {
     return [];
   }
 
-  configureService(schema: TuyaDeviceSchema) {
-
-  }
 
   async onDeviceInfoUpdate(info) {
     // name, online, ...

@@ -17,46 +17,19 @@ export default class DimmerAccessory extends BaseAccessory {
   ) {
     super(platform, accessory);
 
-    this.configure();
-  }
-
-  requiredSchema() {
-    return [SCHEMA_CODE.ON, SCHEMA_CODE.BRIGHTNESS];
-  }
-
-  getOnSchema(index: number) {
-    if (index === 0) {
-      return this.getSchema('switch', 'switch_led');
-    }
-    return this.getSchema(`switch_${index}`, `switch_led_${index}`);
-  }
-
-  getBrightnessSchema(index: number) {
-    if (index === 0) {
-      return this.getSchema('bright_value');
-    }
-    return this.getSchema(`bright_value_${index}`);
-  }
-
-
-  configure() {
-
     const oldService = this.accessory.getService(this.Service.Lightbulb);
     if (oldService && oldService?.subtype === undefined) {
       this.platform.log.warn('Remove old service:', oldService.UUID);
       this.accessory.removeService(oldService);
     }
 
-    for (let index = 0; index <= 3; index++) {
-      const schema = this.getBrightnessSchema(index);
-      if (!schema) {
-        continue;
-      }
+    const schema = this.device.schema.filter((schema) => schema.code.startsWith('bright_value'));
+    for (const _schema of schema) {
+      const suffix = _schema.code.replace('bright_value', '');
+      const name = (schema.length === 1) ? this.device.name : _schema.code;
 
-      const name = (index === 0) ? this.device.name : `${this.device.name} - ${index}`;
-
-      const service = this.accessory.getService(schema.code)
-        || this.accessory.addService(this.Service.Lightbulb, name, schema.code);
+      const service = this.accessory.getService(_schema.code)
+        || this.accessory.addService(this.Service.Lightbulb, name, _schema.code);
 
       service.setCharacteristic(this.Characteristic.Name, name);
       if (!service.testCharacteristic(this.Characteristic.ConfiguredName)) {
@@ -64,13 +37,17 @@ export default class DimmerAccessory extends BaseAccessory {
         service.setCharacteristic(this.Characteristic.ConfiguredName, name);
       }
 
-      this.configureOn(service, index);
-      this.configureBrightness(service, index);
+      this.configureOn(service, suffix);
+      this.configureBrightness(service, suffix);
     }
   }
 
-  configureOn(service: Service, index: number) {
-    const schema = this.getOnSchema(index);
+  requiredSchema() {
+    return [SCHEMA_CODE.ON, SCHEMA_CODE.BRIGHTNESS];
+  }
+
+  configureOn(service: Service, suffix: string) {
+    const schema = this.getSchema('switch' + suffix, 'switch_led' + suffix);
     if (!schema) {
       return;
     }
@@ -86,8 +63,8 @@ export default class DimmerAccessory extends BaseAccessory {
       });
   }
 
-  configureBrightness(service: Service, index: number) {
-    const schema = this.getBrightnessSchema(index);
+  configureBrightness(service: Service, suffix: string) {
+    const schema = this.getSchema('bright_value' + suffix);
     if (!schema) {
       return;
     }
@@ -100,8 +77,8 @@ export default class DimmerAccessory extends BaseAccessory {
       minStep: 1,
     };
 
-    const minStatus = this.getStatus(`brightness_min_${index}`);
-    const maxStatus = this.getStatus(`brightness_max_${index}`);
+    const minStatus = this.getStatus('brightness_min' + suffix);
+    const maxStatus = this.getStatus('brightness_max' + suffix);
     if (minStatus && maxStatus && maxStatus.value > minStatus.value) {
       const minValue = Math.ceil(remap(minStatus.value as number, 0, range, 0, 100));
       const maxValue = Math.floor(remap(maxStatus.value as number, 0, range, 0, 100));
@@ -135,8 +112,8 @@ export default class DimmerAccessory extends BaseAccessory {
     // brightness range updated
     if (status.length !== this.device.status.length) {
       for (const _status of status) {
-        if (!_status.code.startsWith('brightness_min_')
-          && !_status.code.startsWith('brightness_max_')) {
+        if (!_status.code.startsWith('brightness_min')
+          && !_status.code.startsWith('brightness_max')) {
           continue;
         }
 

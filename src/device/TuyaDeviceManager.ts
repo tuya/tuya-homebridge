@@ -113,7 +113,8 @@ export default class TuyaDeviceManager extends EventEmitter {
         this.log.error(error);
       }
     }
-    return Object.values(schemas) as TuyaDeviceSchema[];
+
+    return Object.values(schemas).sort((a, b) => a.code > b.code ? 1 : -1) as TuyaDeviceSchema[];
   }
 
 

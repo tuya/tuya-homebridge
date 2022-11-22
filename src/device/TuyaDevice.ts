@@ -82,6 +82,7 @@ export default class TuyaDevice {
 
   constructor(obj: Partial<TuyaDevice>) {
     Object.assign(this, obj);
+    this.status.sort((a, b) => a.code > b.code ? 1 : -1);
   }
 
 }

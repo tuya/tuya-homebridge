@@ -1,4 +1,6 @@
+import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
+import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
 const SCHEMA_CODE = {
@@ -6,6 +8,25 @@ const SCHEMA_CODE = {
 };
 
 export default class SwitchAccessory extends BaseAccessory {
+
+  constructor(
+    public readonly platform: TuyaPlatform,
+    public readonly accessory: PlatformAccessory,
+  ) {
+    super(platform, accessory);
+
+    const oldService = this.accessory.getService(this.mainService());
+    if (oldService && oldService?.subtype === undefined) {
+      this.platform.log.warn('Remove old service:', oldService.UUID);
+      this.accessory.removeService(oldService);
+    }
+
+    const schema = this.device.schema.filter((schema) => schema.code.startsWith('switch') && schema.type !== TuyaDeviceSchemaType.Boolean);
+    for (const _schema of schema) {
+      const name = (schema.length === 1) ? this.device.name : _schema.code;
+      this.configureSwitch(_schema, name);
+    }
+  }
 
   requiredSchema() {
     return [SCHEMA_CODE.ON];
@@ -15,16 +36,7 @@ export default class SwitchAccessory extends BaseAccessory {
     return this.Service.Switch;
   }
 
-  configureService(schema: TuyaDeviceSchema) {
-    if (!schema.code.startsWith('switch')
-      || schema.type !== TuyaDeviceSchemaType.Boolean) {
-      return;
-    }
-
-    let name = this.device.name;
-    if (schema.code !== 'switch') {
-      name += ` - ${schema.code.replace('switch_', '')}`;
-    }
+  configureSwitch(schema: TuyaDeviceSchema, name: string) {
 
     const service = this.accessory.getService(schema.code)
       || this.accessory.addService(this.mainService(), name, schema.code);
@@ -37,8 +49,8 @@ export default class SwitchAccessory extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.On)
       .onGet(() => {
-        const status = this.getStatus(schema.code);
-        return status!.value as boolean;
+        const status = this.getStatus(schema.code)!;
+        return status.value as boolean;
       })
       .onSet((value) => {
         this.sendCommands([{
