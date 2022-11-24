@@ -24,7 +24,7 @@ export default class SmokeSensor extends BaseAccessory {
       return;
     }
 
-    const { LEAK_NOT_DETECTED, LEAK_DETECTED } = this.Characteristic.LeakDetected;
+    const { SMOKE_NOT_DETECTED, SMOKE_DETECTED } = this.Characteristic.SmokeDetected;
     const service = this.accessory.getService(this.Service.SmokeSensor)
       || this.accessory.addService(this.Service.SmokeSensor);
 
@@ -32,9 +32,9 @@ export default class SmokeSensor extends BaseAccessory {
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
         if ((status.value === 'alarm' || status.value === '1')) {
-          return LEAK_DETECTED;
+          return SMOKE_DETECTED;
         } else {
-          return LEAK_NOT_DETECTED;
+          return SMOKE_NOT_DETECTED;
         }
       });
   }
