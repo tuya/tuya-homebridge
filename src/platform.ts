@@ -256,10 +256,10 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       this.log.info(`Got home_id=${home_id}, name=${name}`);
       if (this.options.homeWhitelist) {
         if (this.options.homeWhitelist.includes(home_id)) {
-            this.log.info(`Found home_id=${home_id} in whitelist; including devices from this home.`);
-            homeIDList.push(home_id);
+          this.log.info(`Found home_id=${home_id} in whitelist; including devices from this home.`);
+          homeIDList.push(home_id);
         } else {
-            this.log.info(`Did not find home_id=${home_id} in whitelist; excluding devices from this home.`);
+          this.log.info(`Did not find home_id=${home_id} in whitelist; excluding devices from this home.`);
         }
       } else {
         homeIDList.push(home_id);

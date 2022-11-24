@@ -26,6 +26,7 @@ import AirQualitySensorAccessory from './AirQualitySensorAccessory';
 import HumanPresenceSensorAccessory from './HumanPresenceSensorAccessory';
 import HumidifierAccessory from './HumidifierAccessory';
 import AirPurifierAccessory from './AirPurifierAccessory';
+import TemperatureHumidityIRSensorAccessory from './TemperatureHumidityIRSensorAccessory';
 
 
 export default class AccessoryFactory {
@@ -103,6 +104,9 @@ export default class AccessoryFactory {
         break;
       case 'co2bj':
         handler = new CarbonDioxideSensorAccessory(platform, accessory);
+        break;
+      case 'wnykq':
+        handler = new TemperatureHumidityIRSensorAccessory(platform, accessory);
         break;
       case 'wsdcg':
         handler = new TemperatureHumiditySensorAccessory(platform, accessory);
