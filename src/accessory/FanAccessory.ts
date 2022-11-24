@@ -4,6 +4,7 @@ import { TuyaPlatform } from '../platform';
 import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
+import { configureOn } from './characteristic/On';
 
 const SCHEMA_CODE = {
   FAN_ACTIVE: ['switch_fan', 'fan_switch', 'switch'],
@@ -30,7 +31,7 @@ export default class FanAccessory extends BaseAccessory {
 
     this.configureRotationDirection();
 
-    this.configureLightOn();
+    configureOn(this, this.lightService(), this.getSchema(...SCHEMA_CODE.LIGHT_ON));
     this.configureLightBrightness();
   }
 
@@ -140,25 +141,6 @@ export default class FanAccessory extends BaseAccessory {
       })
       .onSet(value => {
         this.sendCommands([{ code: schema.code, value: (value === CLOCKWISE) ? 'forward' : 'reverse' }]);
-      });
-  }
-
-  configureLightOn() {
-    const schema = this.getSchema(...SCHEMA_CODE.LIGHT_ON);
-    if (!schema) {
-      return;
-    }
-
-    this.lightService().getCharacteristic(this.Characteristic.On)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        return status.value as boolean;
-      })
-      .onSet(value => {
-        this.sendCommands([{
-          code: schema.code,
-          value: value as boolean,
-        }], true);
       });
   }
 

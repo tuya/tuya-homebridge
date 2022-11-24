@@ -4,6 +4,7 @@ import { TuyaPlatform } from '../platform';
 import { kelvinToHSV, kelvinToMired, miredToKelvin } from '../util/color';
 import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+import { configureOn } from './characteristic/On';
 import { configureMotionDetected } from './characteristic/MotionDetected';
 
 const SCHEMA_CODE = {
@@ -43,26 +44,26 @@ export default class LightAccessory extends BaseAccessory {
 
     switch (this.getAccessoryType()) {
       case LightAccessoryType.Normal:
-        this.configureOn();
+        configureOn(this, this.getLightService(), this.getSchema(...SCHEMA_CODE.ON));
         break;
       case LightAccessoryType.C:
-        this.configureOn();
+        configureOn(this, this.getLightService(), this.getSchema(...SCHEMA_CODE.ON));
         this.configureBrightness();
         break;
       case LightAccessoryType.CW:
-        this.configureOn();
+        configureOn(this, this.getLightService(), this.getSchema(...SCHEMA_CODE.ON));
         this.configureBrightness();
         this.configureColourTemperature();
         break;
       case LightAccessoryType.RGB:
-        this.configureOn();
+        configureOn(this, this.getLightService(), this.getSchema(...SCHEMA_CODE.ON));
         this.configureBrightness();
         this.configureHue();
         this.configureSaturation();
         break;
       case LightAccessoryType.RGBC:
       case LightAccessoryType.RGBCW:
-        this.configureOn();
+        configureOn(this, this.getLightService(), this.getSchema(...SCHEMA_CODE.ON));
         this.configureBrightness();
         this.configureColourTemperature();
         this.configureHue();
@@ -147,21 +148,6 @@ export default class LightAccessory extends BaseAccessory {
       return false;
     }
     return (status.value === 'colour');
-  }
-
-  configureOn() {
-    const service = this.getLightService();
-    const schema = this.getSchema(...SCHEMA_CODE.ON)!;
-
-    service.getCharacteristic(this.Characteristic.On)
-      .onGet(() => {
-        const status = this.getStatus(schema.code);
-        return !!status && status!.value;
-      })
-      .onSet((value) => {
-        this.log.debug(`Characteristic.On set to: ${value}`);
-        this.sendCommands([{ code: schema.code, value: value as boolean }], true);
-      });
   }
 
   configureBrightness() {

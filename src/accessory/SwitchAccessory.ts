@@ -2,6 +2,7 @@ import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
+import { configureOn } from './characteristic/On';
 
 const SCHEMA_CODE = {
   ON: ['switch', 'switch_1'],
@@ -47,17 +48,7 @@ export default class SwitchAccessory extends BaseAccessory {
       service.setCharacteristic(this.Characteristic.ConfiguredName, name);
     }
 
-    service.getCharacteristic(this.Characteristic.On)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        return status.value as boolean;
-      })
-      .onSet((value) => {
-        this.sendCommands([{
-          code: schema.code,
-          value: value as boolean,
-        }]);
-      });
+    configureOn(this, service, schema);
   }
 
 }

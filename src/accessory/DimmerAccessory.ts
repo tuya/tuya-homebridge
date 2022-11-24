@@ -3,6 +3,7 @@ import { TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/Tuy
 import { TuyaPlatform } from '../platform';
 import { remap, limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+import { configureOn } from './characteristic/On';
 
 const SCHEMA_CODE = {
   ON: ['switch', 'switch_led', 'switch_1', 'switch_led_1'],
@@ -37,30 +38,13 @@ export default class DimmerAccessory extends BaseAccessory {
         service.setCharacteristic(this.Characteristic.ConfiguredName, name);
       }
 
-      this.configureOn(service, suffix);
+      configureOn(this, service, this.getSchema('switch' + suffix, 'switch_led' + suffix));
       this.configureBrightness(service, suffix);
     }
   }
 
   requiredSchema() {
     return [SCHEMA_CODE.ON, SCHEMA_CODE.BRIGHTNESS];
-  }
-
-  configureOn(service: Service, suffix: string) {
-    const schema = this.getSchema('switch' + suffix, 'switch_led' + suffix);
-    if (!schema) {
-      return;
-    }
-
-    service.getCharacteristic(this.Characteristic.On)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        return status.value as boolean;
-      })
-      .onSet((value) => {
-        this.log.debug(`Characteristic.On set to: ${value}`);
-        this.sendCommands([{ code: schema.code, value: value as boolean }], true);
-      });
   }
 
   configureBrightness(service: Service, suffix: string) {

@@ -6,6 +6,7 @@ import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
 import { configureCurrentTemperature } from './characteristic/CurrentTemperature';
 import { configureCurrentRelativeHumidity } from './characteristic/CurrentRelativeHumidity';
+import { configureOn } from './characteristic/On';
 
 const SCHEMA_CODE = {
   ACTIVE: ['switch'],
@@ -104,10 +105,7 @@ export default class HumidifierAccessory extends BaseAccessory {
       || this.accessory.addService(this.Service.Fan);
 
     service.setCharacteristic(this.Characteristic.Name, 'Mode');
-    service.getCharacteristic(this.Characteristic.On).onGet(() => {
-      const status = this.getStatus('switch');
-      return status?.value as boolean;
-    });
+    configureOn(this, service, this.getSchema(...SCHEMA_CODE.ACTIVE));
     // const service = this.mainService();
 
     service.getCharacteristic(this.Characteristic.RotationSpeed)
