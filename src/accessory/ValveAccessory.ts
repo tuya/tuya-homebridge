@@ -21,7 +21,7 @@ export default class ValveAccessory extends BaseAccessory {
       this.accessory.removeService(oldService);
     }
 
-    const schema = this.device.schema.filter((schema) => schema.code.startsWith('switch') && schema.type !== TuyaDeviceSchemaType.Boolean);
+    const schema = this.device.schema.filter((schema) => schema.code.startsWith('switch') && schema.type === TuyaDeviceSchemaType.Boolean);
     for (const _schema of schema) {
       const name = (schema.length === 1) ? this.device.name : _schema.code;
       this.configureValve(_schema, name);
