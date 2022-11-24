@@ -78,7 +78,7 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
     - Device Status Notification
     - IoT Core
     - Industry Project Client Service (for "Custom" project)
-- **⚠️Extend the API trial period every 6 months here: [Tuya IoT Platform -> Cloud -> Cloud Services -> IoT Core](https://iot.tuya.com/cloud/products/detail?abilityId=1442730014117204014&id=p1668587814138nv4h3n&abilityAuth=0&tab=1)**
+- **⚠️Extend the API trial period every 6 months here (first-time subscription only give 1 month): [Tuya IoT Platform -> Cloud -> Cloud Services -> IoT Core](https://iot.tuya.com/cloud/products/detail?abilityId=1442730014117204014&id=p1668587814138nv4h3n&abilityAuth=0&tab=1)**
 
 #### For "Custom" Project
 
@@ -100,8 +100,11 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - `options.appSchema` - **required** : App schema. 'tuyaSmart' for Tuya Smart App, 'smartlife' for Smart Life App.
 - `options.homeWhitelist` - **optional**: An array of integer home ID values to whitelist. If present, only includes devices matching this Home ID value.
 
-**Note:**
+
+## Limitations
+- **⚠️Don't forget to extend the API trial period every 6 months. Maybe you can set up a reminder in calendar.**
 - The app account can't be used in multiple HomeBridge/HomeAssistant instance at the same time! Please consider using different app accounts instead.
+- The plugin requires the internet access to Tuya Cloud, and the lan protocol is not supported. See [#90](https://github.com/0x5e/homebridge-tuya-platform/issues/90)
 
 
 ## Troubleshooting
