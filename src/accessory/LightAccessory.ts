@@ -160,14 +160,14 @@ export default class LightAccessory extends BaseAccessory {
           const schema = this.getSchema(...SCHEMA_CODE.COLOR)!;
           const { max } = (schema.property as TuyaDeviceSchemaColorProperty).v;
           const status = this.getColorValue().v;
-          const value = Math.floor(100 * status / max);
+          const value = Math.round(100 * status / max);
           return limit(value, 0, 100);
         } else if (this.inWhiteMode()) {
           // White mode, get brightness from `brightness_value`
           const schema = this.getSchema(...SCHEMA_CODE.BRIGHTNESS)!;
           const { max } = schema.property as TuyaDeviceSchemaIntegerProperty;
           const status = this.getStatus(schema.code)!;
-          const value = Math.floor(100 * (status.value as number) / max);
+          const value = Math.round(100 * (status.value as number) / max);
           return limit(value, 0, 100);
         } else {
           // Unsupported mode
@@ -182,7 +182,7 @@ export default class LightAccessory extends BaseAccessory {
           const colorSchema = this.getSchema(...SCHEMA_CODE.COLOR)!;
           const { min, max } = (colorSchema.property as TuyaDeviceSchemaColorProperty).v;
           const colorValue = this.getColorValue();
-          colorValue.v = Math.floor(value as number * max / 100);
+          colorValue.v = Math.round(value as number * max / 100);
           colorValue.v = limit(colorValue.v, min, max);
           this.sendCommands([{ code: colorSchema.code, value: JSON.stringify(colorValue) }], true);
           return;
@@ -190,7 +190,7 @@ export default class LightAccessory extends BaseAccessory {
           // White mode, set brightness to `brightness_value`
           const brightSchema = this.getSchema(...SCHEMA_CODE.BRIGHTNESS)!;
           const { min, max } = brightSchema.property as TuyaDeviceSchemaIntegerProperty;
-          let brightValue = Math.floor(value as number * max / 100);
+          let brightValue = Math.round(value as number * max / 100);
           brightValue = limit(brightValue, min, max);
           this.sendCommands([{ code: brightSchema.code, value: brightValue }], true);
         } else {
@@ -205,7 +205,7 @@ export default class LightAccessory extends BaseAccessory {
     const props = { minValue: 140, maxValue: 500, minStep: 1 };
 
     if (type === LightAccessoryType.RGBC) {
-      props.minValue = props.maxValue = Math.floor(kelvinToMired(DEFAULT_COLOR_TEMPERATURE_KELVIN));
+      props.minValue = props.maxValue = Math.round(kelvinToMired(DEFAULT_COLOR_TEMPERATURE_KELVIN));
     }
     this.log.debug('Set props for ColorTemperature:', props);
 
@@ -220,7 +220,7 @@ export default class LightAccessory extends BaseAccessory {
         const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
         const status = this.getStatus(schema.code)!;
         const kelvin = remap(status.value as number, min, max, miredToKelvin(props.maxValue), miredToKelvin(props.minValue));
-        const mired = Math.floor(kelvinToMired(kelvin));
+        const mired = Math.round(kelvinToMired(kelvin));
         return limit(mired, props.minValue, props.maxValue);
       })
       .onSet((value) => {
@@ -236,7 +236,7 @@ export default class LightAccessory extends BaseAccessory {
           const schema = this.getSchema(...SCHEMA_CODE.COLOR_TEMP)!;
           const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
           const kelvin = miredToKelvin(value as number);
-          const temp = Math.floor(remap(kelvin, miredToKelvin(props.maxValue), miredToKelvin(props.minValue), min, max));
+          const temp = Math.round(remap(kelvin, miredToKelvin(props.maxValue), miredToKelvin(props.minValue), min, max));
           commands.push({ code: schema.code, value: temp });
         }
 
@@ -256,13 +256,13 @@ export default class LightAccessory extends BaseAccessory {
           return kelvinToHSV(DEFAULT_COLOR_TEMPERATURE_KELVIN)!.h;
         }
 
-        const hue = Math.floor(360 * this.getColorValue().h / max);
+        const hue = Math.round(360 * this.getColorValue().h / max);
         return limit(hue, 0, 360);
       })
       .onSet((value) => {
         this.log.debug(`Characteristic.Hue set to: ${value}`);
         const colorValue = this.getColorValue();
-        colorValue.h = Math.floor(value as number * max / 360);
+        colorValue.h = Math.round(value as number * max / 360);
         colorValue.h = limit(colorValue.h, min, max);
         const commands: TuyaDeviceStatus[] = [{
           code: colorSchema.code,
@@ -288,13 +288,13 @@ export default class LightAccessory extends BaseAccessory {
           return kelvinToHSV(DEFAULT_COLOR_TEMPERATURE_KELVIN)!.s;
         }
 
-        const saturation = Math.floor(100 * this.getColorValue().s / max);
+        const saturation = Math.round(100 * this.getColorValue().s / max);
         return limit(saturation, 0, 100);
       })
       .onSet((value) => {
         this.log.debug(`Characteristic.Saturation set to: ${value}`);
         const colorValue = this.getColorValue();
-        colorValue.s = Math.floor(value as number * max / 100);
+        colorValue.s = Math.round(value as number * max / 100);
         colorValue.s = limit(colorValue.s, min, max);
         const commands: TuyaDeviceStatus[] = [{
           code: colorSchema.code,
