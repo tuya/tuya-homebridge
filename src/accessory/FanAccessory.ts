@@ -3,6 +3,7 @@ import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDevi
 import { TuyaPlatform } from '../platform';
 import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+import { configureActive } from './characteristic/Active';
 
 const SCHEMA_CODE = {
   FAN_ACTIVE: ['switch_fan', 'fan_switch', 'switch'],
@@ -18,7 +19,7 @@ export default class FanAccessory extends BaseAccessory {
   constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
     super(platform, accessory);
 
-    this.configureActive();
+    configureActive(this, this.fanService(), this.getSchema(...SCHEMA_CODE.FAN_ACTIVE));
     if (this.getFanSpeedSchema()) {
       this.configureRotationSpeed();
     } else if (this.getFanSpeedLevelSchema()) {
@@ -65,26 +66,6 @@ export default class FanAccessory extends BaseAccessory {
     return undefined;
   }
 
-
-  configureActive() {
-    const schema = this.getSchema(...SCHEMA_CODE.FAN_ACTIVE);
-    if (!schema) {
-      return;
-    }
-
-    const { ACTIVE, INACTIVE } = this.Characteristic.Active;
-    this.fanService().getCharacteristic(this.Characteristic.Active)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        return status.value as boolean ? ACTIVE : INACTIVE;
-      })
-      .onSet(value => {
-        this.sendCommands([{
-          code: schema.code,
-          value: (value === ACTIVE) ? true : false,
-        }], true);
-      });
-  }
 
   configureRotationSpeed() {
     const schema = this.getFanSpeedSchema()!;

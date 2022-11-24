@@ -3,6 +3,7 @@ import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDevi
 import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+import { configureCurrentTemperature } from './characteristic/CurrentTemperature';
 
 const SCHEMA_CODE = {
   ON: ['switch'],
@@ -19,7 +20,7 @@ export default class ThermostatAccessory extends BaseAccessory {
 
     this.configureCurrentState();
     this.configureTargetState();
-    this.configureCurrentTemp();
+    configureCurrentTemperature(this, this.mainService(), this.getSchema(...SCHEMA_CODE.CURRENT_TEMP));
     this.configureTargetTemp();
     this.configureTempDisplayUnits();
   }
@@ -153,32 +154,6 @@ export default class ThermostatAccessory extends BaseAccessory {
         }
       })
       .setProps({ validValues });
-
-  }
-
-  configureCurrentTemp() {
-    const schema = this.getSchema(...SCHEMA_CODE.CURRENT_TEMP);
-    if (!schema) {
-      this.log.warn('CurrentTemperature not supported.');
-      return;
-    }
-
-    const property = schema.property as TuyaDeviceSchemaIntegerProperty;
-    const multiple = property ? Math.pow(10, property.scale) : 1;
-    const props = {
-      minValue: Math.max(-270, property.min / multiple),
-      maxValue: Math.min(100, property.max / multiple),
-      minStep: Math.max(0.1, property.step / multiple),
-    };
-    this.log.debug('Set props for CurrentTemperature:', props);
-
-    this.mainService().getCharacteristic(this.Characteristic.CurrentTemperature)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        const temp = status.value as number / multiple;
-        return limit(temp, props.minValue, props.maxValue);
-      })
-      .setProps(props);
 
   }
 

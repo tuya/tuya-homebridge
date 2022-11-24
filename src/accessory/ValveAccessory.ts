@@ -2,6 +2,7 @@ import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
+import { configureActive } from './characteristic/Active';
 
 const SCHEMA_CODE = {
   ON: ['switch', 'switch_1'],
@@ -50,18 +51,8 @@ export default class ValveAccessory extends BaseAccessory {
         return status.value as boolean;
       });
 
-    const { INACTIVE, ACTIVE } = this.Characteristic.Active;
-    service.getCharacteristic(this.Characteristic.Active)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        return (status.value as boolean) ? ACTIVE : INACTIVE;
-      })
-      .onSet(value => {
-        this.sendCommands([{
-          code: schema.code,
-          value: (value as number === ACTIVE) ? true : false,
-        }]);
-      });
+    configureActive(this, service, schema);
+
   }
 
 }

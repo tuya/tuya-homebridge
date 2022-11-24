@@ -3,6 +3,7 @@ import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDevi
 import { TuyaPlatform } from '../platform';
 import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+import { configureActive } from './characteristic/Active';
 
 const SCHEMA_CODE = {
   ACTIVE: ['switch'],
@@ -17,7 +18,7 @@ export default class AirPurifierAccessory extends BaseAccessory {
   constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
     super(platform, accessory);
 
-    this.configureActive();
+    configureActive(this, this.mainService(), this.getSchema(...SCHEMA_CODE.ACTIVE));
     this.configureCurrentState();
     this.configureTargetState();
     this.configureLock();
@@ -54,25 +55,6 @@ export default class AirPurifierAccessory extends BaseAccessory {
     return undefined;
   }
 
-  configureActive() {
-    const schema = this.getSchema(...SCHEMA_CODE.ACTIVE);
-    if (!schema) {
-      return;
-    }
-
-    const { ACTIVE, INACTIVE } = this.Characteristic.Active;
-    this.mainService().getCharacteristic(this.Characteristic.Active)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        return status.value as boolean ? ACTIVE : INACTIVE;
-      })
-      .onSet(value => {
-        this.sendCommands([{
-          code: schema.code,
-          value: (value === ACTIVE) ? true : false,
-        }], true);
-      });
-  }
 
   configureCurrentState() {
     const schema = this.getSchema(...SCHEMA_CODE.ACTIVE);

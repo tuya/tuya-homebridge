@@ -4,6 +4,7 @@ import { TuyaPlatform } from '../platform';
 import { kelvinToHSV, kelvinToMired, miredToKelvin } from '../util/color';
 import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+import { configureMotionDetected } from './characteristic/MotionDetected';
 
 const SCHEMA_CODE = {
   ON: ['switch_led'],
@@ -68,6 +69,8 @@ export default class LightAccessory extends BaseAccessory {
         this.configureSaturation();
         break;
     }
+
+    configureMotionDetected(this);
   }
 
   getLightService() {

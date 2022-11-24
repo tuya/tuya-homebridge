@@ -3,19 +3,33 @@ import { TuyaPlatform } from '../platform';
 import { TuyaDeviceSchemaIntegerProperty } from '../device/TuyaDevice';
 import { remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+import { configureActive } from './characteristic/Active';
+import { configureCurrentTemperature } from './characteristic/CurrentTemperature';
+import { configureCurrentRelativeHumidity } from './characteristic/CurrentRelativeHumidity';
+
+const SCHEMA_CODE = {
+  ACTIVE: ['switch'],
+  CURRENT_HUMIDITY: ['humidity_current'],
+  TARGET_HUMIDITY: ['humidity_set'],
+  CURRENT_TEMP: ['temp_current'],
+};
 
 export default class HumidifierAccessory extends BaseAccessory {
 
   constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
     super(platform, accessory);
 
-    this.configureActive();
+    configureActive(this, this.mainService(), this.getSchema(...SCHEMA_CODE.ACTIVE));
     this.configureTargetState();
     this.configureCurrentState();
-    this.configureCurrentRelativeHumidity();
+    configureCurrentRelativeHumidity(this, this.mainService(), this.getSchema(...SCHEMA_CODE.CURRENT_HUMIDITY));
     this.configureRelativeHumidityHumidifierThreshold();
-    this.configureTemperatureSensor();
+    configureCurrentTemperature(this, undefined, this.getSchema(...SCHEMA_CODE.CURRENT_TEMP));
     this.configureRotationSpeed();
+  }
+
+  requiredSchema() {
+    return [SCHEMA_CODE.ACTIVE];
   }
 
   mainService() {
@@ -23,17 +37,6 @@ export default class HumidifierAccessory extends BaseAccessory {
       || this.accessory.addService(this.Service.HumidifierDehumidifier);
   }
 
-  configureActive() {
-    const { ACTIVE, INACTIVE } = this.Characteristic.Active;
-    this.mainService().getCharacteristic(this.Characteristic.Active)
-      .onGet(() => {
-        const status = this.getStatus('switch');
-        return (status?.value as boolean) ? ACTIVE : INACTIVE;
-      })
-      .onSet(value => {
-        this.sendCommands([{ code: 'switch', value: (value === ACTIVE) ? true : false }]);
-      });
-  }
 
   configureTargetState() {
     const { HUMIDIFIER } = this.Characteristic.TargetHumidifierDehumidifierState;
@@ -46,36 +49,23 @@ export default class HumidifierAccessory extends BaseAccessory {
   }
 
   configureCurrentState() {
+    const schema = this.getSchema(...SCHEMA_CODE.ACTIVE);
+    if (!schema) {
+      this.log.warn('CurrentHumidifierDehumidifierState not supported.');
+      return;
+    }
+
     const { INACTIVE, HUMIDIFYING } = this.Characteristic.CurrentHumidifierDehumidifierState;
 
     this.mainService().getCharacteristic(this.Characteristic.CurrentHumidifierDehumidifierState)
       .onGet(() => {
-        const status = this.getStatus('switch');
+        const status = this.getStatus(schema.code);
         return (status?.value as boolean) ? HUMIDIFYING : INACTIVE;
       });
   }
 
-  configureCurrentRelativeHumidity() {
-    const schema = this.getSchema('humidity_current');
-    if (!schema) {
-      this.log.warn('HumiditySensor not supported.');
-      return;
-    }
-    const property = schema.property as TuyaDeviceSchemaIntegerProperty;
-    const multiple = Math.pow(10, property ? property.scale : 0);
-
-    this.mainService().getCharacteristic(this.Characteristic.CurrentRelativeHumidity)
-      .onGet(() => {
-        const status = this.getStatus('humidity_current');
-        let humidity = Math.floor(status!.value as number / multiple);
-        humidity = Math.min(100, humidity);
-        humidity = Math.max(0, humidity);
-        return humidity;
-      });
-  }
-
   configureRelativeHumidityHumidifierThreshold() {
-    const schema = this.getSchema('humidity_set');
+    const schema = this.getSchema(...SCHEMA_CODE.TARGET_HUMIDITY);
     if (!schema) {
       this.log.warn('Humidity setting is not supported.');
       return;
@@ -102,28 +92,6 @@ export default class HumidifierAccessory extends BaseAccessory {
       }).setProps({ minStep: property['step'] });
   }
 
-  configureTemperatureSensor() {
-    const service = this.accessory.getService(this.Service.TemperatureSensor)
-      || this.accessory.addService(this.Service.TemperatureSensor);
-    const schema = this.getSchema('temp_current');
-    if (!schema) {
-      this.log.warn('TemperatureSensor not supported.');
-      return;
-    }
-    const property = schema.property as TuyaDeviceSchemaIntegerProperty;
-    const multiple = Math.pow(10, property ? property.scale : 0);
-
-    service.getCharacteristic(this.Characteristic.CurrentTemperature)
-      .onGet(() => {
-        const status = this.getStatus(schema.code);
-        let temperature = status!.value as number / multiple;
-
-        temperature = Math.max(-270, temperature);
-        temperature = Math.min(100, temperature);
-        return temperature;
-      });
-
-  }
 
   configureRotationSpeed() {
     const schema = this.getSchema('mode');
