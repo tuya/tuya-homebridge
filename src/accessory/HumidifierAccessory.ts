@@ -1,5 +1,3 @@
-import { PlatformAccessory } from 'homebridge';
-import { TuyaPlatform } from '../platform';
 import { TuyaDeviceSchemaIntegerProperty } from '../device/TuyaDevice';
 import { remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
@@ -17,9 +15,11 @@ const SCHEMA_CODE = {
 
 export default class HumidifierAccessory extends BaseAccessory {
 
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.ACTIVE];
+  }
 
+  configureServices() {
     configureActive(this, this.mainService(), this.getSchema(...SCHEMA_CODE.ACTIVE));
     this.configureTargetState();
     this.configureCurrentState();
@@ -29,9 +29,6 @@ export default class HumidifierAccessory extends BaseAccessory {
     this.configureRotationSpeed();
   }
 
-  requiredSchema() {
-    return [SCHEMA_CODE.ACTIVE];
-  }
 
   mainService() {
     return this.accessory.getService(this.Service.HumidifierDehumidifier)

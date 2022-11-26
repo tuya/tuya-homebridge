@@ -171,6 +171,9 @@ export default class BaseAccessory {
     return [];
   }
 
+  configureServices() {
+    //
+  }
 
   async onDeviceInfoUpdate(info) {
     // name, online, ...

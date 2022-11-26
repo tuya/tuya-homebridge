@@ -1,6 +1,4 @@
-import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceSchemaType } from '../device/TuyaDevice';
-import { TuyaPlatform } from '../platform';
 import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
@@ -17,8 +15,11 @@ const SCHEMA_CODE = {
 
 export default class FanAccessory extends BaseAccessory {
 
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.FAN_ACTIVE];
+  }
+
+  configureServices() {
 
     configureActive(this, this.fanService(), this.getSchema(...SCHEMA_CODE.FAN_ACTIVE));
     if (this.getFanSpeedSchema()) {
@@ -33,10 +34,6 @@ export default class FanAccessory extends BaseAccessory {
 
     configureOn(this, this.lightService(), this.getSchema(...SCHEMA_CODE.LIGHT_ON));
     this.configureLightBrightness();
-  }
-
-  requiredSchema() {
-    return [SCHEMA_CODE.FAN_ACTIVE];
   }
 
 

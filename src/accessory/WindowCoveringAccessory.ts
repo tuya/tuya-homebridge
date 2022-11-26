@@ -1,22 +1,19 @@
-import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceStatus } from '../device/TuyaDevice';
-import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 
 export default class WindowCoveringAccessory extends BaseAccessory {
 
-  mainService() {
-    return this.accessory.getService(this.Service.WindowCovering)
-      || this.accessory.addService(this.Service.WindowCovering);
-  }
-
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
-
+  configureServices() {
     this.configurePositionState();
     this.configureCurrentPosition();
     this.configureTargetPosition();
+  }
+
+
+  mainService() {
+    return this.accessory.getService(this.Service.WindowCovering)
+      || this.accessory.addService(this.Service.WindowCovering);
   }
 
   configureCurrentPosition() {

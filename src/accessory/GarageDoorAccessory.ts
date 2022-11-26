@@ -1,5 +1,3 @@
-import { PlatformAccessory } from 'homebridge';
-import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
 const SCHEMA_CODE = {
@@ -9,16 +7,16 @@ const SCHEMA_CODE = {
 
 export default class GarageDoorAccessory extends BaseAccessory {
 
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.TARGET_DOOR_STATE];
+  }
+
+  configureServices() {
 
     this.configureCurrentDoorState();
     this.configureTargetDoorState();
   }
 
-  requiredSchema() {
-    return [SCHEMA_CODE.TARGET_DOOR_STATE];
-  }
 
   mainService() {
     return this.accessory.getService(this.Service.GarageDoorOpener)

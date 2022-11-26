@@ -1,5 +1,3 @@
-import { PlatformAccessory } from 'homebridge';
-import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
 const SCHEMA_CODE = {
@@ -8,9 +6,11 @@ const SCHEMA_CODE = {
 
 export default class LeakSensor extends BaseAccessory {
 
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.LEAK];
+  }
 
+  configureServices() {
     const { LEAK_NOT_DETECTED, LEAK_DETECTED } = this.Characteristic.LeakDetected;
     const service = this.accessory.getService(this.Service.LeakSensor)
       || this.accessory.addService(this.Service.LeakSensor);
@@ -31,10 +31,6 @@ export default class LeakSensor extends BaseAccessory {
         }
       });
 
-  }
-
-  requiredSchema() {
-    return [SCHEMA_CODE.LEAK];
   }
 
 }

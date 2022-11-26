@@ -1,6 +1,4 @@
-import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
-import { TuyaPlatform } from '../platform';
 import { kelvinToHSV, kelvinToMired, miredToKelvin } from '../util/color';
 import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
@@ -38,12 +36,11 @@ type TuyaDeviceSchemaColorProperty = {
 export default class LightAccessory extends BaseAccessory {
   static readonly LightAccessoryType = LightAccessoryType;
 
-  constructor(
-    public readonly platform: TuyaPlatform,
-    public readonly accessory: PlatformAccessory,
-  ) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.ON];
+  }
 
+  configureServices() {
     const type = this.getAccessoryType();
     this.log.info('Light Accessory type:', type);
 
@@ -79,6 +76,7 @@ export default class LightAccessory extends BaseAccessory {
     this.configurePIR();
   }
 
+
   getLightService() {
     return this.accessory.getService(this.Service.Lightbulb)
     || this.accessory.addService(this.Service.Lightbulb);
@@ -110,10 +108,6 @@ export default class LightAccessory extends BaseAccessory {
     }
 
     return accessoryType;
-  }
-
-  requiredSchema() {
-    return [SCHEMA_CODE.ON];
   }
 
   getColorValue() {

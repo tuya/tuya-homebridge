@@ -1,6 +1,4 @@
-import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
-import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
 
@@ -10,12 +8,11 @@ const SCHEMA_CODE = {
 
 export default class ValveAccessory extends BaseAccessory {
 
-  constructor(
-    public readonly platform: TuyaPlatform,
-    public readonly accessory: PlatformAccessory,
-  ) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.ON];
+  }
 
+  configureServices(): void {
     const oldService = this.accessory.getService(this.Service.Valve);
     if (oldService && oldService?.subtype === undefined) {
       this.platform.log.warn('Remove old service:', oldService.UUID);
@@ -29,9 +26,6 @@ export default class ValveAccessory extends BaseAccessory {
     }
   }
 
-  requiredSchema() {
-    return [SCHEMA_CODE.ON];
-  }
 
   configureValve(schema: TuyaDeviceSchema, name: string) {
 

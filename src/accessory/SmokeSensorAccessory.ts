@@ -1,5 +1,3 @@
-import { PlatformAccessory } from 'homebridge';
-import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 
 const SCHEMA_CODE = {
@@ -8,17 +6,11 @@ const SCHEMA_CODE = {
 
 export default class SmokeSensor extends BaseAccessory {
 
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
-
-    this.configureSmokeDetected();
-  }
-
   requiredSchema() {
     return [SCHEMA_CODE.SENSOR_STATUS];
   }
 
-  configureSmokeDetected() {
+  configureServices() {
     const schema = this.getSchema(...SCHEMA_CODE.SENSOR_STATUS);
     if (!schema) {
       return;

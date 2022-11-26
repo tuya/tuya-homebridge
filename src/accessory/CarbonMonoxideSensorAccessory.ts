@@ -1,5 +1,3 @@
-import { PlatformAccessory } from 'homebridge';
-import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 
@@ -10,16 +8,15 @@ const SCHEMA_CODE = {
 
 export default class CarbonMonoxideSensorAccessory extends BaseAccessory {
 
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.CO_STATUS];
+  }
 
+  configureServices() {
     this.configureCarbonMonoxideDetected();
     this.configureCarbonMonoxideLevel();
   }
 
-  requiredSchema() {
-    return [SCHEMA_CODE.CO_STATUS];
-  }
 
   mainService() {
     return this.accessory.getService(this.Service.CarbonMonoxideSensor)
