@@ -1,5 +1,3 @@
-import { PlatformAccessory } from 'homebridge';
-import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 
@@ -11,18 +9,17 @@ const SCHEMA_CODE = {
 
 export default class AirQualitySensorAccessory extends BaseAccessory {
 
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.PM2_5];
+  }
 
+  configureServices() {
     this.configureAirQuality();
     this.configurePM2_5Density();
     this.configurePM10Density();
     this.configureVOCDensity();
   }
 
-  requiredSchema() {
-    return [SCHEMA_CODE.PM2_5];
-  }
 
   mainService() {
     return this.accessory.getService(this.Service.AirQualitySensor)

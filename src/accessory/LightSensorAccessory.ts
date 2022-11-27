@@ -1,5 +1,3 @@
-import { PlatformAccessory } from 'homebridge';
-import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 
@@ -9,17 +7,11 @@ const SCHEMA_CODE = {
 
 export default class LightSensorAccessory extends BaseAccessory {
 
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
-
-    this.configureCurrentAmbientLightLevel();
-  }
-
   requiredSchema() {
     return [SCHEMA_CODE.BRIGHT_LEVEL];
   }
 
-  configureCurrentAmbientLightLevel() {
+  configureServices() {
     const schema = this.getSchema(...SCHEMA_CODE.BRIGHT_LEVEL);
     if (!schema) {
       return;

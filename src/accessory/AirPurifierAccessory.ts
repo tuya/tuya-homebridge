@@ -1,6 +1,4 @@
-import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceSchemaType } from '../device/TuyaDevice';
-import { TuyaPlatform } from '../platform';
 import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
@@ -15,9 +13,11 @@ const SCHEMA_CODE = {
 
 export default class AirPurifierAccessory extends BaseAccessory {
 
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.ACTIVE];
+  }
 
+  configureServices() {
     configureActive(this, this.mainService(), this.getSchema(...SCHEMA_CODE.ACTIVE));
     this.configureCurrentState();
     this.configureTargetState();
@@ -27,10 +27,6 @@ export default class AirPurifierAccessory extends BaseAccessory {
     } else if (this.getFanSpeedLevelSchema()) {
       this.configureSpeedLevel();
     }
-  }
-
-  requiredSchema() {
-    return [SCHEMA_CODE.ACTIVE];
   }
 
 

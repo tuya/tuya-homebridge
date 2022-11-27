@@ -1,6 +1,4 @@
-import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
-import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 import { configureCurrentTemperature } from './characteristic/CurrentTemperature';
@@ -15,9 +13,12 @@ const SCHEMA_CODE = {
 };
 
 export default class ThermostatAccessory extends BaseAccessory {
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
 
+  requiredSchema() {
+    return [SCHEMA_CODE.CURRENT_TEMP, SCHEMA_CODE.TARGET_TEMP];
+  }
+
+  configureServices() {
     this.configureCurrentState();
     this.configureTargetState();
     configureCurrentTemperature(this, this.mainService(), this.getSchema(...SCHEMA_CODE.CURRENT_TEMP));
@@ -25,9 +26,6 @@ export default class ThermostatAccessory extends BaseAccessory {
     this.configureTempDisplayUnits();
   }
 
-  requiredSchema() {
-    return [SCHEMA_CODE.CURRENT_TEMP, SCHEMA_CODE.TARGET_TEMP];
-  }
 
   mainService() {
     return this.accessory.getService(this.Service.Thermostat)

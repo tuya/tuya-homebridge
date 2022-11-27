@@ -1,6 +1,4 @@
-import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
-import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
 import { configureOn } from './characteristic/On';
 
@@ -10,11 +8,11 @@ const SCHEMA_CODE = {
 
 export default class SwitchAccessory extends BaseAccessory {
 
-  constructor(
-    public readonly platform: TuyaPlatform,
-    public readonly accessory: PlatformAccessory,
-  ) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.ON];
+  }
+
+  configureServices() {
 
     const oldService = this.accessory.getService(this.mainService());
     if (oldService && oldService?.subtype === undefined) {
@@ -29,9 +27,6 @@ export default class SwitchAccessory extends BaseAccessory {
     }
   }
 
-  requiredSchema() {
-    return [SCHEMA_CODE.ON];
-  }
 
   mainService() {
     return this.Service.Switch;

@@ -1,6 +1,5 @@
-import { PlatformAccessory, Service } from 'homebridge';
+import { Service } from 'homebridge';
 import { TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
-import { TuyaPlatform } from '../platform';
 import { remap, limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 import { configureOn } from './characteristic/On';
@@ -12,11 +11,11 @@ const SCHEMA_CODE = {
 
 export default class DimmerAccessory extends BaseAccessory {
 
-  constructor(
-    public readonly platform: TuyaPlatform,
-    public readonly accessory: PlatformAccessory,
-  ) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.ON, SCHEMA_CODE.BRIGHTNESS];
+  }
+
+  configureServices() {
 
     const oldService = this.accessory.getService(this.Service.Lightbulb);
     if (oldService && oldService?.subtype === undefined) {
@@ -43,9 +42,6 @@ export default class DimmerAccessory extends BaseAccessory {
     }
   }
 
-  requiredSchema() {
-    return [SCHEMA_CODE.ON, SCHEMA_CODE.BRIGHTNESS];
-  }
 
   configureBrightness(service: Service, suffix: string) {
     const schema = this.getSchema('bright_value' + suffix);

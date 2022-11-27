@@ -1,6 +1,4 @@
-import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
-import { TuyaPlatform } from '../platform';
 import { kelvinToHSV, kelvinToMired, miredToKelvin } from '../util/color';
 import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
@@ -13,18 +11,20 @@ const SCHEMA_CODE = {
   COLOR_TEMP: ['temp_value', 'temp_value_v2'],
   COLOR: ['colour_data', 'colour_data_v2'],
   WORK_MODE: ['work_mode'],
+  PIR: ['pir_state'],
+  PIR_ON: ['switch_pir'],
 };
 
 const DEFAULT_COLOR_TEMPERATURE_KELVIN = 6500;
 
 enum LightAccessoryType {
-  Unknown = -1,
-  Normal = 0, // Normal Accessory, similar to SwitchAccessory, OutletAccessory.
-  C = 1, // Accessory with brightness.
-  CW = 2, // Accessory with brightness and color temperature (Cold and Warm).
-  RGB = 3, // Accessory with color (RGB <--> HSB).
-  RGBC = 4, // Accessory with color and brightness.
-  RGBCW = 5, // Accessory with color, brightness and color temperature (two work mode).
+  Unknown = 'Unknown',
+  Normal = 'Normal', // Normal Accessory, similar to SwitchAccessory, OutletAccessory.
+  C = 'C', // Accessory with brightness.
+  CW = 'CW', // Accessory with brightness and color temperature (Cold and Warm).
+  RGB = 'RGB', // Accessory with color (RGB <--> HSB).
+  RGBC = 'RGBC', // Accessory with color and brightness.
+  RGBCW = 'RGBCW', // Accessory with color, brightness and color temperature (two work mode).
 }
 
 type TuyaDeviceSchemaColorProperty = {
@@ -36,13 +36,15 @@ type TuyaDeviceSchemaColorProperty = {
 export default class LightAccessory extends BaseAccessory {
   static readonly LightAccessoryType = LightAccessoryType;
 
-  constructor(
-    public readonly platform: TuyaPlatform,
-    public readonly accessory: PlatformAccessory,
-  ) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.ON];
+  }
 
-    switch (this.getAccessoryType()) {
+  configureServices() {
+    const type = this.getAccessoryType();
+    this.log.info('Light Accessory type:', type);
+
+    switch (type) {
       case LightAccessoryType.Normal:
         configureOn(this, this.getLightService(), this.getSchema(...SCHEMA_CODE.ON));
         break;
@@ -71,8 +73,9 @@ export default class LightAccessory extends BaseAccessory {
         break;
     }
 
-    configureMotionDetected(this);
+    this.configurePIR();
   }
+
 
   getLightService() {
     return this.accessory.getService(this.Service.Lightbulb)
@@ -94,21 +97,17 @@ export default class LightAccessory extends BaseAccessory {
       accessoryType = LightAccessoryType.RGBC;
     } else if (on && !temp && h && s && v) {
       accessoryType = LightAccessoryType.RGB;
-    } else if (on && bright && temp && !color) {
+    } else if (on && bright && temp) {
       accessoryType = LightAccessoryType.CW;
-    } else if (on && bright && !temp && !color) {
+    } else if (on && bright && !temp) {
       accessoryType = LightAccessoryType.C;
-    } else if (on && !bright && !temp && !color) {
+    } else if (on && !bright && !temp) {
       accessoryType = LightAccessoryType.Normal;
     } else {
       accessoryType = LightAccessoryType.Unknown;
     }
 
     return accessoryType;
-  }
-
-  requiredSchema() {
-    return [SCHEMA_CODE.ON];
   }
 
   getColorValue() {
@@ -310,4 +309,16 @@ export default class LightAccessory extends BaseAccessory {
       });
   }
 
+  configurePIR() {
+    const onSchema = this.getSchema(...SCHEMA_CODE.PIR_ON);
+    if (onSchema) {
+      const service = this.accessory.getService(onSchema.code)
+        || this.accessory.addService(this.Service.Switch, onSchema.code, onSchema.code);
+      configureOn(this, service, onSchema);
+    }
+
+    const motionSchema = this.getSchema(...SCHEMA_CODE.PIR);
+    configureMotionDetected(this, undefined, motionSchema);
+
+  }
 }

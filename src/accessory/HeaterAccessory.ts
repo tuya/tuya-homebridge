@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PlatformAccessory } from 'homebridge';
 import { TuyaDeviceSchemaIntegerProperty } from '../device/TuyaDevice';
-import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
@@ -19,9 +17,11 @@ const SCHEMA_CODE = {
 
 export default class HeaterAccessory extends BaseAccessory {
 
-  constructor(platform: TuyaPlatform, accessory: PlatformAccessory) {
-    super(platform, accessory);
+  requiredSchema() {
+    return [SCHEMA_CODE.ACTIVE];
+  }
 
+  configureServices() {
     configureActive(this, this.mainService(), this.getSchema(...SCHEMA_CODE.ACTIVE));
     this.configureCurrentState();
     this.configureTargetState();
@@ -32,15 +32,11 @@ export default class HeaterAccessory extends BaseAccessory {
     this.configureTempDisplayUnits();
   }
 
-  requiredSchema() {
-    return [SCHEMA_CODE.ACTIVE];
-  }
 
   mainService() {
     return this.accessory.getService(this.Service.HeaterCooler)
       || this.accessory.addService(this.Service.HeaterCooler);
   }
-
 
   configureCurrentState() {
     const schema = this.getSchema(...SCHEMA_CODE.WORK_STATE);
