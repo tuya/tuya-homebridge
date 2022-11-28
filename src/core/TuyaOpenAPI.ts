@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import axios, { Method } from 'axios';
+import https from 'https';
 import Crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -250,7 +250,7 @@ export default class TuyaOpenAPI {
     return res;
   }
 
-  async request(method: Method, path: string, params?, body?) {
+  async request(method: string, path: string, params?, body?) {
     await this._refreshAccessTokenIfNeed(path);
 
     const now = new Date().getTime();
@@ -272,21 +272,47 @@ export default class TuyaOpenAPI {
     };
     this.log.debug('Request:\nmethod = %s\nendpoint = %s\npath = %s\nquery = %s\nheaders = %s\nbody = %s',
       method, this.endpoint, path, JSON.stringify(params, null, 2), JSON.stringify(headers, null, 2), JSON.stringify(body, null, 2));
-    const res = await axios({
-      baseURL: this.endpoint,
-      url: path,
-      method: method,
-      headers: headers,
-      params: params,
-      data: body,
-    });
 
-    this.log.debug('Response:\npath = %s\ndata = %s', path, JSON.stringify(res.data, null, 2));
-    if (res.data && API_ERROR_MESSAGES[res.data.code]) {
-      this.log.error(API_ERROR_MESSAGES[res.data.code]);
+    if (params) {
+      path += '?' + new URLSearchParams(params).toString();
     }
 
-    return res.data as TuyaOpenAPIResponse;
+    const res: TuyaOpenAPIResponse = await new Promise((resolve, reject) => {
+
+      const req = https.request({
+        host: new URL(this.endpoint).host,
+        method,
+        headers,
+        path,
+      }, res => {
+        if (res.statusCode !== 200) {
+          this.log.warn('Status: %d %s', res.statusCode, res.statusMessage);
+          return;
+        }
+        res.setEncoding('utf8');
+        let rawData = '';
+        res.on('data', (chunk) => {
+          rawData += chunk;
+        });
+        res.on('end', () => {
+          resolve(JSON.parse(rawData));
+        });
+      });
+
+      if (body) {
+        req.write(JSON.stringify(body));
+      }
+
+      req.on('error', e => reject(e));
+      req.end();
+    });
+
+    this.log.debug('Response:\npath = %s\ndata = %s', path, JSON.stringify(res, null, 2));
+    if (res && res.success !== true && API_ERROR_MESSAGES[res.code]) {
+      this.log.error(API_ERROR_MESSAGES[res.code]);
+    }
+
+    return res;
   }
 
   async get(path: string, params?) {
@@ -307,7 +333,7 @@ export default class TuyaOpenAPI {
     return sign;
   }
 
-  _getStringToSign(method: Method, path: string, params, body) {
+  _getStringToSign(method: string, path: string, params, body) {
     const httpMethod = method.toUpperCase();
     const bodyStream = body ? JSON.stringify(body) : '';
     const contentSHA256 = Crypto.createHash('sha256').update(bodyStream).digest('hex');
