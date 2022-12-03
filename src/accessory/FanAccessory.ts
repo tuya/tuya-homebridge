@@ -2,13 +2,17 @@ import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDevi
 import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
+import { configureLockPhysicalControls } from './characteristic/LockPhysicalControls';
 import { configureOn } from './characteristic/On';
+import { configureSwingMode } from './characteristic/SwingMode';
 
 const SCHEMA_CODE = {
-  FAN_ACTIVE: ['switch_fan', 'fan_switch', 'switch'],
+  FAN_ON: ['switch_fan', 'fan_switch', 'switch'],
   FAN_DIRECTION: ['fan_direction'],
   FAN_SPEED: ['fan_speed'],
   FAN_SPEED_LEVEL: ['fan_speed_enum', 'fan_speed'],
+  FAN_LOCK: ['child_lock'],
+  FAN_SWING: ['switch_horizontal', 'switch_vertical'],
   LIGHT_ON: ['light', 'switch_led'],
   LIGHT_BRIGHTNESS: ['bright_value'],
 };
@@ -16,12 +20,27 @@ const SCHEMA_CODE = {
 export default class FanAccessory extends BaseAccessory {
 
   requiredSchema() {
-    return [SCHEMA_CODE.FAN_ACTIVE];
+    return [SCHEMA_CODE.FAN_ON];
   }
 
   configureServices() {
 
-    configureActive(this, this.fanService(), this.getSchema(...SCHEMA_CODE.FAN_ACTIVE));
+    const serviceType = this.fanServiceType();
+    if (serviceType === this.Service.Fan) {
+      const unusedService = this.accessory.getService(this.Service.Fanv2);
+      unusedService && this.accessory.removeService(unusedService);
+
+      configureOn(this, this.fanService(), this.getSchema(...SCHEMA_CODE.FAN_ON));
+    } else if (serviceType === this.Service.Fanv2) {
+      const unusedService = this.accessory.getService(this.Service.Fan);
+      unusedService && this.accessory.removeService(unusedService);
+
+      configureActive(this, this.fanService(), this.getSchema(...SCHEMA_CODE.FAN_ON));
+      configureLockPhysicalControls(this, this.fanService(), this.getSchema(...SCHEMA_CODE.FAN_LOCK));
+      configureSwingMode(this, this.fanService(), this.getSchema(...SCHEMA_CODE.FAN_SWING));
+    }
+
+    // Common Characteristics
     if (this.getFanSpeedSchema()) {
       this.configureRotationSpeed();
     } else if (this.getFanSpeedLevelSchema()) {
@@ -36,10 +55,18 @@ export default class FanAccessory extends BaseAccessory {
     this.configureLightBrightness();
   }
 
+  fanServiceType() {
+    if (this.getSchema(...SCHEMA_CODE.FAN_LOCK)
+      || this.getSchema(...SCHEMA_CODE.FAN_SWING)) {
+      return this.Service.Fanv2;
+    }
+    return this.Service.Fan;
+  }
 
   fanService() {
-    return this.accessory.getService(this.Service.Fanv2)
-      || this.accessory.addService(this.Service.Fanv2);
+    const serviceType = this.fanServiceType();
+    return this.accessory.getService(serviceType)
+      || this.accessory.addService(serviceType);
   }
 
   lightService() {
@@ -105,7 +132,7 @@ export default class FanAccessory extends BaseAccessory {
   }
 
   configureRotationSpeedOn() {
-    const schema = this.getSchema(...SCHEMA_CODE.FAN_ACTIVE);
+    const schema = this.getSchema(...SCHEMA_CODE.FAN_ON);
     if (!schema) {
       return;
     }
