@@ -56,6 +56,7 @@ export default class TuyaDevice {
   uuid!: string;
   name!: string;
   online!: boolean;
+  owner_id!: string; // homeID or assetID
 
   // product
   product_id!: string;

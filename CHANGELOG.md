@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0] - (unreleased)
+
+### Add
+- Add scene support.
+- Add `sceneWhitelist` option for whitelisting scenes.
+
+
 ## [1.6.0] - (2022.12.3)
 
 This version has been completely rewritten in TypeScript, brings a lot of bug fix and new device support.

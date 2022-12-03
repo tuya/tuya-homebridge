@@ -16,6 +16,7 @@ Fork version of official Tuya Homebridge plugin. Brings a lot of bug fix and new
 - Less duplicate code.
 - Less API errors.
 - Less development costs for new accessory categroies.
+- Scene supported.
 - More supported devices.
     - [Light] Spotlight (`sxd`)
     - [Light] Motion Sensor Light (`gyd`)
@@ -99,6 +100,7 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - `options.password` - **required** : Password
 - `options.appSchema` - **required** : App schema. 'tuyaSmart' for Tuya Smart App, 'smartlife' for Smart Life App.
 - `options.homeWhitelist` - **optional**: An array of integer home ID values to whitelist. If present, only includes devices matching this Home ID value.
+- `options.sceneWhitelist` - **optional**: An array of integer scene ID values to whitelist. If present, only includes scene matching this Scene ID value.
 
 
 ## Limitations

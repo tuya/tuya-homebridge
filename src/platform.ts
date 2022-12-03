@@ -103,7 +103,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    this.log.info(`Got ${devices.length} device(s).`);
+    this.log.info(`Got ${devices.length} device(s) and scene(s).`);
     const file = path.join(this.api.user.persistPath(), `TuyaDeviceList.${this.deviceManager!.api.tokenInfo.uid}.json`);
     this.log.info('Device list saved at %s', file);
     if (!fs.existsSync(this.api.user.persistPath())) {
@@ -274,6 +274,26 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     this.log.info('Fetching device list.');
     deviceManager.ownerIDs = homeIDList.map(homeID =>homeID.toString());
     const devices = await deviceManager.updateDevices(homeIDList);
+
+    this.log.info('Fetching scene list.');
+    const scenes: TuyaDevice[] = [];
+    for (const homeID of homeIDList) {
+      scenes.push(...await deviceManager.getSceneList(homeID));
+    }
+
+    for (const scene of scenes) {
+      this.log.info(`Got scene_id=${scene.id}, name=${scene.name}`);
+      if (this.options.sceneWhitelist) {
+        if (this.options.sceneWhitelist.includes(scene.id)) {
+          this.log.info(`Found scene_id=${scene.id} in whitelist; including scene.`);
+          devices.push(scene);
+        } else {
+          this.log.info(`Did not find scene_id=${scene.id} in whitelist; excluding scene.`);
+        }
+      } else {
+        devices.push(scene);
+      }
+    }
 
     this.deviceManager = deviceManager;
     return devices;

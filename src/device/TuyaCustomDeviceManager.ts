@@ -63,7 +63,7 @@ export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
       device.schema = await this.getDeviceSchema(device.id);
     }
 
-    // this.log.debug('[TuyaCustomDeviceManager] Devices updated.\n', JSON.stringify(devices, null, 2));
+    // this.log.debug('Devices updated.\n', JSON.stringify(devices, null, 2));
     this.devices = devices;
     return devices;
   }
