@@ -2,9 +2,12 @@
 
 ## [1.7.0] - (unreleased)
 
-### Add
-- Add scene support.
-- Add `sceneWhitelist` option for whitelisting scenes.
+### Added
+- Add scene support. (#118)
+- Add `sceneWhitelist` option for whitelisting scenes. (#118)
+
+### Changed
+- Support Ceiling Fan icon customize and Floor Fan `lock`, `swing` feature. (#131)
 
 
 ## [1.6.0] - (2022.12.3)
