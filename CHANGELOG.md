@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.6.0] - (unreleased)
+## [1.6.0] - (2022.12.3)
 
 This version has been completely rewritten in TypeScript, brings a lot of bug fix and new device support.
 
