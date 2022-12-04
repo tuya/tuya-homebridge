@@ -3,7 +3,7 @@
 import { PlatformAccessory, Service, Characteristic } from 'homebridge';
 import { debounce } from 'debounce';
 
-import { TuyaDeviceStatus } from '../device/TuyaDevice';
+import { TuyaDeviceSchemaMode, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
 import { PrefixLogger } from '../util/Logger';
@@ -111,6 +111,13 @@ export default class BaseAccessory {
       if (!schema) {
         continue;
       }
+
+      // Readable schema must have a status
+      if ([TuyaDeviceSchemaMode.READ_WRITE, TuyaDeviceSchemaMode.READ_ONLY].includes(schema.mode)
+        && !this.getStatus(schema.code)) {
+        continue;
+      }
+
       return schema;
     }
     return undefined;
