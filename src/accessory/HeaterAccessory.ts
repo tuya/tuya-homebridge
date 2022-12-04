@@ -4,6 +4,8 @@ import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
 import { configureCurrentTemperature } from './characteristic/CurrentTemperature';
+import { configureLockPhysicalControls } from './characteristic/LockPhysicalControls';
+import { configureSwingMode } from './characteristic/SwingMode';
 
 const SCHEMA_CODE = {
   ACTIVE: ['switch'],
@@ -26,8 +28,8 @@ export default class HeaterAccessory extends BaseAccessory {
     this.configureCurrentState();
     this.configureTargetState();
     configureCurrentTemperature(this, this.mainService(), this.getSchema(...SCHEMA_CODE.CURRENT_TEMP));
-    this.configureLock();
-    this.configureSwing();
+    configureLockPhysicalControls(this, this.mainService(), this.getSchema(...SCHEMA_CODE.LOCK));
+    configureSwingMode(this, this.mainService(), this.getSchema(...SCHEMA_CODE.SWING));
     this.configureHeatingThreshouldTemp();
     this.configureTempDisplayUnits();
   }
@@ -68,40 +70,6 @@ export default class HeaterAccessory extends BaseAccessory {
         // TODO
       })
       .setProps({ validValues });
-  }
-
-  configureLock() {
-    const schema = this.getSchema(...SCHEMA_CODE.LOCK);
-    if (!schema) {
-      return;
-    }
-
-    const { CONTROL_LOCK_DISABLED, CONTROL_LOCK_ENABLED } = this.Characteristic.LockPhysicalControls;
-    this.mainService().getCharacteristic(this.Characteristic.LockPhysicalControls)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        return (status.value as boolean) ? CONTROL_LOCK_ENABLED : CONTROL_LOCK_DISABLED;
-      })
-      .onSet(value => {
-        this.sendCommands([{ code: schema.code, value: (value === CONTROL_LOCK_ENABLED) ? true : false }]);
-      });
-  }
-
-  configureSwing() {
-    const schema = this.getSchema(...SCHEMA_CODE.SWING);
-    if (!schema) {
-      return;
-    }
-
-    const { SWING_DISABLED, SWING_ENABLED } = this.Characteristic.SwingMode;
-    this.mainService().getCharacteristic(this.Characteristic.SwingMode)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        return (status.value as boolean) ? SWING_ENABLED : SWING_DISABLED;
-      })
-      .onSet(value => {
-        this.sendCommands([{ code: schema.code, value: (value === SWING_ENABLED) ? true : false }]);
-      });
   }
 
   configureHeatingThreshouldTemp() {

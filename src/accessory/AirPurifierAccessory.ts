@@ -2,6 +2,7 @@ import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDevi
 import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
+import { configureLockPhysicalControls } from './characteristic/LockPhysicalControls';
 
 const SCHEMA_CODE = {
   ACTIVE: ['switch'],
@@ -21,7 +22,7 @@ export default class AirPurifierAccessory extends BaseAccessory {
     configureActive(this, this.mainService(), this.getSchema(...SCHEMA_CODE.ACTIVE));
     this.configureCurrentState();
     this.configureTargetState();
-    this.configureLock();
+    configureLockPhysicalControls(this, this.mainService(), this.getSchema(...SCHEMA_CODE.LOCK));
     if (this.getFanSpeedSchema()) {
       this.configureSpeed();
     } else if (this.getFanSpeedLevelSchema()) {
@@ -82,26 +83,6 @@ export default class AirPurifierAccessory extends BaseAccessory {
         this.sendCommands([{
           code: schema.code,
           value: (value === AUTO) ? 'auto' : 'manual',
-        }], true);
-      });
-  }
-
-  configureLock() {
-    const schema = this.getSchema(...SCHEMA_CODE.LOCK);
-    if (!schema) {
-      return;
-    }
-
-    const { CONTROL_LOCK_DISABLED, CONTROL_LOCK_ENABLED } = this.Characteristic.LockPhysicalControls;
-    this.mainService().getCharacteristic(this.Characteristic.LockPhysicalControls)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        return (status.value as boolean) ? CONTROL_LOCK_ENABLED : CONTROL_LOCK_DISABLED;
-      })
-      .onSet(value => {
-        this.sendCommands([{
-          code: schema.code,
-          value: (value === CONTROL_LOCK_ENABLED) ? true : false,
         }], true);
       });
   }
