@@ -1,8 +1,8 @@
-import { TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty, TuyaDeviceSchemaType } from '../device/TuyaDevice';
-import { limit, remap } from '../util/util';
+import { TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
 import { configureLockPhysicalControls } from './characteristic/LockPhysicalControls';
+import { configureRotationSpeed, configureRotationSpeedLevel } from './characteristic/RotationSpeed';
 
 const SCHEMA_CODE = {
   ACTIVE: ['switch'],
@@ -24,9 +24,9 @@ export default class AirPurifierAccessory extends BaseAccessory {
     this.configureTargetState();
     configureLockPhysicalControls(this, this.mainService(), this.getSchema(...SCHEMA_CODE.LOCK));
     if (this.getFanSpeedSchema()) {
-      this.configureSpeed();
+      configureRotationSpeed(this, this.mainService(), this.getFanSpeedSchema());
     } else if (this.getFanSpeedLevelSchema()) {
-      this.configureSpeedLevel();
+      configureRotationSpeedLevel(this, this.mainService(), this.getFanSpeedLevelSchema());
     }
   }
 
@@ -85,49 +85,6 @@ export default class AirPurifierAccessory extends BaseAccessory {
           value: (value === AUTO) ? 'auto' : 'manual',
         }], true);
       });
-  }
-
-  configureSpeed() {
-    const schema = this.getFanSpeedSchema()!;
-    const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
-    this.mainService().getCharacteristic(this.Characteristic.RotationSpeed)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        const value = Math.round(remap(status.value as number, min, max, 0, 100));
-        return limit(value, 0, 100);
-      })
-      .onSet(value => {
-        let speed = Math.round(remap(value as number, 0, 100, min, max));
-        speed = limit(speed, min, max);
-        this.sendCommands([{ code: schema.code, value: speed }], true);
-      });
-  }
-
-  configureSpeedLevel() {
-    const schema = this.getFanSpeedLevelSchema()!;
-    if (!schema) {
-      return;
-    }
-
-    const property = schema.property as TuyaDeviceSchemaEnumProperty;
-    const props = { minValue: 0, maxValue: 100, minStep: 1};
-    props.minStep = Math.floor(100 / (property.range.length - 1));
-    props.maxValue = props.minStep * (property.range.length - 1);
-    this.log.debug('Set props for RotationSpeed:', props);
-
-    this.mainService().getCharacteristic(this.Characteristic.RotationSpeed)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        const index = property.range.indexOf(status.value as string);
-        return props.minStep * index;
-      })
-      .onSet(value => {
-        const index = value as number / props.minStep;
-        value = property.range[index].toString();
-        this.log.debug('Set RotationSpeed to:', value);
-        this.sendCommands([{ code: schema.code, value }], true);
-      })
-      .setProps(props);
   }
 
 }
