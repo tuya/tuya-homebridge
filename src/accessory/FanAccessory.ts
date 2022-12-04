@@ -51,8 +51,15 @@ export default class FanAccessory extends BaseAccessory {
 
     this.configureRotationDirection();
 
-    configureOn(this, this.lightService(), this.getSchema(...SCHEMA_CODE.LIGHT_ON));
-    this.configureLightBrightness();
+    // Light
+    if (this.getSchema(...SCHEMA_CODE.LIGHT_ON)) {
+      configureOn(this, this.lightService(), this.getSchema(...SCHEMA_CODE.LIGHT_ON));
+      this.configureLightBrightness();
+    } else {
+      this.log.warn('Remove Lightbulb Service...');
+      const unusedService = this.accessory.getService(this.Service.Lightbulb);
+      unusedService && this.accessory.removeService(unusedService);
+    }
   }
 
   fanServiceType() {
