@@ -5,6 +5,7 @@
 ### Added
 - Add scene support. (#118)
 - Add `sceneWhitelist` option for whitelisting scenes. (#118)
+- Add Wireless Switch support (`wxkg`).
 
 ### Changed
 - Support Ceiling Fan icon customize and Floor Fan `lock`, `swing` feature. (#131)

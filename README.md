@@ -38,6 +38,7 @@ Fork version of official Tuya Homebridge plugin. Brings a lot of bug fix and new
     - [CarbonDioxideSensor] CO2 Detector (`co2bj`)
     - [LeakSensor] Water Detector (`sj`)
     - [HumidifierDehumidifier] Humidifier (`jsq`)
+    - [StatelessProgrammableSwitch] Wireless Switch (`wxkg`)
 
 
 ## Supported Tuya Devices

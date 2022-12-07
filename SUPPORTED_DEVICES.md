@@ -35,7 +35,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Garage Door Opener | 车库门控制器 | ckmkzq | Garage Door Opener | ✅ |
 | Dimmer Switch | 调光开关 | tgkg | Lightbulb | ✅ |
 | Fan Switch | 风扇开关 | fskg | Fanv2 | ✅ |
-| Wireless Switch | 无线开关 | wxkg | | |
+| Wireless Switch | 无线开关 | wxkg | Stateless Programmable Switch | ✅ |
 | Secne Light Socket | 情景灯插座 | qjdcz | Switch | ✅ |
 
 

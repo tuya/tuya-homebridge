@@ -7,6 +7,7 @@ import LightAccessory from './LightAccessory';
 import DimmerAccessory from './DimmerAccessory';
 import OutletAccessory from './OutletAccessory';
 import SwitchAccessory from './SwitchAccessory';
+import WirelessSwitchAccessory from './WirelessSwitchAccessory';
 import FanAccessory from './FanAccessory';
 import GarageDoorAccessory from './GarageDoorAccessory';
 import WindowAccessory from './WindowAccessory';
@@ -63,6 +64,9 @@ export default class AccessoryFactory {
       case 'tdq':
       case 'qjdcz':
         handler = new SwitchAccessory(platform, accessory);
+        break;
+      case 'wxkg':
+        handler = new WirelessSwitchAccessory(platform, accessory);
         break;
       case 'fs':
       case 'fsd':
