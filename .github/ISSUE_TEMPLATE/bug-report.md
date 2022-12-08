@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+- [ ] I've read the [Readme - Troubleshooting](https://github.com/0x5e/homebridge-tuya-platform#troubleshooting) section.
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
@@ -17,4 +19,4 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Device info**
-If the issue is related to a device, please refer to the troubleshooting section to get device list info and debug logs. https://github.com/0x5e/homebridge-tuya-platform#troubleshooting
+If the issue is related to a device, please provide the device info list and debug logs.

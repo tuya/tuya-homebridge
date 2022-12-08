@@ -106,34 +106,61 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 
 ## Limitations
 - **⚠️Don't forget to extend the API trial period every 6 months. Maybe you can set up a reminder in calendar.**
-- The app account can't be used in multiple HomeBridge/HomeAssistant instance at the same time! Please consider using different app accounts instead.
+- The app account can't be used in multiple Homebridge/HomeAssistant instance at the same time! Please consider using different app accounts instead.
 - The plugin requires the internet access to Tuya Cloud, and the lan protocol is not supported. See [#90](https://github.com/0x5e/homebridge-tuya-platform/issues/90)
 
 
 ## Troubleshooting
 
-When your device is not working well, or not supported yet, please submit the issue and upload your device informations.
-If that's still not enough, you can enable the debug mode to get the detail log.
+If your device is in the support list, but not working properly, meanwhile, the same feature works well in Tuya App, please complete the following steps before submit the issue.
 
-#### Get Device Information
+#### 1. Get Device Information
 
-After successful launching Homebridge, the device list will be saved inside Homebridge's persist path.
-You can get the file path from running log like this:
+After successful launching Homebridge, the device info list will be saved inside Homebridge's persist path.
+You can get the file path from homebridge log:
 ```
 [2022/11/3 18:37:43] [TuyaPlatform] Device list saved at ~/.homebridge/persist/TuyaDeviceList.{uid}.json
 ```
 
-Please remove the sensitive data such as `ip`, `lon`, `lat`, `local_key`, `uid` before uploading.
+**⚠️Please remove the sensitive data such as `ip`, `lon`, `lat`, `local_key`, `uid` before submit the file.**
 
-#### Enable Debug Mode
+
+#### 2. Enable Homebridge Debug Mode
 
 For Homebridge Web UI users:
 - Go to the `Homebridge Setting` page
 - Turn on the `Homebridge Debug Mode -D` switch
-- Restart HomeBridge.
+- Restart Homebridge.
 
 For Homebridge Command Line Users:
 - Start Homebridge with `-D` flag: `homebridge -D`
+
+#### 3. Collecting Logs
+
+With debug mode on, you can now receive mqtt logs. Operate your device physically, or via Tuya App, then you will get mqtt logs like this:
+
+```
+[2022/12/8 12:51:59] [TuyaPlatform] [TuyaOpenMQ] onMessage:
+topic = cloud/token/in/xxx
+protocol = 4
+message = {
+  "dataId": "xxx",
+  "devId": "xxx",
+  "productKey": "xxx",
+  "status": [
+    {
+      "1": "double_click",
+      "code": "switch1_value",
+      "t": "1670475119766",
+      "value": "double_click"
+    }
+  ]
+}
+```
+
+If you can't get any mqtt logs when controlling the device, mostly means that your device is a "non-standard device". You need to change device control mode into "DP Instruction" mode. See [#111](https://github.com/0x5e/homebridge-tuya-platform/issues/111).
+
+If you can get mqtt logs, please submit the issue with device info json and logs.
 
 
 ## Contributing
