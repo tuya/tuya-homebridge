@@ -1,5 +1,6 @@
 import { TuyaDeviceSchema, TuyaDeviceStatus } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
+import { configureProgrammableSwitchEvent, onProgrammableSwitchEvent } from './characteristic/ProgrammableSwitchEvent';
 
 const SCHEMA_CODE = {
   ON: ['switch_mode1', 'switch1_value'],
@@ -28,32 +29,19 @@ export default class SwitchAccessory extends BaseAccessory {
     const index = group![1];
     service.setCharacteristic(this.Characteristic.ServiceLabelIndex, index);
 
+    configureProgrammableSwitchEvent(this, service, schema);
   }
 
   async onDeviceStatusUpdate(status: TuyaDeviceStatus[]) {
     super.onDeviceStatusUpdate(status);
 
-    const { SINGLE_PRESS, DOUBLE_PRESS, LONG_PRESS } = this.Characteristic.ProgrammableSwitchEvent;
     for (const _status of status) {
-      const characteristic = this.accessory.getService(_status.code)?.getCharacteristic(this.Characteristic.ProgrammableSwitchEvent);
-      if (!characteristic) {
+      const service = this.accessory.getService(_status.code);
+      if (!service) {
         continue;
       }
 
-      let value: number;
-      if (_status.value === 'click' || _status.value === 'single_click') {
-        value = SINGLE_PRESS;
-      } else if (_status.value === 'double_click') {
-        value = DOUBLE_PRESS;
-      } else if (_status.value === 'press' || _status.value === 'long_press') {
-        value = LONG_PRESS;
-      } else {
-        continue;
-      }
-
-      this.log.debug('ProgrammableSwitchEvent updateValue: %o %o', _status.code, value);
-      characteristic.updateValue(value);
-
+      onProgrammableSwitchEvent(this, service, _status);
     }
   }
 

@@ -23,6 +23,7 @@ export default class BaseAccessory {
   public deviceManager = this.platform.deviceManager!;
   public device = this.deviceManager.getDevice(this.accessory.context.deviceID)!;
   public log = new PrefixLogger(this.platform.log, this.device.name.length > 0 ? this.device.name : this.device.id);
+  public intialized = false;
 
   constructor(
     public readonly platform: TuyaPlatform,
@@ -33,6 +34,7 @@ export default class BaseAccessory {
     this.addBatteryService();
 
     this.onDeviceStatusUpdate(this.device.status);
+    this.intialized = true;
   }
 
   addAccessoryInfoService() {
