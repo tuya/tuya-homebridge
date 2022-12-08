@@ -20,9 +20,11 @@ Fork version of official Tuya Homebridge plugin. Brings a lot of bug fix and new
 - More supported devices.
     - [Light] Spotlight (`sxd`)
     - [Light] Motion Sensor Light (`gyd`)
+    - [Light] Solar Light (`tyndj`)
     - [Dimmer] Dual Dimmer (`tgq`)
     - [Dimmer] Dual Dimmer Switch (`tgkg`)
     - [Switch] Scene Light Socket (`qjdcz`)
+    - [StatelessProgrammableSwitch] Wireless Switch (`wxkg`)
     - [Fanv2] Ceiling Fan Light (`fsd`)
     - [Window] Door and Window Controller (`mc`)
     - [WindowCovering] Curtain Switch (`clkg`)
@@ -38,7 +40,6 @@ Fork version of official Tuya Homebridge plugin. Brings a lot of bug fix and new
     - [CarbonDioxideSensor] CO2 Detector (`co2bj`)
     - [LeakSensor] Water Detector (`sj`)
     - [HumidifierDehumidifier] Humidifier (`jsq`)
-    - [StatelessProgrammableSwitch] Wireless Switch (`wxkg`)
 
 
 ## Supported Tuya Devices

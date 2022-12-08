@@ -49,6 +49,7 @@ export default class AccessoryFactory {
       case 'dc':
       case 'dd':
       case 'gyd':
+      case 'tyndj':
       case 'sxd':
         handler = new LightAccessory(platform, accessory);
         break;
