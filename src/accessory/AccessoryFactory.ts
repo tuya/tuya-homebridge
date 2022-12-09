@@ -26,6 +26,7 @@ import MotionSensorAccessory from './MotionSensorAccessory';
 import AirQualitySensorAccessory from './AirQualitySensorAccessory';
 import HumanPresenceSensorAccessory from './HumanPresenceSensorAccessory';
 import HumidifierAccessory from './HumidifierAccessory';
+import DehumidifierAccessory from './DehumidifierAccessory';
 import AirPurifierAccessory from './AirPurifierAccessory';
 import TemperatureHumidityIRSensorAccessory from './TemperatureHumidityIRSensorAccessory';
 import SceneAccessory from './SceneAccessory';
@@ -131,6 +132,9 @@ export default class AccessoryFactory {
         break;
       case 'jsq':
         handler = new HumidifierAccessory(platform, accessory);
+        break;
+      case 'cs':
+        handler = new DehumidifierAccessory(platform, accessory);
         break;
       case 'scene':
         handler = new SceneAccessory(platform, accessory);

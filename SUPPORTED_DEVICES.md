@@ -69,7 +69,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Bathroom Heater | 浴霸 | yb | | |
 | Irrigator | 灌溉器 | ggq | Valve | ✅ |
 | Humidifier | 加湿器 | jsq | Humidifier Dehumidifier | ✅ |
-| Dehumidifier | 除湿机 | cs | | |
+| Dehumidifier | 除湿机 | cs | Humidifier Dehumidifier | ✅ |
 | Fan | 风扇 | fs | Fanv2 | ✅ |
 | Water Purifier | 净水器 | js | | |
 | Electric Blanket | 电热毯 | dr | | |
