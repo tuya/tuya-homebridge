@@ -29,7 +29,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Switch | 开关 | kg, tdq | Switch | ✅ |
 | Socket | 插座 | cz | Outlet | ✅ |
 | Power Strip | 排插 | pc | Outlet | ✅ |
-| Scene Switch | 场景开关 | cjkg | | |
+| Scene Switch | 场景开关 | cjkg | Switch | ✅ |
 | Card Switch | 插卡取电开关 | ckqdkg | | |
 | Curtain Switch | 窗帘开关 | clkg | Window Covering | ✅ |
 | Garage Door Opener | 车库门控制器 | ckmkzq | Garage Door Opener | ✅ |

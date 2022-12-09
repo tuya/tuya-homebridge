@@ -24,6 +24,7 @@ Fork version of official Tuya Homebridge plugin. Brings a lot of bug fix and new
     - [Dimmer] Dual Dimmer (`tgq`)
     - [Dimmer] Dual Dimmer Switch (`tgkg`)
     - [Switch] Scene Light Socket (`qjdcz`)
+    - [Switch] Scene Switch (`cjkg`)
     - [StatelessProgrammableSwitch] Wireless Switch (`wxkg`)
     - [Fanv2] Ceiling Fan Light (`fsd`)
     - [Window] Door and Window Controller (`mc`)

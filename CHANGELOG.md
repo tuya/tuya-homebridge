@@ -8,6 +8,7 @@
 - Add Wireless Switch support (`wxkg`).
 - Add Solar Light support (`tyndj`).
 - Add Dehumidifier support (`cs`).
+- Add Scene Switch support (`wxkg`).
 
 ### Changed
 - Support Ceiling Fan icon customize and Floor Fan `lock`, `swing` feature. (#131)
