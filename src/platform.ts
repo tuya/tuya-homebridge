@@ -130,6 +130,32 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
   }
 
+  getDeviceConfig(device: TuyaDevice) {
+    if (!this.options.deviceOverrides) {
+      return undefined;
+    }
+
+    const deviceConfig = this.options.deviceOverrides.find(config => config.id === device.id);
+    const productConfig = this.options.deviceOverrides.find(config => config.id === device.product_id);
+    const globalConfig = this.options.deviceOverrides.find(config => config.id === 'global');
+
+    return deviceConfig || productConfig || globalConfig;
+  }
+
+  getDeviceSchemaConfig(device: TuyaDevice, code: string) {
+    const deviceConfig = this.getDeviceConfig(device);
+    if (!deviceConfig || !deviceConfig.schema) {
+      return undefined;
+    }
+
+    const schemaConfig = deviceConfig.schema.find(item => item.code === code);
+    if (!schemaConfig) {
+      return undefined;
+    }
+
+    return schemaConfig;
+  }
+
   async initCustomProject() {
     if (this.options.projectType !== '1') {
       return null;
@@ -276,23 +302,8 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     const devices = await deviceManager.updateDevices(homeIDList);
 
     this.log.info('Fetching scene list.');
-    const scenes: TuyaDevice[] = [];
     for (const homeID of homeIDList) {
-      scenes.push(...await deviceManager.getSceneList(homeID));
-    }
-
-    for (const scene of scenes) {
-      this.log.info(`Got scene_id=${scene.id}, name=${scene.name}`);
-      if (this.options.sceneWhitelist) {
-        if (this.options.sceneWhitelist.includes(scene.id)) {
-          this.log.info(`Found scene_id=${scene.id} in whitelist; including scene.`);
-          devices.push(scene);
-        } else {
-          this.log.info(`Did not find scene_id=${scene.id} in whitelist; excluding scene.`);
-        }
-      } else {
-        devices.push(scene);
-      }
+      devices.push(...await deviceManager.getSceneList(homeID));
     }
 
     this.deviceManager = deviceManager;
@@ -300,6 +311,15 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
   }
 
   addAccessory(device: TuyaDevice) {
+    const deviceConfig = this.getDeviceConfig(device);
+    if (deviceConfig?.category) {
+      this.log.warn('Override %o category to %o', device.name, deviceConfig.category);
+      device.category = deviceConfig.category;
+      if (deviceConfig.category === 'hidden') {
+        this.log.info('Hide Accessory:', device.name);
+        return;
+      }
+    }
 
     const uuid = this.api.hap.uuid.generate(device.id);
     const existingAccessory = this.cachedAccessories.find(accessory => accessory.UUID === uuid);

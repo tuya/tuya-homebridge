@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-- [ ] I've read the [Readme - Troubleshooting](https://github.com/0x5e/homebridge-tuya-platform#troubleshooting) section.
+- [ ] I've read the [Readme - FAQ](https://github.com/0x5e/homebridge-tuya-platform#faq) and [Readme - Troubleshooting](https://github.com/0x5e/homebridge-tuya-platform#troubleshooting) section.
 
 **Describe the bug**
 A clear and concise description of what the bug is.
