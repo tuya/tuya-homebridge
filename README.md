@@ -6,7 +6,7 @@
 [![verified-by-homebridge](https://badgen.net/badge/homebridge/verified/purple)](https://github.com/homebridge/homebridge/wiki/Verified-Plugins)
 [![Build and Lint](https://github.com/0x5e/homebridge-tuya-platform/actions/workflows/build.yml/badge.svg)](https://github.com/0x5e/homebridge-tuya-platform/actions/workflows/build.yml)
 
-Fork version of official Tuya Homebridge plugin. Brings a lot of bug fix and new device support.
+Fork version of official Tuya Homebridge plugin. Brings a bunch of bug fix and new device support.
 
 
 ## Features
@@ -16,33 +16,9 @@ Fork version of official Tuya Homebridge plugin. Brings a lot of bug fix and new
 - Less duplicate code.
 - Less API errors.
 - Less development costs for new accessory categroies.
-- Scene supported.
-- Support overriding device config.
-- More supported devices.
-    - [Light] Spotlight (`sxd`)
-    - [Light] Motion Sensor Light (`gyd`)
-    - [Light] Solar Light (`tyndj`)
-    - [Dimmer] Dual Dimmer (`tgq`)
-    - [Dimmer] Dual Dimmer Switch (`tgkg`)
-    - [Switch] Scene Light Socket (`qjdcz`)
-    - [Switch] Scene Switch (`cjkg`)
-    - [StatelessProgrammableSwitch] Wireless Switch (`wxkg`)
-    - [Fanv2] Ceiling Fan Light (`fsd`)
-    - [Window] Door and Window Controller (`mc`)
-    - [WindowCovering] Curtain Switch (`clkg`)
-    - [Thermostat] Thermostat (`wk`)
-    - [Thermostat] Thermostat Valve (`wkf`)
-    - [Valve] Irrigator (`ggq`)
-    - [AirQualitySensor] PM2.5 Detector (`pm25`)
-    - [TemperatureHumiditySensor] Temperature and Humidity Sensor (`wsdcg`)
-    - [MotionSensor] Motion Sensor (`pir`)
-    - [HumanPresenceSensor] Human Presence Sensor (`hps`)
-    - [LightSensor] Light Sensor (`ldcg`)
-    - [CarbonMonoxideSensor] CO Detector (`cobj`)
-    - [CarbonDioxideSensor] CO2 Detector (`co2bj`)
-    - [LeakSensor] Water Detector (`sj`)
-    - [HumidifierDehumidifier] Humidifier (`jsq`)
-    - [HumidifierDehumidifier] Dehumidifier (`cs`)
+- Tuya Scene supported (Tap-to-Run).
+- Device overriding config supported. "non-standard" devices have possibility to be supported now.
+- More than 40+ device categories supported, including most of the lights, switches, sensors ...
 
 
 ## Supported Tuya Devices

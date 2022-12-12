@@ -1,7 +1,7 @@
 {
   "name": "@0x5e/homebridge-tuya-platform",
   "version": "1.7.0-beta.5",
-  "description": "Tuya plugin for Hombridge, maintained by @0x5e, former employee of Tuya.",
+  "description": "Fork version of official Tuya Homebridge plugin. Brings a bunch of bug fix and new device support.",
   "license": "MIT",
   "repository": {
     "type": "git",
