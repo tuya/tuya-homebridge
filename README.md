@@ -80,7 +80,7 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - `options.username` - **required** : Username
 - `options.password` - **required** : Password
 - `options.appSchema` - **required** : App schema. 'tuyaSmart' for Tuya Smart App, 'smartlife' for Smart Life App.
-- `options.homeWhitelist` - **optional**: An array of integer home ID values to whitelist. If present, only includes devices matching this Home ID value.
+- `options.homeWhitelist` - **optional**: An array of integer home ID values to whitelist. If present, only includes devices matching this Home ID value. Home ID can be found in the homebridge log.
 
 
 #### Advanced options
