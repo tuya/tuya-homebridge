@@ -94,19 +94,19 @@ See [ADVANCED_OPTIONS.md](./ADVANCED_OPTIONS.md)
 
 ## FAQ
 
-#### What is "standard device" and "non-standard device", how to know what my device is?
+#### What is "Standard DP" and "Non-standard DP"?
 
 If your device is working properly, you don't need to know this.
 
-"standard device" means the device's DP Code is matching the code in documentation at: [Tuya IoT Development Platform Documentation > Cloud Development > Standard Instruction Set](https://developer.tuya.com/en/docs/iot/standarddescription?id=K9i5ql6waswzq).
+"Standard DP" means the device's DP Code is matching the code in documentation at: [Tuya IoT Development Platform Documentation > Cloud Development > Standard Instruction Set](https://developer.tuya.com/en/docs/iot/standarddescription?id=K9i5ql6waswzq).
 
 For example, a Lightbulb must have `switch_led` for power on/off, and optional code
 `bright_value`/`bright_value_v2` for brightness, `temp_value`/`temp_value_v2` for color temperature, `work_mode` for change working mode. These code can be found from above documentation. 
 
-If your Lightbulb can adjust brightness in Tuya App, but can't do with the plugin, then mostly it's an "non-standard device".
+If your Lightbulb can adjust brightness in Tuya App, but can't do with the plugin, then mostly it has an "Non-standard DP".
 
 
-#### Can "non-standard device" be supportd by this plugin?
+#### Can "Non-standard DP" be supportd by this plugin?
 
 Yes. The device should be in the support list, then you need do these steps before it's working.
 1. Change device's control mode on Tuya Platform.
@@ -116,7 +116,7 @@ Yes. The device should be in the support list, then you need do these steps befo
   - The "Table of Instructions" shows the cloud mapping, you can know which DP Codes of your device is missing, you need to manually map them later.
   - <img width="500" alt="image" src="https://user-images.githubusercontent.com/5144674/202967528-4838f9a1-0547-4102-afbb-180dc9b198b1.png">
   - Select "DP Instruction" and save.
-2. Config the schema with [ADVANCED_OPTIONS.md](./ADVANCED_OPTIONS.md).
+2. Override device schema, see [ADVANCED_OPTIONS.md](./ADVANCED_OPTIONS.md).
 
 
 #### Local support
