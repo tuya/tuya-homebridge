@@ -9,7 +9,7 @@
 - Add Dehumidifier support (`cs`).
 - Add Scene Switch support (`wxkg`).
 - Add device overriding config support. "non-standard" devices have possibility to be supported now.
-- Add Camera support (`sp`).
+- Add Camera support (`sp`). Thanks @ErrorErrorError for the contribution
 
 
 ### Changed
@@ -24,14 +24,14 @@ This version has been completely rewritten in TypeScript, brings a lot of bug fi
 - Add CO Detector support (`cobj`).
 - Add CO2 Detector support (`co2bj`).
 - Add Water Detector support (`sj`).
-- Add Temperature and Humidity Sensor support (`wsdcg`).
+- Add Temperature and Humidity Sensor support (`wsdcg`, `wnykq`). Thanks @bimusiek for the contribution
 - Add Light Sensor support (`ldcg`).
 - Add Motion Sensor support (`pir`).
 - Add PM2.5 Detector support (`pm25`).
 - Add Door and Window Controller support (`mc`).
 - Add Curtain Switch support (`clkg`). (#8)
 - Add Human Presence Sensor support (`hps`). (#17)
-- Add Thermostat support (`wk`). (#19)
+- Add Thermostat support (`wk`). (#19) Thanks @burcadoruciprian for the contribution
 - Add Spotlight support (`sxd`). (#21)
 - Add Irrigator support (`ggq`). (#28)
 - Add Scene Light Socket support (`qjdcz`). (#33)
@@ -39,7 +39,7 @@ This version has been completely rewritten in TypeScript, brings a lot of bug fi
 - Add Thermostat Valve support (`wkf`). (#50)
 - Add Motion Sensor Light support (`gyd`). (#65)
 - Add Multiple Dimmer and Dimmer Switch support (`tgq`, `tgkg`). (#82)
-- Add Humidifier support (`jsq`). (#89)
+- Add Humidifier support (`jsq`). (#89) Thanks @akaminsky-net for the contribution
 
 
 ### Added
@@ -47,7 +47,7 @@ This version has been completely rewritten in TypeScript, brings a lot of bug fi
 - Add instruction message for handling API errors.
 - Add debounce in `BaseAccessory.sendCommands()` for better API request peformance.
 - Persist `TuyaDeviceList.{uid}.json` for debugging. (#41)
-- Add `homeWhitelist` option for whitelisting homes. (#84)
+- Add `homeWhitelist` option for whitelisting homes. (#84) Thanks @JulianLepinski for the contribution
 
 
 ### Fixed
@@ -75,6 +75,7 @@ This version has been completely rewritten in TypeScript, brings a lot of bug fi
 - Now `Manufactor`, `Serial Number` and `Model` will be correctly displayed in HomeKit.
 - All devices will be shown in HomeKit by default (Including unsupported device).
 - Updated unit test.
+- Updated documentations. Thanks @prabch for the contribution
 
 
 ### Removed
