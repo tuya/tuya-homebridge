@@ -1,21 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable max-len */
-import {
-  AudioRecordingCodecType,
-  AudioRecordingSamplerate,
-  CameraController,
-  StreamRequestTypes,
-  VideoCodecType,
-} from 'hap-nodejs';
 
 import {
   AudioStreamingCodecType,
   AudioStreamingSamplerate,
+  CameraController,
   CameraControllerOptions,
   CameraRecordingOptions,
   CameraStreamingDelegate,
   CameraStreamingOptions,
   EventTriggerOption,
+  HAP,
   H264Level,
   H264Profile,
   MediaContainerType,
@@ -69,22 +64,25 @@ type ActiveSession = {
     socket?: Socket;
 };
 
+/*
 interface SampleRateEntry {
     type: AudioRecordingCodecType;
     bitrateMode: number;
     samplerate: AudioRecordingSamplerate[];
     audioChannels: number;
 }
+*/
 
 export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStreamingDelegate {
   public readonly controller: CameraController;
 
-  private readonly camera: CameraAccessory;
   private pendingSessions: { [index: string]: SessionInfo } = {};
   private ongoingSessions: { [index: string]: ActiveSession } = {};
 
-  constructor(camera: CameraAccessory) {
-    this.camera = camera;
+  constructor(
+    private readonly camera: CameraAccessory,
+    private readonly hap: HAP,
+  ) {
     // this.recordingDelegate = new TuyaRecordingDelegate();
 
     const resolutions: Resolution[] = [
@@ -147,13 +145,13 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
           ],
         },
         resolutions: resolutions,
-        type: VideoCodecType.H264,
+        type: this.hap.VideoCodecType.H264,
       },
       audio: {
         codecs: [
           {
-            samplerate: AudioRecordingSamplerate.KHZ_32,
-            type: AudioRecordingCodecType.AAC_LC,
+            samplerate: this.hap.AudioRecordingSamplerate.KHZ_32,
+            type: this.hap.AudioRecordingCodecType.AAC_LC,
           },
         ],
       },
@@ -168,7 +166,7 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
       // }
     };
 
-    this.controller = new CameraController(options);
+    this.controller = new this.hap.CameraController(options);
   }
 
   stopStream(sessionId: string): void {
@@ -242,12 +240,12 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
     const videoIncomingPort = await reservePorts({
       count: 1,
     });
-    const videoSSRC = CameraController.generateSynchronisationSource();
+    const videoSSRC = this.hap.CameraController.generateSynchronisationSource();
 
     const audioIncomingPort = await reservePorts({
       count: 1,
     });
-    const audioSSRC = CameraController.generateSynchronisationSource();
+    const audioSSRC = this.hap.CameraController.generateSynchronisationSource();
 
     const sessionInfo: SessionInfo = {
       address: request.targetAddress,
@@ -290,7 +288,7 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
     callback: StreamRequestCallback,
   ) {
     switch (request.type) {
-      case StreamRequestTypes.START: {
+      case this.hap.StreamRequestTypes.START: {
         this.camera.log.debug(
           `Start stream requested: ${request.video.width}x${request.video.height}, ${request.video.fps} fps, ${request.video.max_bit_rate} kbps`,
           this.camera.accessory.displayName,
@@ -300,7 +298,7 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
         break;
       }
 
-      case StreamRequestTypes.RECONFIGURE: {
+      case this.hap.StreamRequestTypes.RECONFIGURE: {
         this.camera.log.debug(
           `Reconfigure stream requested: ${request.video.width}x${request.video.height}, ${request.video.fps} fps, ${request.video.max_bit_rate} kbps (Ignored)`,
           this.camera.accessory.displayName,
@@ -310,7 +308,7 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
         break;
       }
 
-      case StreamRequestTypes.STOP: {
+      case this.hap.StreamRequestTypes.STOP: {
         this.camera.log.debug('Stop stream requested', this.camera.accessory.displayName);
 
         this.stopStream(request.sessionID);
