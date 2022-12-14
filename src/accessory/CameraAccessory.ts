@@ -88,7 +88,7 @@ export default class CameraAccessory extends BaseAccessory {
       return;
     }
 
-    this.stream = new TuyaStreamingDelegate(this, this.platform.api.hap);
+    this.stream = new TuyaStreamingDelegate(this);
     this.accessory.configureController(this.stream.controller);
   }
 

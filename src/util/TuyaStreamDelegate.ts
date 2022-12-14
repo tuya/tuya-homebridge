@@ -79,10 +79,12 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
   private pendingSessions: { [index: string]: SessionInfo } = {};
   private ongoingSessions: { [index: string]: ActiveSession } = {};
 
-  constructor(
-    private readonly camera: CameraAccessory,
-    private readonly hap: HAP,
-  ) {
+  private readonly camera: CameraAccessory;
+  private readonly hap: HAP;
+  constructor(camera: CameraAccessory) {
+    this.camera = camera;
+    this.hap = camera.platform.api.hap;
+
     // this.recordingDelegate = new TuyaRecordingDelegate();
 
     const resolutions: Resolution[] = [
