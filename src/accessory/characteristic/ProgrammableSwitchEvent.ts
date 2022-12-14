@@ -1,5 +1,5 @@
 import { Service } from 'homebridge';
-import { TuyaDeviceSchema, TuyaDeviceSchemaEnumProperty, TuyaDeviceStatus } from '../../device/TuyaDevice';
+import { TuyaDeviceSchema, TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaType, TuyaDeviceStatus } from '../../device/TuyaDevice';
 import BaseAccessory from '../BaseAccessory';
 
 const SINGLE_PRESS = 0;
@@ -11,12 +11,17 @@ export function configureProgrammableSwitchEvent(accessory: BaseAccessory, servi
     return;
   }
 
-  const { range } = schema.property as TuyaDeviceSchemaEnumProperty;
-  const props = GetStatelessSwitchProps(
-    range.includes('click') || range.includes('single_click'),
-    range.includes('double_click'),
-    range.includes('press') || range.includes('long_press'),
-  );
+  let props;
+  if (schema.type === TuyaDeviceSchemaType.Enum) {
+    const { range } = schema.property as TuyaDeviceSchemaEnumProperty;
+    props = GetStatelessSwitchProps(
+      range.includes('click') || range.includes('single_click'),
+      range.includes('double_click'),
+      range.includes('press') || range.includes('long_press'),
+    );
+  } else {
+    props = GetStatelessSwitchProps(true, false, false);
+  }
 
   service.getCharacteristic(accessory.Characteristic.ProgrammableSwitchEvent)
     .setProps(props);
@@ -27,14 +32,29 @@ export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Ser
     return;
   }
 
-  let value: number;
-  if (status.value === 'click' || status.value === 'single_click') {
+  let value = -1;
+
+  const schema = accessory.getSchema(status.code)!;
+  if (schema.type === TuyaDeviceSchemaType.Boolean) { // doorbell_ring_exist
+    status.value && (value = SINGLE_PRESS);
+  } else if (schema.type === TuyaDeviceSchemaType.Raw) { // doorbell_pic
+    const url = Buffer.from(status.value as string, 'base64').toString('binary');
+    if (url.length === 0) {
+      return;
+    }
+    accessory.log.info('Doorbell picture:', url);
     value = SINGLE_PRESS;
-  } else if (status.value === 'double_click') {
-    value = DOUBLE_PRESS;
-  } else if (status.value === 'press' || status.value === 'long_press') {
-    value = LONG_PRESS;
-  } else {
+  } else if (schema.type === TuyaDeviceSchemaType.Enum) {
+    if (status.value === 'click' || status.value === 'single_click') {
+      value = SINGLE_PRESS;
+    } else if (status.value === 'double_click') {
+      value = DOUBLE_PRESS;
+    } else if (status.value === 'press' || status.value === 'long_press') {
+      value = LONG_PRESS;
+    }
+  }
+
+  if (value === -1) {
     accessory.log.warn('Unknown ProgrammableSwitchEvent status:', status);
     return;
   }

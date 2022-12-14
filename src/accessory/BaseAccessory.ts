@@ -10,6 +10,13 @@ import { PrefixLogger } from '../util/Logger';
 
 const MANUFACTURER = 'Tuya Inc.';
 
+const SCHEMA_CODE = {
+  BATTERY_STATE: ['battery_state'],
+  BATTERY_PERCENT: ['battery_percentage', 'residual_electricity', 'wireless_electricity', 'va_battery', 'battery'],
+  BATTERY_CHARGING: ['charge_state'],
+};
+
+
 /**
  * Homebridge Accessory Categories Documentation:
  *   https://developers.homebridge.io/#/categories
@@ -51,7 +58,8 @@ class BaseAccessory {
   }
 
   addBatteryService() {
-    if (!this.getBatteryPercentage()) {
+    const percentSchema = this.getSchema(...SCHEMA_CODE.BATTERY_PERCENT);
+    if (!percentSchema) {
       return;
     }
 
@@ -59,51 +67,36 @@ class BaseAccessory {
     const service = this.accessory.getService(this.Service.Battery)
       || this.accessory.addService(this.Service.Battery);
 
-    if (this.getBatteryState() || this.getBatteryPercentage()) {
+    const stateSchema = this.getSchema(...SCHEMA_CODE.BATTERY_STATE);
+    if (stateSchema || percentSchema) {
       service.getCharacteristic(this.Characteristic.StatusLowBattery)
         .onGet(() => {
-          let status = this.getBatteryState();
-          if (status) {
+          if (stateSchema) {
+            const status = this.getStatus(stateSchema.code)!;
             return (status!.value === 'low') ? BATTERY_LEVEL_LOW : BATTERY_LEVEL_NORMAL;
           }
 
           // fallback
-          status = this.getBatteryPercentage();
+          const status = this.getStatus(percentSchema.code)!;
           return (status!.value as number <= 20) ? BATTERY_LEVEL_LOW : BATTERY_LEVEL_NORMAL;
         });
     }
 
-    if (this.getBatteryPercentage()) {
-      service.getCharacteristic(this.Characteristic.BatteryLevel)
-        .onGet(() => {
-          const status = this.getBatteryPercentage()!;
-          return limit(status.value as number, 0, 100);
-        });
-    }
+    service.getCharacteristic(this.Characteristic.BatteryLevel)
+      .onGet(() => {
+        const status = this.getStatus(percentSchema.code)!;
+        return limit(status.value as number, 0, 100);
+      });
 
-    if (this.getChargeState()) {
+    const chargingSchema = this.getSchema(...SCHEMA_CODE.BATTERY_CHARGING);
+    if (chargingSchema) {
       const { NOT_CHARGING, CHARGING } = this.Characteristic.ChargingState;
       service.getCharacteristic(this.Characteristic.ChargingState)
         .onGet(() => {
-          const status = this.getChargeState();
-          return (status?.value as boolean) ? CHARGING : NOT_CHARGING;
+          const status = this.getStatus(chargingSchema.code)!;
+          return (status.value as boolean) ? CHARGING : NOT_CHARGING;
         });
     }
-  }
-
-  getBatteryState() {
-    return this.getStatus('battery_state');
-  }
-
-  getBatteryPercentage() {
-    return this.getStatus('battery_percentage')
-      || this.getStatus('residual_electricity')
-      || this.getStatus('va_battery')
-      || this.getStatus('battery');
-  }
-
-  getChargeState() {
-    return this.getStatus('charge_state');
   }
 
 

@@ -9,6 +9,7 @@
 - Add Dehumidifier support (`cs`).
 - Add Scene Switch support (`wxkg`).
 - Add device overriding config support. "non-standard" devices have possibility to be supported now.
+- Add Camera support (`sp`).
 
 
 ### Changed

@@ -25,6 +25,7 @@
     "lint": "eslint src/**/*.ts --max-warnings=0",
     "test": "jest",
     "watch": "npm run build && npm link && nodemon",
+    "launch": "tsc && homebridge -I -D",
     "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run lint && npm run build"
   },
@@ -32,6 +33,7 @@
     "homebridge-plugin"
   ],
   "dependencies": {
+    "@homebridge/camera-utils": "^2.2.0",
     "color-convert": "^2.0.1",
     "crypto-js": "^4.1.1",
     "debounce": "^1.2.1",

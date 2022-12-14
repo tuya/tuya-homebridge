@@ -107,7 +107,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Name | Name (zh) | Code | Homebridge Service | Supported |
 | ---- | ---- | ---- | ---- | ---- |
 | Alarm Host | 报警主机 | mal | | |
-| Smart Camera | 智能摄像机 | sp | | |
+| Smart Camera | 智能摄像机 | sp | Motion Sensor, Doorbell | ✅ |
 | Siren Alarm | 声光报警传感器 | sgbj | | |
 | Gas Alarm | 燃气报警传感器 | rqbj | Leak Sensor | ✅ |
 | Smoke Alarm | 烟雾报警传感器 | ywbj | Smoke Sensor | ✅ |
