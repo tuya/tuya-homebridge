@@ -128,11 +128,19 @@ export default class TuyaOpenMQ {
       this.log.warn('CurrentMessage: dataId = %s, t = %s', message['dataId'], t);
       this.log.warn('Fallback to use API fetching the latest device status.');
       const devId = message['devId'];
+      const status = message['status'];
       const res = await this.api.get(`/v1.0/iot-03/devices/${devId}/status`);
       if (res.success === false) {
         return;
       }
-      message = { devId, status: res.result };
+
+      for (const _status of status) {
+        const latestStatus = (res.result as []).find(item => item['code'] === _status);
+        if (latestStatus) {
+          _status['value'] = latestStatus['value'];
+        }
+      }
+      message = { devId, status };
     }
     this.lastPayload = currentPayload;
 
