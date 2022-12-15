@@ -1,5 +1,5 @@
 import { TuyaDeviceSchemaIntegerProperty } from '../device/TuyaDevice';
-import { remap } from '../util/util';
+import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
 import { configureCurrentTemperature } from './characteristic/CurrentTemperature';
@@ -70,23 +70,24 @@ export default class HumidifierAccessory extends BaseAccessory {
 
     const property = schema.property as TuyaDeviceSchemaIntegerProperty;
     const multiple = Math.pow(10, property ? property.scale : 0);
+    const props = {
+      minValue: 0,
+      maxValue: 100,
+      minStep: Math.max(1, property.step / multiple),
+    };
+    this.log.debug('Set props for RelativeHumidityHumidifierThreshold:', props);
 
     this.mainService().getCharacteristic(this.Characteristic.RelativeHumidityHumidifierThreshold)
       .onGet(() => {
-        const status = this.getStatus(schema.code);
-        let humidity_set = status?.value as number / multiple;
-        humidity_set = Math.max(0, humidity_set);
-        humidity_set = Math.min(100, humidity_set);
-        return humidity_set;
+        const status = this.getStatus(schema.code)!;
+        return limit(status.value as number / multiple, 0, 100);
       })
       .onSet(value => {
-        let humidity_set = value as number * multiple;
-        humidity_set = Math.max(property['min'], humidity_set);
-        humidity_set = Math.min(property['max'], humidity_set);
+        const humidity_set = limit(value as number * multiple, property.min, property.max);
         this.sendCommands([{ code: schema.code, value: humidity_set }]);
         // also set spray mode to humidity
         this.setSprayModeToHumidity();
-      }).setProps({ minStep: property['step'] });
+      }).setProps(props);
   }
 
 

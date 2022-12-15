@@ -83,8 +83,8 @@ export default class DehumidifierAccessory extends BaseAccessory {
     const property = schema.property as TuyaDeviceSchemaIntegerProperty;
     const multiple = Math.pow(10, property.scale);
     const props = {
-      minValue: Math.max(0, property.min / multiple),
-      maxValue: Math.min(100, property.max / multiple),
+      minValue: 0,
+      maxValue: 100,
       minStep: Math.max(1, property.step / multiple),
     };
     this.log.debug('Set props for RelativeHumidityDehumidifierThreshold:', props);
@@ -92,7 +92,7 @@ export default class DehumidifierAccessory extends BaseAccessory {
     this.mainService().getCharacteristic(this.Characteristic.RelativeHumidityDehumidifierThreshold)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        return limit(status.value as number / multiple, props.minValue, props.maxValue);
+        return limit(status.value as number / multiple, 0, 100);
       })
       .onSet(value => {
         const dehumidity_set = limit(value as number * multiple, property.min, property.max);
