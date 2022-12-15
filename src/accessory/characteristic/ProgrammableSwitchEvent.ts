@@ -15,7 +15,7 @@ export function configureProgrammableSwitchEvent(accessory: BaseAccessory, servi
   if (schema.type === TuyaDeviceSchemaType.Enum) {
     const { range } = schema.property as TuyaDeviceSchemaEnumProperty;
     props = GetStatelessSwitchProps(
-      range.includes('click') || range.includes('single_click'),
+      range.includes('click') || range.includes('single_click') || range.includes('1'),
       range.includes('double_click'),
       range.includes('press') || range.includes('long_press'),
     );
@@ -24,7 +24,7 @@ export function configureProgrammableSwitchEvent(accessory: BaseAccessory, servi
   }
 
   service.getCharacteristic(accessory.Characteristic.ProgrammableSwitchEvent)
-    .setProps(props);
+    .setProps(props || {});
 }
 
 export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Service, status: TuyaDeviceStatus) {
@@ -45,7 +45,7 @@ export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Ser
     accessory.log.info('Doorbell picture:', url);
     value = SINGLE_PRESS;
   } else if (schema.type === TuyaDeviceSchemaType.Enum) {
-    if (status.value === 'click' || status.value === 'single_click') {
+    if (status.value === 'click' || status.value === 'single_click' || status.value === '1') {
       value = SINGLE_PRESS;
     } else if (status.value === 'double_click') {
       value = DOUBLE_PRESS;
