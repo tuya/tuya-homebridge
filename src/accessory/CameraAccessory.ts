@@ -88,6 +88,10 @@ export default class CameraAccessory extends BaseAccessory {
       return;
     }
 
+    if (this.device.isVirtualDevice()) {
+      return;
+    }
+
     this.stream = new TuyaStreamingDelegate(this);
     this.accessory.configureController(this.stream.controller);
   }

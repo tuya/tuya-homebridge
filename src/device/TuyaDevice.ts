@@ -86,4 +86,8 @@ export default class TuyaDevice {
     this.status.sort((a, b) => a.code > b.code ? 1 : -1);
   }
 
+  isVirtualDevice() {
+    return this.id.startsWith('vdevo');
+  }
+
 }
