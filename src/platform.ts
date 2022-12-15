@@ -293,8 +293,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     }
 
     if (homeIDList.length === 0) {
-      this.log.warn('Home list is empty. exit.');
-      return null;
+      this.log.warn('Home list is empty.');
     }
 
     this.log.info('Fetching device list.');
@@ -303,7 +302,11 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
     this.log.info('Fetching scene list.');
     for (const homeID of homeIDList) {
-      devices.push(...await deviceManager.getSceneList(homeID));
+      const scenes = await deviceManager.getSceneList(homeID);
+      for (const scene of scenes) {
+        this.log.info(`Got scene_id=${scene.id}, name=${scene.name}`);
+      }
+      devices.push(...scenes);
     }
 
     this.deviceManager = deviceManager;
