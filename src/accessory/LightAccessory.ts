@@ -13,6 +13,7 @@ const SCHEMA_CODE = {
   WORK_MODE: ['work_mode'],
   PIR: ['pir_state'],
   PIR_ON: ['switch_pir'],
+  POWER_SWITCH: ['switch'],
 };
 
 const DEFAULT_COLOR_TEMPERATURE_KELVIN = 6500;
@@ -74,6 +75,9 @@ export default class LightAccessory extends BaseAccessory {
     }
 
     this.configurePIR();
+
+    // RGB Power Switch
+    this.configurePowerSwitch();
   }
 
 
@@ -321,4 +325,17 @@ export default class LightAccessory extends BaseAccessory {
     configureMotionDetected(this, undefined, motionSchema);
 
   }
+
+  configurePowerSwitch() {
+    const schema = this.getSchema(...SCHEMA_CODE.POWER_SWITCH);
+    if (!schema) {
+      return;
+    }
+
+    const service = this.accessory.getService(schema.code)
+        || this.accessory.addService(this.Service.Switch, schema.code, schema.code);
+
+    configureOn(this, service, schema);
+  }
+
 }
