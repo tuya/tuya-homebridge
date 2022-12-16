@@ -17,7 +17,7 @@ Fork version of official Tuya Homebridge plugin. Brings a bunch of bug fix and n
 - Less API errors.
 - Less development costs for new accessory categroies.
 - Tuya Scene supported (Tap-to-Run).
-- Device overriding config supported. "non-standard" devices have possibility to be supported now.
+- Device overriding config supported. "Non-standard DP" have possibility to be supported now.
 - More than 40+ device categories supported, including most of the lights, switches, sensors ...
 
 
@@ -173,7 +173,7 @@ message = {
 }
 ```
 
-If you can't get any mqtt logs when controlling the device, mostly means that your device is a "non-standard device".
+If you can't get any mqtt logs when controlling the device, mostly means that your device probably have "Non-standard DP".
 
 With the device info json and mqtt logs, please submit the issue to help us supporting new device category.
 
