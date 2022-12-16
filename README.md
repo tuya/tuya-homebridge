@@ -59,7 +59,9 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
     - Authorization Token Management
     - Device Status Notification
     - IoT Core
+    - IoT Video Live Stream (for Camera)
     - Industry Project Client Service (for "Custom" project)
+    - Smart Home Scene Linkage (for Scene)
 - **⚠️Extend the API trial period every 6 months here (first-time subscription only give 1 month): [Tuya IoT Platform > Cloud > Cloud Services > IoT Core](https://iot.tuya.com/cloud/products/detail?abilityId=1442730014117204014&id=p1668587814138nv4h3n&abilityAuth=0&tab=1)**
 
 #### For "Custom" Project
