@@ -109,7 +109,6 @@ export default class TuyaOpenMQ {
     this.log.debug('End');
   }
 
-  private lastPayload?;
   async _onMessage(topic: string, payload: Buffer) {
     const { protocol, data, t } = JSON.parse(payload.toString());
     const messageData = this._decodeMQMessage(data, this.config!.password, t);
@@ -117,35 +116,69 @@ export default class TuyaOpenMQ {
       this.log.warn('Message decode failed:', payload.toString());
       return;
     }
-    let message = JSON.parse(messageData);
-    this.log.debug('onMessage:\ntopic = %s\nprotocol = %s\nmessage = %s', topic, protocol, JSON.stringify(message, null, 2));
+    const message = JSON.parse(messageData);
+    this.log.debug('onMessage:\ntopic = %s\nprotocol = %s\nmessage = %s\nt = %s', topic, protocol, JSON.stringify(message, null, 2), t);
 
-    // Check message order
-    const currentPayload = { protocol, message, t };
-    if (protocol === 4 && this.lastPayload && t < this.lastPayload.t) {
-      this.log.warn('Message received with wrong order.');
-      this.log.warn('LastMessage: dataId = %s, t = %s', this.lastPayload.message['dataId'], this.lastPayload.t);
-      this.log.warn('CurrentMessage: dataId = %s, t = %s', message['dataId'], t);
-      this.log.warn('Fallback to use API fetching the latest device status.');
-      const devId = message['devId'];
-      const status = message['status'];
-      const res = await this.api.get(`/v1.0/iot-03/devices/${devId}/status`);
-      if (res.success === false) {
-        return;
-      }
-
-      for (const _status of status) {
-        const latestStatus = (res.result as []).find(item => item['code'] === _status);
-        if (latestStatus) {
-          _status['value'] = latestStatus['value'];
-        }
-      }
-      message = { devId, status };
-    }
-    this.lastPayload = currentPayload;
+    this._fixWrongOrderMessage(protocol, message, t);
 
     for (const listener of this.messageListeners) {
       listener(topic, protocol, message);
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private consumedQueue: any[] = [];
+  _fixWrongOrderMessage(protocol: number, message, t: number) {
+    if (protocol !== 4) {
+      return;
+    }
+
+    const currentPayload = { protocol, message, t };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const lastPayload : any = this.consumedQueue[this.consumedQueue.length - 1];
+    if (lastPayload && currentPayload.t < lastPayload.t) {
+      this.log.debug('Message received with wrong order.');
+      this.log.debug('LastMessage: dataId = %s, t = %s', lastPayload.message.dataId, lastPayload.t);
+      this.log.debug('CurrentMessage: dataId = %s, t = %s', message.dataId, t);
+      this.log.debug('This may cause outdated device status update.');
+
+      // Use newer status to override current status.
+      for (const _status of message.status) {
+        for (const payload of this.consumedQueue.reverse()) {
+          if (message.devId !== payload.message.devId) {
+            continue;
+          }
+
+          const latestStatus = payload.message.status.find(item => item.code === _status.code);
+          if (latestStatus) {
+            if (latestStatus.value !== _status.value) {
+              this.log.debug('Override status %o => %o', latestStatus, _status);
+              _status.value = latestStatus.value;
+              _status.t = latestStatus.t;
+            }
+            break;
+          }
+        }
+      }
+
+      return;
+    }
+
+    this.consumedQueue.push(currentPayload);
+
+    while (this.consumedQueue.length > 0) {
+      let t = this.consumedQueue[0].t as number;
+      if (t > Math.pow(10, 12)) { // timestamp format always changing, seconds or milliseconds is not certain :(
+        t = t / 1000;
+      }
+
+      // Remove message older than 30 seconds
+      if (Date.now() / 1000 > t + 30) {
+        this.consumedQueue.shift();
+      } else {
+        break;
+      }
     }
   }
 
