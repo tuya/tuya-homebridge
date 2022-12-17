@@ -1,4 +1,3 @@
-
 import { TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaStreamingDelegate } from '../util/TuyaStreamDelegate';
 import { limit, remap } from '../util/util';
@@ -9,7 +8,10 @@ import { configureProgrammableSwitchEvent, onProgrammableSwitchEvent } from './c
 const SCHEMA_CODE = {
   MOTION_ON: ['motion_switch'],
   MOTION_DETECT: ['movement_detect_pic'],
-  DOORBELL: ['doorbell_ring_exist', 'doorbell_pic'],
+  // Indicates that this is possibly a doorbell
+  DOORBELL: ['wireless_powermode', 'doorbell_ring_exist'],
+  // Notifies when a doorbell ring occurs.
+  DOORBELL_RING: ['alarm_message', 'doorbell_pic'],
   LIGHT_ON: ['floodlight_switch'],
   LIGHT_BRIGHTNESS: ['floodlight_lightness'],
 };
@@ -75,7 +77,12 @@ export default class CameraAccessory extends BaseAccessory {
   }
 
   configureDoorbell() {
-    const schema = this.getSchema(...SCHEMA_CODE.DOORBELL);
+    // Check to see if it is indeed a doorbell.
+    if (!this.getSchema(...SCHEMA_CODE.DOORBELL)) {
+      return;
+    }
+
+    const schema = this.getSchema(...SCHEMA_CODE.DOORBELL_RING);
     if (!schema) {
       return;
     }
@@ -114,10 +121,10 @@ export default class CameraAccessory extends BaseAccessory {
   async onDeviceStatusUpdate(status: TuyaDeviceStatus[]) {
     super.onDeviceStatusUpdate(status);
 
-    const doorbellSchema = this.getSchema(...SCHEMA_CODE.DOORBELL);
-    if (doorbellSchema) {
-      const doorbellStatus = status.find(_status => _status.code === doorbellSchema.code);
-      doorbellStatus && onProgrammableSwitchEvent(this, this.getDoorbellService(), doorbellStatus);
+    const doorbellRingSchema = this.getSchema(...SCHEMA_CODE.DOORBELL_RING);
+    if (this.getSchema(...SCHEMA_CODE.DOORBELL) && doorbellRingSchema) {
+      const doorbellRingStatus = status.find(_status => _status.code === doorbellRingSchema.code);
+      doorbellRingStatus && onProgrammableSwitchEvent(this, this.getDoorbellService(), doorbellRingStatus);
     }
 
     const motionSchema = this.getSchema(...SCHEMA_CODE.MOTION_DETECT);

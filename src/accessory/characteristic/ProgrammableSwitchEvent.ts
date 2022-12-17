@@ -1,4 +1,4 @@
-import { Service } from 'homebridge';
+import { CharacteristicProps, PartialAllowingNull, Service } from 'homebridge';
 import { TuyaDeviceSchema, TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaType, TuyaDeviceStatus } from '../../device/TuyaDevice';
 import BaseAccessory from '../BaseAccessory';
 
@@ -11,7 +11,7 @@ export function configureProgrammableSwitchEvent(accessory: BaseAccessory, servi
     return;
   }
 
-  let props;
+  let props: PartialAllowingNull<CharacteristicProps>;
   if (schema.type === TuyaDeviceSchemaType.Enum) {
     const { range } = schema.property as TuyaDeviceSchemaEnumProperty;
     props = GetStatelessSwitchProps(
@@ -24,7 +24,7 @@ export function configureProgrammableSwitchEvent(accessory: BaseAccessory, servi
   }
 
   service.getCharacteristic(accessory.Characteristic.ProgrammableSwitchEvent)
-    .setProps(props || {});
+    .setProps(props);
 }
 
 export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Service, status: TuyaDeviceStatus) {
@@ -32,12 +32,10 @@ export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Ser
     return;
   }
 
-  let value = -1;
+  let value: number | undefined;
 
   const schema = accessory.getSchema(status.code)!;
-  if (schema.type === TuyaDeviceSchemaType.Boolean) { // doorbell_ring_exist
-    status.value && (value = SINGLE_PRESS);
-  } else if (schema.type === TuyaDeviceSchemaType.Raw) { // doorbell_pic
+  if (schema.type === TuyaDeviceSchemaType.Raw) { // doorbell_pic or alarm_message
     const url = Buffer.from(status.value as string, 'base64').toString('binary');
     if (url.length === 0) {
       return;
@@ -54,7 +52,7 @@ export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Ser
     }
   }
 
-  if (value === -1) {
+  if (!value) {
     accessory.log.warn('Unknown ProgrammableSwitchEvent status:', status);
     return;
   }
@@ -65,52 +63,33 @@ export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Ser
 
 }
 
-// From https://github.com/benzman81/homebridge-http-webhooks/blob/master/src/homekit/accessories/HttpWebHookStatelessSwitchAccessory.js
-function GetStatelessSwitchProps(single_press: boolean, double_press: boolean, long_press: boolean) {
+// Modified version of https://github.com/benzman81/homebridge-http-webhooks/blob/master/src/homekit/accessories/HttpWebHookStatelessSwitchAccessory.js
+function GetStatelessSwitchProps(single_press: boolean, double_press: boolean, long_press: boolean): PartialAllowingNull<CharacteristicProps> {
+  let props: PartialAllowingNull<CharacteristicProps> = {};
 
-  let props;
-  if (single_press && !double_press && !long_press) {
-    props = {
-      minValue : SINGLE_PRESS,
-      maxValue : SINGLE_PRESS,
-    };
+  if (single_press) {
+    props.minValue = SINGLE_PRESS
+  } else if (double_press) {
+    props.minValue = DOUBLE_PRESS
+  } else if (long_press) {
+    props.minValue = LONG_PRESS
   }
-  if (single_press && double_press && !long_press) {
-    props = {
-      minValue : SINGLE_PRESS,
-      maxValue : DOUBLE_PRESS,
-    };
+
+  if (single_press) {
+    props.maxValue = SINGLE_PRESS
   }
+
+  if (double_press) {
+    props.maxValue = DOUBLE_PRESS
+  }
+
+  if (long_press) {
+    props.maxValue = LONG_PRESS
+  }
+
   if (single_press && !double_press && long_press) {
-    props = {
-      minValue : SINGLE_PRESS,
-      maxValue : LONG_PRESS,
-      validValues : [ SINGLE_PRESS, LONG_PRESS ],
-    };
+    props.validValues = [SINGLE_PRESS, LONG_PRESS]
   }
-  if (!single_press && double_press && !long_press) {
-    props = {
-      minValue : DOUBLE_PRESS,
-      maxValue : DOUBLE_PRESS,
-    };
-  }
-  if (!single_press && double_press && long_press) {
-    props = {
-      minValue : DOUBLE_PRESS,
-      maxValue : LONG_PRESS,
-    };
-  }
-  if (!single_press && !double_press && long_press) {
-    props = {
-      minValue : LONG_PRESS,
-      maxValue : LONG_PRESS,
-    };
-  }
-  if (single_press && double_press && long_press) {
-    props = {
-      minValue : SINGLE_PRESS,
-      maxValue : LONG_PRESS,
-    };
-  }
+
   return props;
 }
