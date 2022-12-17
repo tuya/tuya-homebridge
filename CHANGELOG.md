@@ -8,12 +8,15 @@
 - Add Solar Light support (`tyndj`).
 - Add Dehumidifier support (`cs`).
 - Add Scene Switch support (`wxkg`).
-- Add device overriding config support. "non-standard" devices have possibility to be supported now.
+- Add device overriding config support. "Non-standard DP" devices have possibility to be supported now.
 - Add Camera support (`sp`). Thanks @ErrorErrorError for the contribution
 
 
 ### Changed
 - Support Ceiling Fan icon customize and Floor Fan `lock`, `swing` feature. (#131)
+- Adjust humidity range of dehumidifier and humidifier.
+- Print scene id in logs.
+- Update support for RGB Power Switch (`dj`).
 
 
 ## [1.6.0] - (2022.12.3)
