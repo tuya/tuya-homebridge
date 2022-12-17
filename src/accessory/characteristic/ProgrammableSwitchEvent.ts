@@ -35,7 +35,7 @@ export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Ser
   let value: number | undefined;
 
   const schema = accessory.getSchema(status.code)!;
-  if (schema.type === TuyaDeviceSchemaType.Raw) { // doorbell_pic or alarm_message
+  if (schema.type === TuyaDeviceSchemaType.Raw || schema.type === TuyaDeviceSchemaType.String) { // doorbell_pic or alarm_message
     const url = Buffer.from(status.value as string, 'base64').toString('binary');
     if (url.length === 0) {
       return;
