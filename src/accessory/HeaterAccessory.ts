@@ -81,8 +81,8 @@ export default class HeaterAccessory extends BaseAccessory {
     const property = schema.property as TuyaDeviceSchemaIntegerProperty;
     const multiple = property ? Math.pow(10, property.scale) : 1;
     const props = {
-      minValue: Math.max(0, property.min / multiple),
-      maxValue: Math.min(25, property.max / multiple),
+      minValue: property.min / multiple,
+      maxValue: property.max / multiple,
       minStep: Math.max(0.1, property.step / multiple),
     };
     this.log.debug('Set props for HeatingThresholdTemperature:', props);
