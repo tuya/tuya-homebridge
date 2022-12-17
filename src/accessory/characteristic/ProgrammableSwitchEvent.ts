@@ -63,32 +63,33 @@ export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Ser
 
 }
 
-// Modified version of https://github.com/benzman81/homebridge-http-webhooks/blob/master/src/homekit/accessories/HttpWebHookStatelessSwitchAccessory.js
-function GetStatelessSwitchProps(single_press: boolean, double_press: boolean, long_press: boolean): PartialAllowingNull<CharacteristicProps> {
-  let props: PartialAllowingNull<CharacteristicProps> = {};
+// Modified version of
+// https://github.com/benzman81/homebridge-http-webhooks/blob/master/src/homekit/accessories/HttpWebHookStatelessSwitchAccessory.js
+function GetStatelessSwitchProps(single_press: boolean, double_press: boolean, long_press: boolean) {
+  const props: PartialAllowingNull<CharacteristicProps> = {};
 
   if (single_press) {
-    props.minValue = SINGLE_PRESS
+    props.minValue = SINGLE_PRESS;
   } else if (double_press) {
-    props.minValue = DOUBLE_PRESS
+    props.minValue = DOUBLE_PRESS;
   } else if (long_press) {
-    props.minValue = LONG_PRESS
+    props.minValue = LONG_PRESS;
   }
 
   if (single_press) {
-    props.maxValue = SINGLE_PRESS
+    props.maxValue = SINGLE_PRESS;
   }
 
   if (double_press) {
-    props.maxValue = DOUBLE_PRESS
+    props.maxValue = DOUBLE_PRESS;
   }
 
   if (long_press) {
-    props.maxValue = LONG_PRESS
+    props.maxValue = LONG_PRESS;
   }
 
   if (single_press && !double_press && long_press) {
-    props.validValues = [SINGLE_PRESS, LONG_PRESS]
+    props.validValues = [SINGLE_PRESS, LONG_PRESS];
   }
 
   return props;
