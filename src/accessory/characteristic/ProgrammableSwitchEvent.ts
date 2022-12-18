@@ -52,7 +52,7 @@ export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Ser
     }
   }
 
-  if (!value) {
+  if (value === undefined) {
     accessory.log.warn('Unknown ProgrammableSwitchEvent status:', status);
     return;
   }
