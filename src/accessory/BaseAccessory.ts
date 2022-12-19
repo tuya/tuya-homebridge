@@ -159,6 +159,8 @@ class BaseAccessory {
         continue;
       }
       this.log.warn('Missing one of the required schema: %s', codes);
+      this.log.warn('Please switch device control mode to "DP Insctrution", and set `deviceOverrides` manually.');
+      this.log.warn('Detail information: https://github.com/0x5e/homebridge-tuya-platform#faq');
       result = false;
     }
 
