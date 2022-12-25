@@ -95,6 +95,30 @@ class BaseAccessory {
     }
   }
 
+  configureStatusActive() {
+    for (const service of this.accessory.services) {
+      if (!service.testCharacteristic(this.Characteristic.StatusActive)) { // silence warning
+        service.addOptionalCharacteristic(this.Characteristic.StatusActive);
+      }
+      service.getCharacteristic(this.Characteristic.StatusActive)
+        .onGet(() => this.device.online);
+    }
+  }
+
+  async updateAllValues() {
+    for (const service of this.accessory.services) {
+      for (const characteristic of service.characteristics) {
+        const getHandler = characteristic['getHandler'];
+        const newValue = getHandler ? (await getHandler()) : characteristic.value;
+        if (characteristic.value === newValue) {
+          continue;
+        }
+        this.log.debug('Update value %o => %o for service = %o, subtype = %o, characteristic = %o',
+          characteristic.value, newValue, service.UUID, service.subtype, characteristic.UUID);
+        characteristic.updateValue(newValue);
+      }
+    }
+  }
 
   getSchema(...codes: string[]) {
     for (const code of codes) {
@@ -182,22 +206,11 @@ class BaseAccessory {
   }
 
   async onDeviceInfoUpdate(info) {
-    // name, online, ...
+    this.updateAllValues();
   }
 
   async onDeviceStatusUpdate(status: TuyaDeviceStatus[]) {
-    for (const service of this.accessory.services) {
-      for (const characteristic of service.characteristics) {
-        const getHandler = characteristic['getHandler'];
-        const newValue = getHandler ? (await getHandler()) : characteristic.value;
-        if (characteristic.value === newValue) {
-          continue;
-        }
-        this.log.debug('Update value %o => %o for service = %o, subtype = %o, characteristic = %o',
-          characteristic.value, newValue, service.UUID, service.subtype, characteristic.UUID);
-        characteristic.updateValue(newValue);
-      }
-    }
+    this.updateAllValues();
   }
 
 }

@@ -156,6 +156,7 @@ export default class AccessoryFactory {
 
     if (handler && handler.checkRequirements()) {
       handler.configureServices();
+      handler.configureStatusActive();
       handler.onDeviceStatusUpdate(handler.device.status);
       handler.intialized = true;
     }

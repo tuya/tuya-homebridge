@@ -55,6 +55,7 @@ export default class TuyaHomeDeviceManager extends TuyaDeviceManager {
         category: 'scene',
         schema: [],
         status: [],
+        online: true,
       }));
     }
     return scenes;
