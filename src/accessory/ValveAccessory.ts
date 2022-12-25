@@ -39,10 +39,11 @@ export default class ValveAccessory extends BaseAccessory {
     }
     service.setCharacteristic(this.Characteristic.ValveType, this.Characteristic.ValveType.IRRIGATION);
 
+    const { NOT_IN_USE, IN_USE } = this.Characteristic.InUse;
     service.getCharacteristic(this.Characteristic.InUse)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        return status.value as boolean;
+        return status.value ? IN_USE : NOT_IN_USE;
       });
 
     configureActive(this, service, schema);
