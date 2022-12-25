@@ -117,16 +117,11 @@ export default class AirConditionerAccessory extends BaseAccessory {
       });
 
     const { DEHUMIDIFYING } = this.Characteristic.CurrentHumidifierDehumidifierState;
-    service.getCharacteristic(this.Characteristic.CurrentHumidifierDehumidifierState)
-      .onGet(() => {
-        return DEHUMIDIFYING;
-      });
+    service.setCharacteristic(this.Characteristic.CurrentHumidifierDehumidifierState, DEHUMIDIFYING);
 
     const { DEHUMIDIFIER } = this.Characteristic.TargetHumidifierDehumidifierState;
     service.getCharacteristic(this.Characteristic.TargetHumidifierDehumidifierState)
-      .onGet(() => {
-        return DEHUMIDIFIER;
-      })
+      .updateValue(DEHUMIDIFIER)
       .setProps({ validValues: [DEHUMIDIFIER] });
 
     if (this.getSchema(...SCHEMA_CODE.CURRENT_HUMIDITY)) {
