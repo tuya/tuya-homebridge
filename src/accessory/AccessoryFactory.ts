@@ -154,7 +154,11 @@ export default class AccessoryFactory {
         break;
     }
 
-    handler && handler.checkRequirements() && handler.configureServices();
+    if (handler && handler.checkRequirements()) {
+      handler.configureServices();
+      handler.onDeviceStatusUpdate(handler.device.status);
+      handler.intialized = true;
+    }
 
     if (!handler) {
       platform.log.warn(`Unsupported device: ${device.name}.`);

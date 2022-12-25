@@ -36,12 +36,8 @@ class BaseAccessory {
     public readonly platform: TuyaPlatform,
     public readonly accessory: PlatformAccessory,
   ) {
-
     this.addAccessoryInfoService();
     this.addBatteryService();
-
-    this.onDeviceStatusUpdate(this.device.status);
-    this.intialized = true;
   }
 
   addAccessoryInfoService() {
