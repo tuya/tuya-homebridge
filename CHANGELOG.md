@@ -24,6 +24,7 @@
 - Adjust humidity range of dehumidifier and humidifier.
 - Print scene id in logs.
 - Update support for RGB Power Switch (`dj`).
+- Support showing device online status via `StatusActive`. (#172)
 
 
 ## [1.6.0] - (2022.12.3)
