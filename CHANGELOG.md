@@ -8,10 +8,15 @@
 - Add Solar Light support (`tyndj`).
 - Add Dehumidifier support (`cs`).
 - Add Scene Switch support (`wxkg`).
-- Add device overriding config support. "Non-standard DP" devices have possibility to be supported now.
+- Add device overriding config support. "Non-standard DP" devices have possibility to be supported now. (#119)
 - Add Camera support (`sp`). Thanks @ErrorErrorError for the contribution
-- Add Air Conditioner support (`kt`).
-- Add Air Conditioner Controller support (`ktkzq`).
+- Add Air Conditioner support (`kt`). (#160)
+- Add Air Conditioner Controller support (`ktkzq`). (#160)
+
+
+### Fixed
+- Fix `RotationSpeed` missing one level. (#170)
+- Fix `bright_value` not sent for the `C/CW` lights who doesn't have `work_mode`. (#171)
 
 
 ### Changed
