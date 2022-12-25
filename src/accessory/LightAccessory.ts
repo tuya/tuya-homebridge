@@ -130,6 +130,11 @@ export default class LightAccessory extends BaseAccessory {
   }
 
   inWhiteMode() {
+    if (this.getAccessoryType() === LightAccessoryType.C
+      || this.getAccessoryType() === LightAccessoryType.CW) {
+      return true;
+    }
+
     const mode = this.getSchema(...SCHEMA_CODE.WORK_MODE);
     if (!mode) {
       return false;
@@ -142,6 +147,10 @@ export default class LightAccessory extends BaseAccessory {
   }
 
   inColorMode() {
+    if (this.getAccessoryType() === LightAccessoryType.RGB) {
+      return true;
+    }
+
     const mode = this.getSchema(...SCHEMA_CODE.WORK_MODE);
     if (!mode) {
       return false;
@@ -188,7 +197,6 @@ export default class LightAccessory extends BaseAccessory {
           colorValue.v = Math.round(value as number * max / 100);
           colorValue.v = limit(colorValue.v, min, max);
           this.sendCommands([{ code: colorSchema.code, value: JSON.stringify(colorValue) }], true);
-          return;
         } else if (this.inWhiteMode()) {
           // White mode, set brightness to `brightness_value`
           const brightSchema = this.getSchema(...SCHEMA_CODE.BRIGHTNESS)!;
@@ -198,6 +206,7 @@ export default class LightAccessory extends BaseAccessory {
           this.sendCommands([{ code: brightSchema.code, value: brightValue }], true);
         } else {
           // Unsupported mode
+          this.log.warn('Neither color mode nor white mode.');
         }
       });
 
