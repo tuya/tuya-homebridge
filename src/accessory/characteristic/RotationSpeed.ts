@@ -59,12 +59,14 @@ export function configureRotationSpeedLevel(
       return props.minStep * (index + 1);
     })
     .onSet(value => {
-      const index = value as number / props.minStep - 1;
+      accessory.log.debug('Set RotationSpeed to:', value);
+      const index = Math.round(value as number / props.minStep) - 1;
       if (index < 0 || index >= range.length) {
+        accessory.log.debug('Out of range, return.');
         return;
       }
       const speedLevel = range[index].toString();
-      accessory.log.debug('Set RotationSpeed to:', speedLevel);
+      accessory.log.debug('Set RotationSpeedLevel to:', speedLevel);
       accessory.sendCommands([{ code: schema.code, value: speedLevel }], true);
     })
     .setProps(props);
