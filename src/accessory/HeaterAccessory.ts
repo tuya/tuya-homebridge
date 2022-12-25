@@ -6,6 +6,7 @@ import { configureActive } from './characteristic/Active';
 import { configureCurrentTemperature } from './characteristic/CurrentTemperature';
 import { configureLockPhysicalControls } from './characteristic/LockPhysicalControls';
 import { configureSwingMode } from './characteristic/SwingMode';
+import { configureTempDisplayUnits } from './characteristic/TemperatureDisplayUnits';
 
 const SCHEMA_CODE = {
   ACTIVE: ['switch'],
@@ -14,7 +15,7 @@ const SCHEMA_CODE = {
   TARGET_TEMP: ['temp_set'],
   LOCK: ['lock'],
   SWING: ['shake'],
-  TEMP_UNIT_CONVERT: ['temp_unit_convert'],
+  TEMP_UNIT_CONVERT: ['temp_unit_convert', 'c_f'],
 };
 
 export default class HeaterAccessory extends BaseAccessory {
@@ -31,7 +32,7 @@ export default class HeaterAccessory extends BaseAccessory {
     configureLockPhysicalControls(this, this.mainService(), this.getSchema(...SCHEMA_CODE.LOCK));
     configureSwingMode(this, this.mainService(), this.getSchema(...SCHEMA_CODE.SWING));
     this.configureHeatingThreshouldTemp();
-    this.configureTempDisplayUnits();
+    configureTempDisplayUnits(this, this.mainService(), this.getSchema(...SCHEMA_CODE.TEMP_UNIT_CONVERT));
   }
 
 
@@ -97,26 +98,6 @@ export default class HeaterAccessory extends BaseAccessory {
         this.sendCommands([{ code: schema.code, value: (value as number) * multiple}]);
       })
       .setProps(props);
-  }
-
-  configureTempDisplayUnits() {
-    const schema = this.getSchema(...SCHEMA_CODE.TEMP_UNIT_CONVERT);
-    if (!schema) {
-      return;
-    }
-    this.mainService().getCharacteristic(this.Characteristic.TemperatureDisplayUnits)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        return (status.value === 'c') ?
-          this.Characteristic.TemperatureDisplayUnits.CELSIUS :
-          this.Characteristic.TemperatureDisplayUnits.FAHRENHEIT;
-      })
-      .onSet(value => {
-        this.sendCommands([{
-          code: schema.code,
-          value: (value === this.Characteristic.TemperatureDisplayUnits.CELSIUS) ? 'c':'f',
-        }]);
-      });
   }
 
 }

@@ -48,8 +48,8 @@ Most category code is pinyin abbreviation of Chinese name.
 | Refrigerator | 冰箱 | bx | | |
 | Bathtub | 浴缸 | yg | | |
 | Washing Machine | 洗衣机 | xy | | |
-| Air Conditioner | 空调 | kt | | |
-| Air Conditioner Controller | 空调控制器 | ktkzq | | |
+| Air Conditioner | 空调 | kt | Heater Cooler, Humidifier Dehumidifier, Fanv2 | ✅ |
+| Air Conditioner Controller | 空调控制器 | ktkzq | Heater Cooler, Humidifier Dehumidifier, Fanv2 | ✅ |
 | Boiler | 壁挂炉 | bgl | | |
 
 

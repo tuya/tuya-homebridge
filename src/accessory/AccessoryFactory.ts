@@ -32,6 +32,7 @@ import AirPurifierAccessory from './AirPurifierAccessory';
 import TemperatureHumidityIRSensorAccessory from './TemperatureHumidityIRSensorAccessory';
 import CameraAccessory from './CameraAccessory';
 import SceneAccessory from './SceneAccessory';
+import AirConditionerAccessory from './AirConditionerAccessory';
 
 
 export default class AccessoryFactory {
@@ -140,6 +141,10 @@ export default class AccessoryFactory {
         break;
       case 'cs':
         handler = new DehumidifierAccessory(platform, accessory);
+        break;
+      case 'kt':
+      case 'ktkzq':
+        handler = new AirConditionerAccessory(platform, accessory);
         break;
       case 'sp':
         handler = new CameraAccessory(platform, accessory);

@@ -125,11 +125,17 @@ class BaseAccessory {
   private sendQueue = new Map<string, TuyaDeviceStatus>();
   private debounceSendCommands = debounce(async () => {
     const commands = [...this.sendQueue.values()];
+    if (commands.length === 0) {
+      return;
+    }
     await this.deviceManager.sendCommands(this.device.id, commands);
     this.sendQueue.clear();
   }, 100);
 
   async sendCommands(commands: TuyaDeviceStatus[], debounce = false) {
+    if (commands.length === 0) {
+      return;
+    }
 
     // Update cache immediately
     for (const newStatus of commands) {

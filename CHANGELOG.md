@@ -10,6 +10,8 @@
 - Add Scene Switch support (`wxkg`).
 - Add device overriding config support. "Non-standard DP" devices have possibility to be supported now.
 - Add Camera support (`sp`). Thanks @ErrorErrorError for the contribution
+- Add Air Conditioner support (`kt`).
+- Add Air Conditioner Controller support (`ktkzq`).
 
 
 ### Changed
