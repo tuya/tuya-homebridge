@@ -29,18 +29,21 @@ export function configureRotationSpeedLevel(accessory: BaseAccessory, service: S
 
   const property = schema.property as TuyaDeviceSchemaEnumProperty;
   const props = { minValue: 0, maxValue: 100, minStep: 1 };
-  props.minStep = Math.floor(100 / (property.range.length - 1));
-  props.maxValue = props.minStep * (property.range.length - 1);
+  props.minStep = Math.floor(100 / property.range.length);
+  props.maxValue = props.minStep * property.range.length;
   accessory.log.debug('Set props for RotationSpeed:', props);
 
   service.getCharacteristic(accessory.Characteristic.RotationSpeed)
     .onGet(() => {
       const status = accessory.getStatus(schema.code)!;
       const index = property.range.indexOf(status.value as string);
-      return props.minStep * index;
+      return props.minStep * (index + 1);
     })
     .onSet(value => {
-      const index = value as number / props.minStep;
+      const index = value as number / props.minStep - 1;
+      if (index < 0) {
+        return;
+      }
       value = property.range[index].toString();
       accessory.log.debug('Set RotationSpeed to:', value);
       accessory.sendCommands([{ code: schema.code, value }], true);
