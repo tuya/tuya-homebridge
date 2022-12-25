@@ -113,8 +113,15 @@ class BaseAccessory {
         if (characteristic.value === newValue) {
           continue;
         }
-        this.log.debug('Update value %o => %o for service = %o, subtype = %o, characteristic = %o',
-          characteristic.value, newValue, service.UUID, service.subtype, characteristic.UUID);
+
+        this.log.debug(
+          '[%s/%s/%s] Update value: %o => %o',
+          service.constructor.name,
+          service.subtype,
+          characteristic.constructor.name,
+          characteristic.value,
+          newValue,
+        );
         characteristic.updateValue(newValue);
       }
     }
