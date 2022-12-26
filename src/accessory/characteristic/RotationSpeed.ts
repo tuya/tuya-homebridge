@@ -91,8 +91,5 @@ export function configureRotationSpeedOn(
       const status = accessory.getStatus(schema.code)!;
       return (status.value as boolean) ? 100 : 0;
     })
-    .onSet(value => {
-      accessory.sendCommands([{ code: schema.code, value: (value > 50) ? true : false }], true);
-    })
     .setProps(props);
 }
