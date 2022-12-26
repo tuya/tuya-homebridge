@@ -19,8 +19,8 @@ Before config, you need to know about [Tuya IoT Development Platform > Cloud Dev
 - `options.deviceOverrides[].schema[].code` - **required**: New DP code.
 - `options.deviceOverrides[].schema[].type` - **optional**: New DP type. One of the `Boolean`, `Integer`, `Enum`, `String`, `Json`, `Raw`.
 - `options.deviceOverrides[].schema[].property` - **optional**: New DP property object. For `Integer` type, the object should contains `min`, `max`, `scale`, `step`; For `Enum` type, the object should contains `range`. For detail information, please see `TuyaDeviceSchemaProperty` in [TuyaDevice.ts](./src/device/TuyaDevice.ts).
-- `options.deviceOverrides[].schema[].onGet` - **optional**: An one-line JavaScript code convert old value to new value. The function is called with one argument: `value`.
-- `options.deviceOverrides[].schema[].onSet` - **optional**: An one-line JavaScript code convert new value to old value. The function is called with one argument: `value`.
+- `options.deviceOverrides[].schema[].onGet` - **optional**: An one-line JavaScript code convert old value to new value. The function is called with two arguments: `device`, `value`.
+- `options.deviceOverrides[].schema[].onSet` - **optional**: An one-line JavaScript code convert new value to old value. The function is called with two arguments: `device`, `value`.
 
 ## Examples
 
@@ -38,7 +38,26 @@ Before config, you need to know about [Tuya IoT Development Platform > Cloud Dev
 }
 ```
 
-### Changing DP code
+### Offline as off
+
+If you want to display off status when device is offline:
+```js
+{
+  "options": {
+    // ...
+    "deviceOverrides": [{
+      "id": "{device_id}",
+      "schema": [{
+        "oldCode": "{dp_code}",
+        "code": "{dp_code}",
+        "onGet": "(device.online && value)"
+      }]
+    }]
+  }
+}
+```
+
+### Change DP code
 
 ```js
 {
@@ -47,8 +66,8 @@ Before config, you need to know about [Tuya IoT Development Platform > Cloud Dev
     "deviceOverrides": [{
       "id": "{device_id}",
       "schema": [{
-          "oldCode": "{oldCode}",
-          "code": "{newCode}",
+          "oldCode": "{old_dp_code}",
+          "code": "{new_dp_code}"
       }]
     }]
   }
@@ -65,8 +84,8 @@ A example of convert `open`/`close` into `true`/`false`.
     "deviceOverrides": [{
       "id": "{device_id}",
       "schema": [{
-        "oldCode": "{oldCode}",
-        "code": "{newCode}",
+        "oldCode": "{old_dp_code}",
+        "code": "{new_dp_code}",
         "type": "Boolean",
         "onGet": "(value === 'open') ? true : false;",
         "onSet": "(value === true) ? 'open' : 'close';",

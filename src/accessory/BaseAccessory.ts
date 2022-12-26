@@ -225,7 +225,7 @@ class BaseAccessory {
 // Overriding getSchema, getStatus, sendCommands
 export default class OverridedBaseAccessory extends BaseAccessory {
 
-  private eval = (script: string, value) => eval(script);
+  private eval = (script: string, device, value) => eval(script);
 
   private getOverridedSchema(code: string) {
     const schemaConfig = this.platform.getDeviceSchemaConfig(this.device, code);
@@ -275,7 +275,7 @@ export default class OverridedBaseAccessory extends BaseAccessory {
 
     const status = { code: schemaConfig.code, value: originalStatus.value } as TuyaDeviceStatus;
     if (schemaConfig.onGet) {
-      status.value = this.eval(schemaConfig.onGet, originalStatus.value);
+      status.value = this.eval(schemaConfig.onGet, this.device, originalStatus.value);
     }
 
     this.log.debug('Override status %o => %o', originalStatus, status);
@@ -299,7 +299,7 @@ export default class OverridedBaseAccessory extends BaseAccessory {
 
       const originalCommand = { code: schemaConfig.oldCode, value: command.value } as TuyaDeviceStatus;
       if (schemaConfig.onSet) {
-        originalCommand.value = this.eval(schemaConfig.onSet, command.value);
+        originalCommand.value = this.eval(schemaConfig.onSet, this.device, command.value);
       }
 
       this.log.debug('Override command %o => %o', command, originalCommand);
