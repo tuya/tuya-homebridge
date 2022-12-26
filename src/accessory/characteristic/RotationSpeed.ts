@@ -47,20 +47,20 @@ export function configureRotationSpeedLevel(
     range.push(value);
   }
 
-  const props = { minValue: 0, maxValue: 100, minStep: 1 };
-  props.minStep = Math.floor(100 / range.length);
-  props.maxValue = props.minStep * range.length;
+  const props = { minValue: 0, maxValue: range.length, minStep: 1, unit: 'speed' };
   accessory.log.debug('Set props for RotationSpeed:', props);
 
+  const onGetHandler = () => {
+    const status = accessory.getStatus(schema.code)!;
+    const index = range.indexOf(status.value as string);
+    return limit(index + 1, props.minValue, props.maxValue);
+  };
+
   service.getCharacteristic(accessory.Characteristic.RotationSpeed)
-    .onGet(() => {
-      const status = accessory.getStatus(schema.code)!;
-      const index = range.indexOf(status.value as string);
-      return props.minStep * (index + 1);
-    })
+    .onGet(onGetHandler)
     .onSet(value => {
       accessory.log.debug('Set RotationSpeed to:', value);
-      const index = Math.round(value as number / props.minStep) - 1;
+      const index = Math.round(value as number - 1);
       if (index < 0 || index >= range.length) {
         accessory.log.debug('Out of range, return.');
         return;
@@ -69,6 +69,7 @@ export function configureRotationSpeedLevel(
       accessory.log.debug('Set RotationSpeedLevel to:', speedLevel);
       accessory.sendCommands([{ code: schema.code, value: speedLevel }], true);
     })
+    .updateValue(onGetHandler()) // ensure the value is correct before set props
     .setProps(props);
 }
 
