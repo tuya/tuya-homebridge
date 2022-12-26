@@ -61,7 +61,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Heater | 取暖器 | qn | Heater Coller | ✅ |
 | Air Purifier | 空气净化器 | kj | Air Purifier | ✅ |
 | Drying Rack | 晾衣架 | lyj | | |
-| Diffuser | 香薰机 | xxj | | |
+| Diffuser | 香薰机 | xxj | Air Purifier, Lightbulb | ✅ |
 | Curtain | 窗帘 | cl | Window Covering | ✅ |
 | Door and Window Controller | 门窗控制器 | mc | Window | ✅ |
 | Thermostat | 温控器 | wk | Thermostat | ✅ |

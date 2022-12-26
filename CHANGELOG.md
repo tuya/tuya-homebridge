@@ -12,6 +12,7 @@
 - Add Camera support (`sp`). Thanks @ErrorErrorError for the contribution
 - Add Air Conditioner support (`kt`). (#160)
 - Add Air Conditioner Controller support (`ktkzq`). (#160)
+- Add Diffuser support (`xxj`).
 
 
 ### Fixed
