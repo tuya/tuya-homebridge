@@ -25,6 +25,7 @@
 - Print scene id in logs.
 - Update support for RGB Power Switch (`dj`).
 - Support showing device online status via `StatusActive`. (#172)
+- Update unit and range of `RotationSpeed` with level, need clean accessory cache to take effect. (#174)
 
 
 ## [1.6.0] - (2022.12.3)
