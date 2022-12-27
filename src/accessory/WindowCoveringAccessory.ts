@@ -1,13 +1,27 @@
-import { TuyaDeviceStatus } from '../device/TuyaDevice';
 import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 
+const SCHEMA_CODE = {
+  CURRENT_POSITION: ['percent_state'],
+  TARGET_POSITION_CONTROL: ['control'],
+  TARGET_POSITION_PERCENT: ['percent_control', 'position'],
+  // POSITION_STATE: ['work_state'],
+};
+
 export default class WindowCoveringAccessory extends BaseAccessory {
 
+  requiredSchema() {
+    return [SCHEMA_CODE.TARGET_POSITION_CONTROL];
+  }
+
   configureServices() {
-    this.configurePositionState();
     this.configureCurrentPosition();
-    this.configureTargetPosition();
+    this.configurePositionState();
+    if (this.getSchema(...SCHEMA_CODE.TARGET_POSITION_PERCENT)) {
+      this.configureTargetPositionPercent();
+    } else {
+      this.configureTargetPositionControl();
+    }
   }
 
 
@@ -17,98 +31,107 @@ export default class WindowCoveringAccessory extends BaseAccessory {
   }
 
   configureCurrentPosition() {
+    const currentSchema = this.getSchema(...SCHEMA_CODE.CURRENT_POSITION);
+    const targetSchema = this.getSchema(...SCHEMA_CODE.TARGET_POSITION_PERCENT);
+    const targetControlSchema = this.getSchema(...SCHEMA_CODE.TARGET_POSITION_CONTROL)!;
+
     this.mainService().getCharacteristic(this.Characteristic.CurrentPosition)
       .onGet(() => {
-        if (!this.positionSupported()) {
-          const control = this.getStatus('control');
-          if (control?.value === 'close') {
-            return 0;
-          } else if (control?.value === 'stop') {
-            return 50;
-          } else if (control?.value === 'open') {
-            return 100;
-          }
+        if (currentSchema) {
+          const status = this.getStatus(currentSchema.code)!;
+          return limit(status.value as number, 0, 100);
+        } else if (targetSchema) {
+          const status = this.getStatus(targetSchema.code)!;
+          return limit(status.value as number, 0, 100);
         }
 
-        const state = this.getCurrentPosition()
-          || this.getTargetPosition();
-        return limit(state!.value as number, 0, 100);
+        const status = this.getStatus(targetControlSchema.code)!;
+        if (status.value === 'close') {
+          return 0;
+        } else if (status.value === 'stop') {
+          return 50;
+        } else if (status.value === 'open') {
+          return 100;
+        }
+
+        this.log.warn('Unknown CurrentPosition:', status.value);
+        return 50;
       });
   }
 
   configurePositionState() {
+    const currentSchema = this.getSchema(...SCHEMA_CODE.CURRENT_POSITION);
+    const targetSchema = this.getSchema(...SCHEMA_CODE.TARGET_POSITION_PERCENT);
+
     const { DECREASING, INCREASING, STOPPED } = this.Characteristic.PositionState;
     this.mainService().getCharacteristic(this.Characteristic.PositionState)
       .onGet(() => {
-        const state = this.getWorkState();
-        if (!state) {
+        if (!currentSchema || !targetSchema) {
           return STOPPED;
         }
 
-        const current = this.getCurrentPosition();
-        const target = this.getTargetPosition();
-        if (current?.value === target?.value) {
+        const currentStatus = this.getStatus(currentSchema.code)!;
+        const targetStatus = this.getStatus(targetSchema.code)!;
+        if (targetStatus.value === 100 && currentStatus.value !== 100) {
+          return INCREASING;
+        } else if (targetStatus.value === 0 && currentStatus.value !== 0) {
+          return DECREASING;
+        } else {
           return STOPPED;
         }
-
-        return (state.value === 'opening') ? INCREASING : DECREASING;
       });
   }
 
-  configureTargetPosition() {
+  configureTargetPositionPercent() {
+    const schema = this.getSchema(...SCHEMA_CODE.TARGET_POSITION_PERCENT);
+    if (!schema) {
+      return;
+    }
+
     this.mainService().getCharacteristic(this.Characteristic.TargetPosition)
       .onGet(() => {
-        if (!this.positionSupported()) {
-          const control = this.getStatus('control');
-          if (control?.value === 'close') {
-            return 0;
-          } else if (control?.value === 'stop') {
-            return 50;
-          } else if (control?.value === 'open') {
-            return 100;
-          }
-        }
-
-        const state = this.getTargetPosition();
-        return limit(state!.value as number, 0, 100);
+        const status = this.getStatus(schema.code)!;
+        return limit(status.value as number, 0, 100);
       })
       .onSet(value => {
-        const commands: TuyaDeviceStatus[] = [];
-        if (!this.positionSupported()) {
-          if (value === 0) {
-            commands.push({ code: 'control', value: 'close' });
-          } else if (value === 100) {
-            commands.push({ code: 'control', value: 'open' });
-          } else {
-            commands.push({ code: 'control', value: 'stop' });
-          }
-        } else {
-          const state = this.getTargetPosition()!;
-          commands.push({ code: state.code, value: value as number });
-        }
-        this.sendCommands(commands, true);
-      })
-      .setProps({
-        minStep: this.positionSupported() ? 1 : 50,
+        this.sendCommands([{ code: schema.code, value: value as number }], true);
       });
   }
 
-  getCurrentPosition() {
-    return this.getStatus('percent_state'); // 0~100
-  }
+  configureTargetPositionControl() {
+    const schema = this.getSchema(...SCHEMA_CODE.TARGET_POSITION_CONTROL);
+    if (!schema) {
+      return;
+    }
 
-  getTargetPosition() {
-    return this.getStatus('percent_control')
-    || this.getStatus('position');  // 0~100
-  }
+    this.mainService().getCharacteristic(this.Characteristic.TargetPosition)
+      .onGet(() => {
+        const status = this.getStatus(schema.code)!;
+        if (status.value === 'close') {
+          return 0;
+        } else if (status.value === 'stop') {
+          return 50;
+        } else if (status.value === 'open') {
+          return 100;
+        }
 
-  getWorkState() {
-    return this.getStatus('work_state'); // opening, closing
-  }
-
-  positionSupported() {
-    // return false;
-    return this.getCurrentPosition() || this.getTargetPosition();
+        this.log.warn('Unknown TargetPosition:', status.value);
+        return 50;
+      })
+      .onSet(value => {
+        let control: string;
+        if (value === 0) {
+          control = 'close';
+        } else if (value === 100) {
+          control = 'open';
+        } else {
+          control = 'stop';
+        }
+        this.sendCommands([{ code: 'control', value: control }], true);
+      })
+      .setProps({
+        minStep: 50,
+      });
   }
 
   /*
