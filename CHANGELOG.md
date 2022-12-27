@@ -12,12 +12,14 @@
 - Add Camera support (`sp`). Thanks @ErrorErrorError for the contribution
 - Add Air Conditioner support (`kt`). (#160)
 - Add Air Conditioner Controller support (`ktkzq`). (#160)
-- Add Diffuser support (`xxj`).
+- Add Diffuser support (`xxj`). (#175)
 
 
 ### Fixed
 - Fix `RotationSpeed` missing one level. (#170)
 - Fix `bright_value` not sent for the `C/CW` lights who doesn't have `work_mode`. (#171)
+- Fix crash when camera sends an invalid status message.
+- Fix incorrect Door and Window Controller state. (#178)
 
 
 ### Changed
