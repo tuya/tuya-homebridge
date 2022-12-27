@@ -126,8 +126,8 @@ export default class CameraAccessory extends BaseAccessory {
     const doorbellRingSchema = this.getSchema(...SCHEMA_CODE.DOORBELL_RING);
     const alarmMessageSchema = this.getSchema(...SCHEMA_CODE.ALARM_MESSAGE);
     if (this.getSchema(...SCHEMA_CODE.DOORBELL) && (doorbellRingSchema || alarmMessageSchema)) {
-      const doorbellRingStatus = status.find(_status => _status.code === doorbellRingSchema?.code);
-      const alarmMessageStatus = status.find(_status => _status.code === alarmMessageSchema?.code);
+      const doorbellRingStatus = doorbellRingSchema && status.find(_status => _status.code === doorbellRingSchema.code);
+      const alarmMessageStatus = alarmMessageSchema && status.find(_status => _status.code === alarmMessageSchema.code);
       if (doorbellRingStatus && (doorbellRingStatus.value as string).length > 1) { // Compared with '1' in order to filter value '$'
         onProgrammableSwitchEvent(this, this.getDoorbellService(), doorbellRingStatus);
       } else if (alarmMessageStatus && (alarmMessageStatus.value as string).length > 1) {
