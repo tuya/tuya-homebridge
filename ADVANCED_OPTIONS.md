@@ -88,7 +88,7 @@ A example of convert `open`/`close` into `true`/`false`.
         "code": "{new_dp_code}",
         "type": "Boolean",
         "onGet": "(value === 'open') ? true : false;",
-        "onSet": "(value === true) ? 'open' : 'close';",
+        "onSet": "(value === true) ? 'open' : 'close';"
       }]
     }]
   }
@@ -131,7 +131,7 @@ Here's the example config:
           "min": 50,
           "max": 350,
           "scale": 1,
-          "step": 5,
+          "step": 5
         }
       }]
     }]
@@ -140,3 +140,29 @@ Here's the example config:
 ```
 
 After transform value using `onGet` and `onSet`, and new range in `property`, it should be working now.
+
+### Reverse curtain motor's on/off state
+
+Most curtain motor have "reverse mode" setting in the Tuya App, if you don't have this, you can reverse `percent_control`/`position` and `percent_state` in the plugin config:
+
+```js
+{
+  "options": {
+    // ...
+    "deviceOverrides": [{
+      "id": "{device_id}",
+      "schema": [{
+        "oldCode": "percent_control",
+        "code": "percent_control",
+        "onGet": "(100 - value)",
+        "onSet": "(100 - value)"
+      }, {
+        "oldCode": "percent_state",
+        "code": "percent_state",
+        "onGet": "(100 - value)",
+        "onSet": "(100 - value)"
+      }]
+    }]
+  }
+}
+```
