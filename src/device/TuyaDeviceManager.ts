@@ -200,6 +200,10 @@ export default class TuyaDeviceManager extends EventEmitter {
           }
           this.devices.splice(this.devices.indexOf(device), 1);
           this.emit(Events.DEVICE_DELETE, devId);
+        } else if (bizCode === 'event_notify') {
+          // doorbell event
+        } else if (bizCode === 'p2pSignal') {
+          // p2p signal
         } else {
           this.log.warn('Unhandled mqtt message: bizCode = %s, bizData = %o', bizCode, bizData);
         }
