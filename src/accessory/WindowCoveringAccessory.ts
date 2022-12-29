@@ -6,7 +6,7 @@ const SCHEMA_CODE = {
   TARGET_POSITION_CONTROL: ['control'],
   TARGET_POSITION_PERCENT: ['percent_control', 'position'],
   // POSITION_STATE: ['work_state'],
-  REVERSE_MODE: ['control_back_mode'],
+  REVERSE_MODE: ['control_back_mode', 'control_back'],
 };
 
 export default class WindowCoveringAccessory extends BaseAccessory {

@@ -19,7 +19,7 @@ const SCHEMA_CODE = {
 export default class DiffuserAccessory extends BaseAccessory {
 
   requiredSchema() {
-    return [SCHEMA_CODE.ON, SCHEMA_CODE.SPRAY_ON];
+    return [SCHEMA_CODE.SPRAY_ON];
   }
 
   configureServices() {
@@ -29,19 +29,34 @@ export default class DiffuserAccessory extends BaseAccessory {
     configureOn(this, undefined, this.getSchema(...SCHEMA_CODE.SOUND_ON)); // Sound Switch
   }
 
+  mainService() {
+    return this.accessory.getService(this.Service.AirPurifier)
+      || this.accessory.addService(this.Service.AirPurifier);
+  }
+
+  lightService() {
+    return this.accessory.getService(this.Service.Lightbulb)
+      || this.accessory.addService(this.Service.Lightbulb, this.device.name + ' Light');
+  }
+
   configureAirPurifier() {
-    const onSchema = this.getSchema(...SCHEMA_CODE.ON)!;
+    const onSchema = this.getSchema(...SCHEMA_CODE.ON);
     const sprayOnSchema = this.getSchema(...SCHEMA_CODE.SPRAY_ON)!;
 
     // Required Characteristics
     const { INACTIVE, ACTIVE } = this.Characteristic.Active;
     this.mainService().getCharacteristic(this.Characteristic.Active)
       .onGet(() => {
-        return (this.getStatus(onSchema.code)!.value && this.getStatus(sprayOnSchema.code)!.value) ? ACTIVE : INACTIVE;
+        if (onSchema && !this.getStatus(onSchema.code)!.value) {
+          return INACTIVE;
+        }
+
+        const status = this.getStatus(sprayOnSchema.code)!;
+        return (status.value as boolean) ? ACTIVE : INACTIVE;
       })
       .onSet(value => {
         const commands = [{ code: sprayOnSchema.code, value: (value === ACTIVE) }];
-        if (value === ACTIVE) {
+        if (onSchema && value === ACTIVE) {
           commands.push({ code: onSchema.code, value: true });
         }
         this.sendCommands(commands, true);
@@ -50,7 +65,12 @@ export default class DiffuserAccessory extends BaseAccessory {
     const { PURIFYING_AIR } = this.Characteristic.CurrentAirPurifierState;
     this.mainService().getCharacteristic(this.Characteristic.CurrentAirPurifierState)
       .onGet(() => {
-        return (this.getStatus(onSchema.code)!.value && this.getStatus(sprayOnSchema.code)!.value) ? PURIFYING_AIR : INACTIVE;
+        if (onSchema && this.getStatus(onSchema.code)!.value !== true) {
+          return INACTIVE;
+        }
+
+        const status = this.getStatus(sprayOnSchema.code)!;
+        return (status.value as boolean) ? PURIFYING_AIR : INACTIVE;
       });
 
     // const { MANUAL } = this.Characteristic.TargetAirPurifierState;
@@ -63,7 +83,7 @@ export default class DiffuserAccessory extends BaseAccessory {
   }
 
   configureLight() {
-    const onSchema = this.getSchema(...SCHEMA_CODE.ON)!;
+    const onSchema = this.getSchema(...SCHEMA_CODE.ON);
     const lightOnSchema = this.getSchema(...SCHEMA_CODE.LIGHT_ON);
     if (!lightOnSchema) {
       return;
@@ -71,26 +91,21 @@ export default class DiffuserAccessory extends BaseAccessory {
 
     this.lightService().getCharacteristic(this.Characteristic.On)
       .onGet(() => {
-        return this.getStatus(onSchema.code)!.value && this.getStatus(lightOnSchema.code)!.value;
+        if (onSchema && this.getStatus(onSchema.code)!.value !== true) {
+          return false;
+        }
+
+        const status = this.getStatus(lightOnSchema.code)!;
+        return (status.value as boolean);
       })
       .onSet(value => {
         const commands = [{ code: lightOnSchema.code, value: value as boolean }];
-        if (value) {
+        if (onSchema && value) {
           commands.push({ code: onSchema.code, value: true });
         }
         this.sendCommands(commands, true);
       });
     this.configureLightBrightness();
-  }
-
-  mainService() {
-    return this.accessory.getService(this.Service.AirPurifier)
-      || this.accessory.addService(this.Service.AirPurifier);
-  }
-
-  lightService() {
-    return this.accessory.getService(this.Service.Lightbulb)
-    || this.accessory.addService(this.Service.Lightbulb, this.device.name + ' Light');
   }
 
   configureLightBrightness() {
