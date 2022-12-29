@@ -1,7 +1,7 @@
-import { TuyaDeviceSchemaIntegerProperty, TuyaDeviceSchemaType } from '../device/TuyaDevice';
-import { limit, remap } from '../util/util';
+import { TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
+import { configureLight } from './characteristic/Light';
 import { configureLockPhysicalControls } from './characteristic/LockPhysicalControls';
 import { configureOn } from './characteristic/On';
 import { configureRotationSpeed, configureRotationSpeedLevel, configureRotationSpeedOn } from './characteristic/RotationSpeed';
@@ -15,7 +15,10 @@ const SCHEMA_CODE = {
   FAN_LOCK: ['child_lock'],
   FAN_SWING: ['switch_horizontal', 'switch_vertical'],
   LIGHT_ON: ['light', 'switch_led'],
-  LIGHT_BRIGHTNESS: ['bright_value'],
+  LIGHT_MODE: ['work_mode'],
+  LIGHT_BRIGHT: ['bright_value', 'bright_value_v2'],
+  LIGHT_TEMP: ['temp_value', 'temp_value_v2'],
+  LIGHT_COLOR: ['colour_data'],
 };
 
 export default class FanAccessory extends BaseAccessory {
@@ -54,8 +57,15 @@ export default class FanAccessory extends BaseAccessory {
 
     // Light
     if (this.getSchema(...SCHEMA_CODE.LIGHT_ON)) {
-      configureOn(this, this.lightService(), this.getSchema(...SCHEMA_CODE.LIGHT_ON));
-      this.configureLightBrightness();
+      configureLight(
+        this,
+        this.lightService(),
+        this.getSchema(...SCHEMA_CODE.LIGHT_ON),
+        this.getSchema(...SCHEMA_CODE.LIGHT_BRIGHT),
+        this.getSchema(...SCHEMA_CODE.LIGHT_TEMP),
+        this.getSchema(...SCHEMA_CODE.LIGHT_COLOR),
+        this.getSchema(...SCHEMA_CODE.LIGHT_MODE),
+      );
     } else {
       this.log.warn('Remove Lightbulb Service...');
       const unusedService = this.accessory.getService(this.Service.Lightbulb);
@@ -116,26 +126,4 @@ export default class FanAccessory extends BaseAccessory {
       });
   }
 
-  configureLightBrightness() {
-    const schema = this.getSchema(...SCHEMA_CODE.LIGHT_BRIGHTNESS);
-    if (!schema) {
-      return;
-    }
-
-    const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
-    this.lightService().getCharacteristic(this.Characteristic.Brightness)
-      .onGet(() => {
-        const status = this.getStatus(schema.code)!;
-        const value = Math.round(remap(status.value as number, 0, max, 0, 100));
-        return limit(value, 0, 100);
-      })
-      .onSet(value => {
-        let brightness = Math.round(remap(value as number, 0, 100, 0, max));
-        brightness = limit(brightness, min, max);
-        this.sendCommands([{
-          code: schema.code,
-          value: brightness,
-        }], true);
-      });
-  }
 }

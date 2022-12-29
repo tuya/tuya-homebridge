@@ -1,7 +1,7 @@
-import { TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
+import { TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaStreamingDelegate } from '../util/TuyaStreamDelegate';
-import { limit, remap } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+import { configureLight } from './characteristic/Light';
 import { configureOn } from './characteristic/On';
 import { configureProgrammableSwitchEvent, onProgrammableSwitchEvent } from './characteristic/ProgrammableSwitchEvent';
 
@@ -15,7 +15,7 @@ const SCHEMA_CODE = {
   // Notifies when a doorbell ring occurs.
   ALARM_MESSAGE: ['alarm_message'],
   LIGHT_ON: ['floodlight_switch'],
-  LIGHT_BRIGHTNESS: ['floodlight_lightness'],
+  LIGHT_BRIGHT: ['floodlight_lightness'],
 };
 
 export default class CameraAccessory extends BaseAccessory {
@@ -29,41 +29,18 @@ export default class CameraAccessory extends BaseAccessory {
   configureServices() {
     this.configureDoorbell();
     this.configureCamera();
-    this.configureFloodLight();
     this.configureMotion();
-  }
 
-  configureFloodLight() {
-    const onSchema = this.getSchema(...SCHEMA_CODE.LIGHT_ON);
-    if (!onSchema) {
-      return;
-    }
-
-    const service = this.getLightService();
-
-    configureOn(this, service, onSchema);
-
-    const brightnessSchema = this.getSchema(...SCHEMA_CODE.LIGHT_BRIGHTNESS);
-    if (brightnessSchema) {
-      const { min, max } = brightnessSchema.property as TuyaDeviceSchemaIntegerProperty;
-      service.getCharacteristic(this.Characteristic.Brightness)
-        .onGet(() => {
-          const status = this.getStatus(brightnessSchema.code)!;
-          let value = status.value as number;
-          value = remap(value, 0, max, 0, 100);
-          value = Math.round(value);
-          value = limit(value, min, max);
-          return value;
-        })
-        .onSet(value => {
-          this.log.debug(`Characteristic.Brightness set to: ${value}`);
-          let brightValue = value as number;
-          brightValue = remap(brightValue, 0, 100, 0, max);
-          brightValue = Math.round(brightValue);
-          brightValue = limit(brightValue, min, max);
-          this.sendCommands([{ code: brightnessSchema.code, value: brightValue }], true);
-        });
-    }
+    // FloodLight
+    configureLight(
+      this,
+      this.getLightService(),
+      this.getSchema(...SCHEMA_CODE.LIGHT_ON),
+      this.getSchema(...SCHEMA_CODE.LIGHT_BRIGHT),
+      undefined,
+      undefined,
+      undefined,
+    );
   }
 
   configureMotion() {

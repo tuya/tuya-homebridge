@@ -83,7 +83,8 @@ export default class DimmerAccessory extends BaseAccessory {
         brightValue = Math.round(brightValue);
         brightValue = limit(brightValue, min, max);
         this.sendCommands([{ code: schema.code, value: brightValue }], true);
-      }).setProps(props);
+      })
+      .setProps(props);
 
   }
 
