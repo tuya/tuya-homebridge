@@ -12,7 +12,7 @@ const SCHEMA_CODE = {
   LIGHT_ON: ['switch_led'],
   LIGHT_MODE: ['work_mode'],
   LIGHT_BRIGHT: ['bright_value', 'bright_value_v2'],
-  LIGHT_COLOR: ['colour_data_hsv'],
+  LIGHT_COLOR: ['colour_data', 'colour_data_hsv'],
   SOUND_ON: ['switch_sound'],
 };
 

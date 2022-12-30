@@ -31,13 +31,13 @@ function getLightType(
   color?: TuyaDeviceSchema,
   mode?: TuyaDeviceSchema,
 ) {
-  const modeRange = (mode?.property as TuyaDeviceSchemaEnumProperty).range;
+  const modeRange = mode && (mode.property as TuyaDeviceSchemaEnumProperty).range;
   const { h, s, v } = (color?.property || {}) as never;
 
   let lightType: LightType;
-  if (on && bright && temp && h && s && v && mode && modeRange.includes('colour') && modeRange.includes('white')) {
+  if (on && bright && temp && h && s && v && modeRange && modeRange.includes('colour') && modeRange.includes('white')) {
     lightType = LightType.RGBCW;
-  } else if (on && bright && !temp && h && s && v && mode && modeRange.includes('colour') && modeRange.includes('white')) {
+  } else if (on && bright && !temp && h && s && v && modeRange && modeRange.includes('colour') && modeRange.includes('white')) {
     lightType = LightType.RGBC;
   } else if (on && !temp && h && s && v) {
     lightType = LightType.RGB;
