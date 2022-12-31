@@ -6,7 +6,9 @@ const SCHEMA_CODE = {
   TARGET_POSITION_CONTROL: ['control'],
   TARGET_POSITION_PERCENT: ['percent_control', 'position'],
   // POSITION_STATE: ['work_state'],
-  REVERSE_MODE: ['control_back_mode', 'control_back'],
+
+  // conflit in different products, see: https://github.com/0x5e/homebridge-tuya-platform/issues/179#issuecomment-1367922879
+  // REVERSE_MODE: ['control_back_mode', 'control_back'],
 };
 
 export default class WindowCoveringAccessory extends BaseAccessory {
@@ -38,25 +40,25 @@ export default class WindowCoveringAccessory extends BaseAccessory {
 
     this.mainService().getCharacteristic(this.Characteristic.CurrentPosition)
       .onGet(() => {
-        let value: number;
-        const schema = currentSchema || targetSchema;
-        if (schema) {
-          const status = this.getStatus(schema.code)!;
-          value = limit(status.value as number, 0, 100);
-        } else {
-          const status = this.getStatus(targetControlSchema.code)!;
-          if (status.value === 'close') {
-            value = 0;
-          } else if (status.value === 'stop') {
-            value = 50;
-          } else if (status.value === 'open') {
-            value = 100;
-          } else {
-            this.log.warn('Unknown CurrentPosition:', status.value);
-            value = 50;
-          }
+        if (currentSchema) {
+          const status = this.getStatus(currentSchema.code)!;
+          return limit(status.value as number, 0, 100);
+        } else if (targetSchema) {
+          const status = this.getStatus(targetSchema.code)!;
+          return limit(status.value as number, 0, 100);
         }
-        return this.isMotorReversed() ? 100 - value : value;
+
+        const status = this.getStatus(targetControlSchema.code)!;
+        if (status.value === 'close') {
+          return 0;
+        } else if (status.value === 'stop') {
+          return 50;
+        } else if (status.value === 'open') {
+          return 100;
+        }
+
+        this.log.warn('Unknown CurrentPosition:', status.value);
+        return 50;
       });
   }
 
@@ -74,9 +76,9 @@ export default class WindowCoveringAccessory extends BaseAccessory {
         const currentStatus = this.getStatus(currentSchema.code)!;
         const targetStatus = this.getStatus(targetSchema.code)!;
         if (targetStatus.value === 100 && currentStatus.value !== 100) {
-          return this.isMotorReversed() ? DECREASING : INCREASING;
+          return INCREASING;
         } else if (targetStatus.value === 0 && currentStatus.value !== 0) {
-          return this.isMotorReversed() ? INCREASING : DECREASING;
+          return DECREASING;
         } else {
           return STOPPED;
         }
@@ -92,13 +94,10 @@ export default class WindowCoveringAccessory extends BaseAccessory {
     this.mainService().getCharacteristic(this.Characteristic.TargetPosition)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        const value = limit(status.value as number, 0, 100);
-        return this.isMotorReversed() ? 100 - value : value;
+        return limit(status.value as number, 0, 100);
       })
       .onSet(value => {
-        let position = value as number;
-        position = this.isMotorReversed() ? 100 - position : position;
-        this.sendCommands([{ code: schema.code, value: position }], true);
+        this.sendCommands([{ code: schema.code, value: value as number }], true);
       });
   }
 
@@ -110,27 +109,24 @@ export default class WindowCoveringAccessory extends BaseAccessory {
 
     this.mainService().getCharacteristic(this.Characteristic.TargetPosition)
       .onGet(() => {
-        let value: number;
         const status = this.getStatus(schema.code)!;
         if (status.value === 'close') {
-          value = 0;
+          return 0;
         } else if (status.value === 'stop') {
-          value = 50;
+          return 50;
         } else if (status.value === 'open') {
-          value = 100;
-        } else {
-          this.log.warn('Unknown TargetPosition:', status.value);
-          value = 50;
+          return 100;
         }
 
-        return this.isMotorReversed() ? 100 - value : value;
+        this.log.warn('Unknown TargetPosition:', status.value);
+        return 50;
       })
       .onSet(value => {
         let control: string;
         if (value === 0) {
-          control = this.isMotorReversed() ? 'open' : 'close';
+          control = 'close';
         } else if (value === 100) {
-          control = this.isMotorReversed() ? 'close' : 'open';
+          control = 'open';
         } else {
           control = 'stop';
         }
@@ -139,16 +135,6 @@ export default class WindowCoveringAccessory extends BaseAccessory {
       .setProps({
         minStep: 50,
       });
-  }
-
-  isMotorReversed() {
-    const schema = this.getSchema(...SCHEMA_CODE.REVERSE_MODE);
-    if (!schema) {
-      return false;
-    }
-
-    const state = this.getStatus(schema.code)!;
-    return (state.value === 'back' || state.value === true);
   }
 
 }
