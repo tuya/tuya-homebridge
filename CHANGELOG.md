@@ -32,6 +32,7 @@
 - Support Diffuser RGB light. (#184)
 - Support Fan light temperature and color. (#184)
 - Support Humidifier light. (#184)
+- Expose energy usage for outlets/switches. (#190) Thanks @lstrojny for the contribution
 
 
 ## [1.6.0] - (2022.12.3)
