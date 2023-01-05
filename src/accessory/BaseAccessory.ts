@@ -164,6 +164,12 @@ class BaseAccessory {
       return;
     }
 
+    if (this.device.online === false) {
+      this.log.warn('Device is offline, skip send command.');
+      this.updateAllValues();
+      return;
+    }
+
     // Update cache immediately
     for (const newStatus of commands) {
       const oldStatus = this.device.status.find(_status => _status.code === newStatus.code);
