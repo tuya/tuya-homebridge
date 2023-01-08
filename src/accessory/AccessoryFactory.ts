@@ -114,9 +114,11 @@ export default class AccessoryFactory {
         handler = new LeakSensorAccessory(platform, accessory);
         break;
       case 'cobj':
+      case 'cocgq':
         handler = new CarbonMonoxideSensorAccessory(platform, accessory);
         break;
       case 'co2bj':
+      case 'co2cgq':
         handler = new CarbonDioxideSensorAccessory(platform, accessory);
         break;
       case 'wnykq':

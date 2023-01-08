@@ -116,11 +116,11 @@ Most category code is pinyin abbreviation of Chinese name.
 | Vibration Sensor | 震动传感器 | zd | | |
 | Water Detector | 水浸传感器 | sj | Leak Sensor | ✅ |
 | Luminance Sensor | 亮度传感器 | ldcg | Light Sensor | ✅ |
-| Pressure Sensor | 压力传感器 | ylcg | | |
+| Pressure Sensor | 压力传感器 | ylcg, ylcgq | | |
 | Emergency Button | 紧急按钮 | sos | | |
 | PM2.5 Detector | PM2.5传感器 | pm25, pm2.5, pm25cgq | Air Quality Sensor | ✅ |
-| CO Detector | CO报警传感器 | cobj | Carbon Monoxide Sensor | ✅ |
-| CO2 Detector | CO2报警传感器 | co2bj | Carbon Dioxide Sensor | ✅ |
+| CO Detector | CO报警传感器 | cobj, cocgq | Carbon Monoxide Sensor | ✅ |
+| CO2 Detector | CO2报警传感器 | co2bj, co2cgq | Carbon Dioxide Sensor | ✅ |
 | Multi-functional Sensor | 多功能传感器 | dgnbj | | |
 | Methane Detector | 甲烷报警传感器 | jwbj | Leak Sensor | ✅ |
 | Human Motion Sensor | 人体运动传感器 | pir | Motion Sensor | ✅ |
