@@ -132,6 +132,8 @@ export default class AccessoryFactory {
         handler = new MotionSensorAccessory(platform, accessory);
         break;
       case 'pm25':
+      case 'pm2.5':
+      case 'pm25cgq':
         handler = new AirQualitySensorAccessory(platform, accessory);
         break;
       case 'hps':

@@ -1,10 +1,14 @@
 import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+import { configureCurrentRelativeHumidity } from './characteristic/CurrentRelativeHumidity';
+import { configureCurrentTemperature } from './characteristic/CurrentTemperature';
 
 const SCHEMA_CODE = {
   PM2_5: ['pm25_value'],
   PM10: ['pm10_value'],
   VOC: ['voc_value'],
+  CURRENT_TEMP: ['va_temperature'],
+  CURRENT_HUMIDITY: ['va_humidity', 'humidity_value'],
 };
 
 export default class AirQualitySensorAccessory extends BaseAccessory {
@@ -18,6 +22,10 @@ export default class AirQualitySensorAccessory extends BaseAccessory {
     this.configurePM2_5Density();
     this.configurePM10Density();
     this.configureVOCDensity();
+
+    // Other
+    configureCurrentTemperature(this, undefined, this.getSchema(...SCHEMA_CODE.CURRENT_TEMP));
+    configureCurrentRelativeHumidity(this, undefined, this.getSchema(...SCHEMA_CODE.CURRENT_HUMIDITY));
   }
 
 
