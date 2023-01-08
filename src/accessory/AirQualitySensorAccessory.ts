@@ -7,7 +7,7 @@ const SCHEMA_CODE = {
   PM2_5: ['pm25_value'],
   PM10: ['pm10_value'],
   VOC: ['voc_value'],
-  CURRENT_TEMP: ['va_temperature'],
+  CURRENT_TEMP: ['va_temperature', 'temp_indoor'],
   CURRENT_HUMIDITY: ['va_humidity', 'humidity_value'],
 };
 
