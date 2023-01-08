@@ -64,6 +64,7 @@ export default class AccessoryFactory {
         break;
       case 'cz':
       case 'pc':
+      case 'wkcz':
         handler = new OutletAccessory(platform, accessory);
         break;
       case 'kg':

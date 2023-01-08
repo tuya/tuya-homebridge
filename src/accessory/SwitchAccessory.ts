@@ -2,12 +2,16 @@ import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
 import { configureOn } from './characteristic/On';
 import { configureEnergyUsage } from './characteristic/EnergyUsage';
+import { configureCurrentTemperature } from './characteristic/CurrentTemperature';
+import { configureCurrentRelativeHumidity } from './characteristic/CurrentRelativeHumidity';
 
 const SCHEMA_CODE = {
   ON: ['switch', 'switch_1'], // switch_2, switch_3, switch_4, ..., switch_usb1, switch_usb2, switch_usb3, ..., switch_backlight
   CURRENT: ['cur_current'],
   POWER: ['cur_power'],
   VOLTAGE: ['cur_voltage'],
+  CURRENT_TEMP: ['va_temperature'],
+  CURRENT_HUMIDITY: ['va_humidity', 'humidity_value'],
 };
 
 export default class SwitchAccessory extends BaseAccessory {
@@ -32,6 +36,11 @@ export default class SwitchAccessory extends BaseAccessory {
       const name = (schemata.length === 1) ? this.device.name : schema.code;
       this.configureSwitch(schema, name);
     });
+
+
+    // Other
+    configureCurrentTemperature(this, undefined, this.getSchema(...SCHEMA_CODE.CURRENT_TEMP));
+    configureCurrentRelativeHumidity(this, undefined, this.getSchema(...SCHEMA_CODE.CURRENT_HUMIDITY));
   }
 
 

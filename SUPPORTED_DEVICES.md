@@ -37,6 +37,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Fan Switch | 风扇开关 | fskg | Fanv2 | ✅ |
 | Wireless Switch | 无线开关 | wxkg | Stateless Programmable Switch | ✅ |
 | Secne Light Socket | 情景灯插座 | qjdcz | Switch | ✅ |
+| Temperature Control Socket | 温控插座 | wkcz | Switch, Temperature Sensor, Humidity Sensor | ✅ |
 
 
 ## Large Home Appliances
@@ -170,3 +171,8 @@ Most category code is pinyin abbreviation of Chinese name.
 | Name | Name (zh) | Code | Homebridge Service | Supported |
 | ---- | ---- | ---- | ---- | ---- |
 | Tracker | 定位器 | tracker | | |
+
+
+## Others
+
+For the undocumented product category, you can get code and name from `/v1.0/iot-03/device-categories`, no more detail informations.

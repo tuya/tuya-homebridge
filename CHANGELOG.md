@@ -13,6 +13,7 @@
 - Add Air Conditioner support (`kt`). (#160)
 - Add Air Conditioner Controller support (`ktkzq`). (#160)
 - Add Diffuser support (`xxj`). (#175)
+- Add Temperature Control Socket support (`wkcz`).
 
 
 ### Fixed
