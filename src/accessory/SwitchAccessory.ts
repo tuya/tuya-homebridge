@@ -10,7 +10,7 @@ const SCHEMA_CODE = {
   CURRENT: ['cur_current'],
   POWER: ['cur_power'],
   VOLTAGE: ['cur_voltage'],
-  CURRENT_TEMP: ['va_temperature'],
+  CURRENT_TEMP: ['va_temperature', 'temp_current'],
   CURRENT_HUMIDITY: ['va_humidity', 'humidity_value'],
 };
 
