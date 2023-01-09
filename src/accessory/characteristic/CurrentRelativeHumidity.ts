@@ -5,7 +5,6 @@ import BaseAccessory from '../BaseAccessory';
 
 export function configureCurrentRelativeHumidity(accessory: BaseAccessory, service?: Service, schema?: TuyaDeviceSchema) {
   if (!schema) {
-    accessory.log.warn('CurrentRelativeHumidity not supported.');
     return;
   }
 

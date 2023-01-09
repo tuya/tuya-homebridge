@@ -5,7 +5,6 @@ import BaseAccessory from '../BaseAccessory';
 
 export function configureCurrentTemperature(accessory: BaseAccessory, service?: Service, schema?: TuyaDeviceSchema) {
   if (!schema) {
-    accessory.log.warn('CurrentTemperature not supported.');
     return;
   }
 
