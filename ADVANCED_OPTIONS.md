@@ -20,7 +20,7 @@ Before config, you need to know about [Tuya IoT Development Platform > Cloud Dev
 - `options.deviceOverrides[].schema[].type` - **optional**: New DP type. One of the `Boolean`, `Integer`, `Enum`, `String`, `Json`, `Raw`.
 - `options.deviceOverrides[].schema[].property` - **optional**: New DP property object. For `Integer` type, the object should contains `min`, `max`, `scale`, `step`; For `Enum` type, the object should contains `range`. For detail information, please see `TuyaDeviceSchemaProperty` in [TuyaDevice.ts](./src/device/TuyaDevice.ts).
 - `options.deviceOverrides[].schema[].onGet` - **optional**: An one-line JavaScript code convert old value to new value. The function is called with two arguments: `device`, `value`.
-- `options.deviceOverrides[].schema[].onSet` - **optional**: An one-line JavaScript code convert new value to old value. The function is called with two arguments: `device`, `value`.
+- `options.deviceOverrides[].schema[].onSet` - **optional**: An one-line JavaScript code convert new value to old value. The function is called with two arguments: `device`, `value`. return `undefined` means skip send this command.
 
 ## Examples
 
@@ -161,6 +161,26 @@ Most curtain motor have "reverse mode" setting in the Tuya App, if you don't hav
         "code": "percent_state",
         "onGet": "(100 - value)",
         "onSet": "(100 - value)"
+      }]
+    }]
+  }
+}
+```
+
+### Skip send on/off command when touching brightness/speed slider
+
+Some products (dimmer, fan) having issue when sending brightness/speed command with on/off command together. Here's an example of skip on/off command.
+
+```js
+{
+  "options": {
+    // ...
+    "deviceOverrides": [{
+      "id": "{device_id}",
+      "schema": [{
+        "oldCode": "switch_led",
+        "code": "switch_led",
+        "onSet": "(value === device.status.find(status => status.code === 'switch_led').value) ? undefined : value"
       }]
     }]
   }
