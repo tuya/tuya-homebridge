@@ -164,6 +164,8 @@ class BaseAccessory {
       return;
     }
 
+    commands = commands.filter((status) => status.code && status.value !== undefined);
+
     if (this.device.online === false) {
       this.log.warn('Device is offline, skip send command.');
       this.updateAllValues();
