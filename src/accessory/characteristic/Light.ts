@@ -111,16 +111,16 @@ function configureBrightness(
 
   service.getCharacteristic(accessory.Characteristic.Brightness)
     .onGet(() => {
-      if (inColorMode(accessory, lightType, modeSchema)) {
+      if (inColorMode(accessory, lightType, modeSchema) && colorSchema) {
         // Color mode, get brightness from `color_data.v`
-        const { max } = (colorSchema!.property as TuyaDeviceSchemaColorProperty).v;
-        const colorValue = getColorValue(accessory, colorSchema!);
+        const { max } = (colorSchema.property as TuyaDeviceSchemaColorProperty).v;
+        const colorValue = getColorValue(accessory, colorSchema);
         const value = Math.round(100 * colorValue.v / max);
         return limit(value, 0, 100);
-      } else if (inWhiteMode(accessory, lightType, modeSchema)) {
+      } else if (inWhiteMode(accessory, lightType, modeSchema) && brightSchema) {
         // White mode, get brightness from `brightness_value`
-        const { max } = brightSchema!.property as TuyaDeviceSchemaIntegerProperty;
-        const status = accessory.getStatus(brightSchema!.code)!;
+        const { max } = brightSchema.property as TuyaDeviceSchemaIntegerProperty;
+        const status = accessory.getStatus(brightSchema.code)!;
         const value = Math.round(100 * (status.value as number) / max);
         return limit(value, 0, 100);
       } else {
@@ -130,19 +130,19 @@ function configureBrightness(
     })
     .onSet((value) => {
       accessory.log.debug(`Characteristic.Brightness set to: ${value}`);
-      if (inColorMode(accessory, lightType, modeSchema)) {
+      if (inColorMode(accessory, lightType, modeSchema) && colorSchema) {
         // Color mode, set brightness to `color_data.v`
-        const { min, max } = (colorSchema!.property as TuyaDeviceSchemaColorProperty).v;
-        const colorValue = getColorValue(accessory, colorSchema!);
+        const { min, max } = (colorSchema.property as TuyaDeviceSchemaColorProperty).v;
+        const colorValue = getColorValue(accessory, colorSchema);
         colorValue.v = Math.round(value as number * max / 100);
         colorValue.v = limit(colorValue.v, min, max);
-        accessory.sendCommands([{ code: colorSchema!.code, value: JSON.stringify(colorValue) }], true);
-      } else if (inWhiteMode(accessory, lightType, modeSchema)) {
+        accessory.sendCommands([{ code: colorSchema.code, value: JSON.stringify(colorValue) }], true);
+      } else if (inWhiteMode(accessory, lightType, modeSchema) && brightSchema) {
         // White mode, set brightness to `brightness_value`
-        const { min, max } = brightSchema!.property as TuyaDeviceSchemaIntegerProperty;
+        const { min, max } = brightSchema.property as TuyaDeviceSchemaIntegerProperty;
         let brightValue = Math.round(value as number * max / 100);
         brightValue = limit(brightValue, min, max);
-        accessory.sendCommands([{ code: brightSchema!.code, value: brightValue }], true);
+        accessory.sendCommands([{ code: brightSchema.code, value: brightValue }], true);
       } else {
         // Unsupported mode
         accessory.log.warn('Neither color mode nor white mode.');
