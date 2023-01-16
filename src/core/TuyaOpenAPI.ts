@@ -164,6 +164,12 @@ export default class TuyaOpenAPI {
    */
   async homeLogin(countryCode: number, username: string, password: string, appSchema: string) {
 
+    if (this._isSaltedPassword(password)) {
+      this.log.info('Login with md5 salted password.');
+    } else {
+      password = Crypto.createHash('md5').update(password).digest('hex');
+    }
+
     for (const _endpoint of Object.keys(DEFAULT_ENDPOINTS)) {
       const countryCodeList = DEFAULT_ENDPOINTS[_endpoint];
       if (countryCodeList.includes(countryCode)) {
@@ -175,7 +181,7 @@ export default class TuyaOpenAPI {
     const res = await this.post('/v1.0/iot-01/associated-users/actions/authorized-login', {
       country_code: countryCode,
       username: username,
-      password: Crypto.createHash('md5').update(password).digest('hex'),
+      password: password,
       schema: appSchema,
     });
 
@@ -353,6 +359,10 @@ export default class TuyaOpenAPI {
     const url = `${path}?${kv.join('&')}`;
 
     return url;
+  }
+
+  _isSaltedPassword(password: string) {
+    return Buffer.from(password, 'hex').length === 16;
   }
 
 }
