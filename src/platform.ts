@@ -135,7 +135,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       return undefined;
     }
 
-    const deviceConfig = this.options.deviceOverrides.find(config => config.id === device.id);
+    const deviceConfig = this.options.deviceOverrides.find(config => config.id === device.id || config.id === device.uuid);
     const productConfig = this.options.deviceOverrides.find(config => config.id === device.product_id);
     const globalConfig = this.options.deviceOverrides.find(config => config.id === 'global');
 
