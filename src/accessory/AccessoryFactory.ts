@@ -163,17 +163,19 @@ export default class AccessoryFactory {
         break;
     }
 
-    if (handler && handler.checkRequirements()) {
-      handler.configureServices();
-      handler.configureStatusActive();
-      handler.updateAllValues();
-      handler.intialized = true;
+    if (handler && !handler.checkRequirements()) {
+      handler = undefined;
     }
 
     if (!handler) {
       platform.log.warn(`Unsupported device: ${device.name}.`);
       handler = new BaseAccessory(platform, accessory);
     }
+
+    handler.configureServices();
+    handler.configureStatusActive();
+    handler.updateAllValues();
+    handler.intialized = true;
 
     return handler;
   }
