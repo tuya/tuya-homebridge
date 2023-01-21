@@ -9,7 +9,7 @@ Most category code is pinyin abbreviation of Chinese name.
 
 | Name | Name (zh) | Code | Homebridge Service | Supported |
 | ---- | ---- | ---- | ---- | ---- |
-| Light | 光源 | dj | Lightbulb | ✅ |
+| Light | 光源 | dj, dsd | Lightbulb | ✅ |
 | Ceiling Light | 吸顶灯 | xdd | Lightbulb | ✅ |
 | Ambiance Light | 氛围灯 | fwd | Lightbulb | ✅ |
 | String Lights | 灯串 | dc | Lightbulb | ✅ |

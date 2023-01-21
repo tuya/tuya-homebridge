@@ -49,6 +49,7 @@ export default class AccessoryFactory {
         handler = new AirPurifierAccessory(platform, accessory);
         break;
       case 'dj':
+      case 'dsd':
       case 'xdd':
       case 'fwd':
       case 'dc':
