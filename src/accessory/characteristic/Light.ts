@@ -75,6 +75,8 @@ function inWhiteMode(
 ) {
   if (lightType === LightType.C || lightType === LightType.CW) {
     return true;
+  } else if (lightType === LightType.RGB) {
+    return false;
   }
 
   if (!modeSchema) {
@@ -91,6 +93,8 @@ function inColorMode(
 ) {
   if (lightType === LightType.RGB) {
     return true;
+  } else if (lightType === LightType.C || lightType === LightType.CW) {
+    return false;
   }
 
   if (!modeSchema) {
