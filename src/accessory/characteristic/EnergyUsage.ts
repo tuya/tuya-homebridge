@@ -17,7 +17,7 @@ export function configureEnergyUsage(
       const amperes = createAmperesCharacteristic(api);
       if (!service.testCharacteristic(amperes)) {
         service.addCharacteristic(amperes).onGet(
-          createStatusGetter(accessory, currentSchema.code, isUnit(currentSchema, 'mA') ? 1000 : 0),
+          createStatusGetter(accessory, currentSchema, isUnit(currentSchema, 'mA') ? 1000 : 0),
         );
       }
     } else {
@@ -29,7 +29,7 @@ export function configureEnergyUsage(
     if (isUnit(powerSchema, 'W')) {
       const watts = createWattsCharacteristic(api);
       if (!service.testCharacteristic(watts)) {
-        service.addCharacteristic(watts).onGet(createStatusGetter(accessory, powerSchema.code));
+        service.addCharacteristic(watts).onGet(createStatusGetter(accessory, powerSchema));
       }
     } else {
       accessory.log.warn('Unsupported power unit %p', currentSchema);
@@ -40,7 +40,7 @@ export function configureEnergyUsage(
     if (isUnit(voltageSchema, 'V')) {
       const volts = createVoltsCharacteristic(api);
       if (!service.testCharacteristic(volts)) {
-        service.addCharacteristic(volts).onGet(createStatusGetter(accessory, voltageSchema.code));
+        service.addCharacteristic(volts).onGet(createStatusGetter(accessory, voltageSchema));
       }
     } else {
       accessory.log.warn('Unsupported voltage unit %p', currentSchema);
@@ -52,9 +52,11 @@ function isUnit(schema: TuyaDeviceSchema, ...units: string[]): boolean {
   return units.includes((schema.property as TuyaDeviceSchemaIntegerProperty).unit);
 }
 
-function createStatusGetter(accessory: BaseAccessory, code: string, divisor = 1): () => number {
+function createStatusGetter(accessory: BaseAccessory, schema: TuyaDeviceSchema, divisor = 1): () => number {
+  const property = schema.property as TuyaDeviceSchemaIntegerProperty;
+  divisor *= Math.pow(10, property.scale);
   return () => {
-    const status = accessory.getStatus(code)!;
+    const status = accessory.getStatus(schema.code)!;
 
     return (status.value as number) / divisor;
   };
