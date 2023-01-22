@@ -81,8 +81,8 @@ Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
 - `options.accessId` - **required** : Access ID from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
 - `options.accessKey` - **required** : Access Secret from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
 - `options.countryCode` - **required** : Country Code
-- `options.username` - **required** : Username
-- `options.password` - **required** : Password. MD5 salted password is also available for better config security.
+- `options.username` - **required** : App username.
+- `options.password` - **required** : App password. MD5 salted password is also available for better config security.
 - `options.appSchema` - **required** : App schema. 'tuyaSmart' for Tuya Smart App, 'smartlife' for Smart Life App.
 - `options.homeWhitelist` - **optional**: An array of integer home ID values to whitelist. If present, only includes devices matching this Home ID value. Home ID can be found in the homebridge log.
 
