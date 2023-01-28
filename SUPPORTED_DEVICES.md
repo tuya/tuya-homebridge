@@ -127,7 +127,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Human Motion Sensor | 人体运动传感器 | pir | Motion Sensor | ✅ |
 | Human Presence Sensor | 人体存在传感器 | hps | Occupancy Sensor | ✅ |
 | Smart Lock | 智能门锁 | ms | | |
-| Environmental Detector | 环境检测仪 | hjjcy | | |
+| Environmental Detector | 环境检测仪 | hjjcy | Air Quality Sensor | ✅ |
 
 
 ## Exercise & Health
