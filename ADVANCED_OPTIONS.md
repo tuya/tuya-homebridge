@@ -2,7 +2,14 @@
 
 **During the beta version, the options are unstable, may get changed during updates.**
 
-Before config, you need to know about [Tuya IoT Development Platform > Cloud Development > Standard Instruction Set > Data Type](https://developer.tuya.com/en/docs/iot/datatypedescription?id=K9i5ql2jo7j1k), and a little programming skills of writing very basic JavaScript code.
+The main function of `deviceOverrides` is to convert "non-standard schema" to "standard schema", making device compatible with this plugin.
+
+Before config, you may need to:
+- Have basic programming skills of JavaScript (Only used in `onGet`/`onSet` handler).
+- Understand the meaning of device schema (aka Data Type): [Tuya IoT Development Platform > Cloud Development > Standard Instruction Set > Data Type](https://developer.tuya.com/en/docs/iot/datatypedescription?id=K9i5ql2jo7j1k)
+- Find your device product's "Standard Instruction Set" and "Standard Status Set" documentation under [Tuya IoT Development Platform > Cloud Development > Standard Instruction Set](https://developer.tuya.com/en/docs/iot/datatypedescription?id=K9i5ql6waswzq)
+- Get your device's detail information from `/path/to/persist/TuyaDeviceList.xxx.json` (Full path can be found from logs).
+- Find the "wrong schema", then convert to the "correct schema" from product documentation.
 
 
 ### Configuration
