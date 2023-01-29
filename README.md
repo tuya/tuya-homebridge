@@ -184,7 +184,7 @@ With the device info json and mqtt logs, please submit the issue to help us supp
 
 ## Contributing
 
-Please see https://github.com/homebridge/homebridge-plugin-template for setup development environment.
+Please see https://github.com/homebridge/homebridge-plugin-template#setup-development-environment for setup development environment.
 
 PRs and issues are welcome.
 

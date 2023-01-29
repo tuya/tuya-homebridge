@@ -193,3 +193,25 @@ Some products (dimmer, fan) having issue when sending brightness/speed command w
   }
 }
 ```
+
+### Convert Fahrenheit to Celsius
+
+F = 1.8 * C + 32
+C = (F - 32) / 1.8
+
+```js
+{
+  "options": {
+    // ...
+    "deviceOverrides": [{
+      "id": "{device_id}",
+      "schema": [{
+        "oldCode": "temp_current",
+        "code": "temp_current",
+        "onGet": "Math.round((value - 32) / 1.8);",
+        "onSet": "Math.round(1.8 * value + 32);"
+      }]
+    }]
+  }
+}
+```
