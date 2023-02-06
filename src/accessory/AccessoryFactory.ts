@@ -102,6 +102,7 @@ export default class AccessoryFactory {
         handler = new HeaterAccessory(platform, accessory);
         break;
       case 'ggq':
+      case 'sfkzq':
         handler = new ValveAccessory(platform, accessory);
         break;
       case 'ywbj':

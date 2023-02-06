@@ -68,7 +68,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Thermostat | 温控器 | wk | Thermostat | ✅ |
 | Thermostat Valve | 温控阀 | wkf | Thermostat | ✅ |
 | Bathroom Heater | 浴霸 | yb | | |
-| Irrigator | 灌溉器 | ggq | Valve | ✅ |
+| Irrigator | 灌溉器 | ggq, sfkzq | Valve | ✅ |
 | Humidifier | 加湿器 | jsq | Humidifier Dehumidifier | ✅ |
 | Dehumidifier | 除湿机 | cs | Humidifier Dehumidifier | ✅ |
 | Fan | 风扇 | fs | Fanv2 | ✅ |

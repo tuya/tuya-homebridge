@@ -15,6 +15,7 @@
 - Add Diffuser support (`xxj`). (#175)
 - Add Temperature Control Socket support (`wkcz`).
 - Add Environmental Detector support (`hjjcy`).
+- Add Water Valve Controller support (`sfkzq`).
 
 
 ### Fixed
