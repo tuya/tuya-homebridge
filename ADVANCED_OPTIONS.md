@@ -197,6 +197,7 @@ Some products (dimmer, fan) having issue when sending brightness/speed command w
 ### Convert Fahrenheit to Celsius
 
 F = 1.8 * C + 32
+
 C = (F - 32) / 1.8
 
 ```js
