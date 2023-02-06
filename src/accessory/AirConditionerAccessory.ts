@@ -39,6 +39,10 @@ export default class AirConditionerAccessory extends BaseAccessory {
     this.configureAirConditioner();
     this.configureDehumidifier();
     this.configureFan();
+
+    // Add extra sensors for home automation use.
+    configureCurrentTemperature(this, undefined, this.getSchema(...SCHEMA_CODE.CURRENT_TEMP));
+    configureCurrentRelativeHumidity(this, undefined, this.getSchema(...SCHEMA_CODE.CURRENT_HUMIDITY));
   }
 
   configureAirConditioner() {
