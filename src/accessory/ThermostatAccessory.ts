@@ -127,11 +127,19 @@ export default class ThermostatAccessory extends BaseAccessory {
         const commands: TuyaDeviceStatus[] = [];
 
         // Thermostat valve may not support 'Power Off'
-        if (this.getStatus('switch')) {
-          commands.push({
-            code: 'switch',
-            value: (value === OFF) ? false : true,
-          });
+        const on = this.getStatus('switch');
+        if (on) {
+          if (value === OFF) {
+            commands.push({
+              code: 'switch',
+              value: false,
+            });
+          } else if (on.value === false) {
+            commands.push({
+              code: 'switch',
+              value: true,
+            });
+          }
         }
 
         if (schema) {
