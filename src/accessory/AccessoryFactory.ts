@@ -30,10 +30,10 @@ import HumidifierAccessory from './HumidifierAccessory';
 import DehumidifierAccessory from './DehumidifierAccessory';
 import DiffuserAccessory from './DiffuserAccessory';
 import AirPurifierAccessory from './AirPurifierAccessory';
-import TemperatureHumidityIRSensorAccessory from './TemperatureHumidityIRSensorAccessory';
 import CameraAccessory from './CameraAccessory';
 import SceneAccessory from './SceneAccessory';
 import AirConditionerAccessory from './AirConditionerAccessory';
+import IRControlHubAccessory from './IRControlHubAccessory';
 
 
 export default class AccessoryFactory {
@@ -45,9 +45,8 @@ export default class AccessoryFactory {
 
     let handler : BaseAccessory | undefined;
     switch (device.category) {
-      case 'kj':
-        handler = new AirPurifierAccessory(platform, accessory);
-        break;
+
+      // Lighting
       case 'dj':
       case 'dsd':
       case 'xdd':
@@ -63,15 +62,17 @@ export default class AccessoryFactory {
       case 'tgkg':
         handler = new DimmerAccessory(platform, accessory);
         break;
-      case 'cz':
-      case 'pc':
-      case 'wkcz':
-        handler = new OutletAccessory(platform, accessory);
-        break;
+
+      // Electrical Products
       case 'kg':
       case 'tdq':
       case 'qjdcz':
         handler = new SwitchAccessory(platform, accessory);
+        break;
+      case 'cz':
+      case 'pc':
+      case 'wkcz':
+        handler = new OutletAccessory(platform, accessory);
         break;
       case 'wxkg':
         handler = new WirelessSwitchAccessory(platform, accessory);
@@ -79,31 +80,56 @@ export default class AccessoryFactory {
       case 'cjkg':
         handler = new SceneSwitchAccessory(platform, accessory);
         break;
-      case 'fs':
-      case 'fsd':
-      case 'fskg':
-        handler = new FanAccessory(platform, accessory);
+
+      // Large Home Appliances
+      case 'kt':
+      case 'ktkzq':
+        handler = new AirConditionerAccessory(platform, accessory);
+        break;
+
+      // Small Home Appliances
+      case 'qn':
+        handler = new HeaterAccessory(platform, accessory);
+        break;
+      case 'kj':
+        handler = new AirPurifierAccessory(platform, accessory);
+        break;
+      case 'xxj':
+        handler = new DiffuserAccessory(platform, accessory);
         break;
       case 'ckmkzq':
         handler = new GarageDoorAccessory(platform, accessory);
-        break;
-      case 'mc':
-        handler = new WindowAccessory(platform, accessory);
         break;
       case 'cl':
       case 'clkg':
         handler = new WindowCoveringAccessory(platform, accessory);
         break;
+      case 'mc':
+        handler = new WindowAccessory(platform, accessory);
+        break;
       case 'wk':
       case 'wkf':
         handler = new ThermostatAccessory(platform, accessory);
         break;
-      case 'qn':
-        handler = new HeaterAccessory(platform, accessory);
-        break;
       case 'ggq':
       case 'sfkzq':
         handler = new ValveAccessory(platform, accessory);
+        break;
+      case 'jsq':
+        handler = new HumidifierAccessory(platform, accessory);
+        break;
+      case 'cs':
+        handler = new DehumidifierAccessory(platform, accessory);
+        break;
+      case 'fs':
+      case 'fsd':
+      case 'fskg':
+        handler = new FanAccessory(platform, accessory);
+        break;
+
+      // Security & Video Surveillance
+      case 'sp':
+        handler = new CameraAccessory(platform, accessory);
         break;
       case 'ywbj':
         handler = new SmokeSensorAccessory(platform, accessory);
@@ -124,9 +150,6 @@ export default class AccessoryFactory {
       case 'co2cgq':
         handler = new CarbonDioxideSensorAccessory(platform, accessory);
         break;
-      case 'wnykq':
-        handler = new TemperatureHumidityIRSensorAccessory(platform, accessory);
-        break;
       case 'wsdcg':
         handler = new TemperatureHumiditySensorAccessory(platform, accessory);
         break;
@@ -145,22 +168,13 @@ export default class AccessoryFactory {
       case 'hps':
         handler = new HumanPresenceSensorAccessory(platform, accessory);
         break;
-      case 'jsq':
-        handler = new HumidifierAccessory(platform, accessory);
+
+      // IR Remote Control
+      case 'wnykq':
+        handler = new IRControlHubAccessory(platform, accessory);
         break;
-      case 'cs':
-        handler = new DehumidifierAccessory(platform, accessory);
-        break;
-      case 'xxj':
-        handler = new DiffuserAccessory(platform, accessory);
-        break;
-      case 'kt':
-      case 'ktkzq':
-        handler = new AirConditionerAccessory(platform, accessory);
-        break;
-      case 'sp':
-        handler = new CameraAccessory(platform, accessory);
-        break;
+
+      // Other
       case 'scene':
         handler = new SceneAccessory(platform, accessory);
         break;
