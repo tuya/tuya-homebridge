@@ -9,13 +9,13 @@ Most category code is pinyin abbreviation of Chinese name.
 
 | Name | Name (zh) | Code | Homebridge Service | Supported |
 | ---- | ---- | ---- | ---- | ---- |
-| Light | 光源 | dj, dsd | Lightbulb | ✅ |
+| Light | 光源 | dj<br> dsd | Lightbulb | ✅ |
 | Ceiling Light | 吸顶灯 | xdd | Lightbulb | ✅ |
 | Ambiance Light | 氛围灯 | fwd | Lightbulb | ✅ |
 | String Lights | 灯串 | dc | Lightbulb | ✅ |
 | Strip Lights | 灯带 | dd | Lightbulb | ✅ |
 | Motion Sensor Light | 感应灯 | gyd | Lightbulb | ✅ |
-| Ceiling Fan Light | 风扇灯 | fsd | Fanv2 | ✅ |
+| Ceiling Fan Light | 风扇灯 | fsd | Lightbulb<br> Fanv2 | ✅ |
 | Solar Light | 太阳能灯 | tyndj | Lightbulb | ✅ |
 | Dimmer | 调光器 | tgq | Lightbulb | ✅ |
 | Remote Control | 遥控器 | ykq | | |
@@ -26,7 +26,7 @@ Most category code is pinyin abbreviation of Chinese name.
 
 | Name | Name (zh) | Code | Homebridge Service | Supported |
 | ---- | ---- | ---- | ---- | ---- |
-| Switch | 开关 | kg, tdq | Switch | ✅ |
+| Switch | 开关 | kg<br> tdq | Switch | ✅ |
 | Socket | 插座 | cz | Outlet | ✅ |
 | Power Strip | 排插 | pc | Outlet | ✅ |
 | Scene Switch | 场景开关 | cjkg | Switch | ✅ |
@@ -37,7 +37,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Fan Switch | 风扇开关 | fskg | Fanv2 | ✅ |
 | Wireless Switch | 无线开关 | wxkg | Stateless Programmable Switch | ✅ |
 | Secne Light Socket | 情景灯插座 | qjdcz | Switch | ✅ |
-| Temperature Control Socket | 温控插座 | wkcz | Switch, Temperature Sensor, Humidity Sensor | ✅ |
+| Temperature Control Socket | 温控插座 | wkcz | Switch<br> Temperature Sensor<br> Humidity Sensor | ✅ |
 
 
 ## Large Home Appliances
@@ -49,8 +49,8 @@ Most category code is pinyin abbreviation of Chinese name.
 | Refrigerator | 冰箱 | bx | | |
 | Bathtub | 浴缸 | yg | | |
 | Washing Machine | 洗衣机 | xy | | |
-| Air Conditioner | 空调 | kt | Heater Cooler, Humidifier Dehumidifier, Fanv2 | ✅ |
-| Air Conditioner Controller | 空调控制器 | ktkzq | Heater Cooler, Humidifier Dehumidifier, Fanv2 | ✅ |
+| Air Conditioner | 空调 | kt | Heater Cooler<br> Humidifier Dehumidifier<br> Fanv2 | ✅ |
+| Air Conditioner Controller | 空调控制器 | ktkzq | Heater Cooler<br> Humidifier Dehumidifier<br> Fanv2 | ✅ |
 | Boiler | 壁挂炉 | bgl | | |
 
 
@@ -62,13 +62,13 @@ Most category code is pinyin abbreviation of Chinese name.
 | Heater | 取暖器 | qn | Heater Coller | ✅ |
 | Air Purifier | 空气净化器 | kj | Air Purifier | ✅ |
 | Drying Rack | 晾衣架 | lyj | | |
-| Diffuser | 香薰机 | xxj | Air Purifier, Lightbulb | ✅ |
+| Diffuser | 香薰机 | xxj | Air Purifier<br> Lightbulb | ✅ |
 | Curtain | 窗帘 | cl | Window Covering | ✅ |
 | Door and Window Controller | 门窗控制器 | mc | Window | ✅ |
 | Thermostat | 温控器 | wk | Thermostat | ✅ |
 | Thermostat Valve | 温控阀 | wkf | Thermostat | ✅ |
 | Bathroom Heater | 浴霸 | yb | | |
-| Irrigator | 灌溉器 | ggq, sfkzq | Valve | ✅ |
+| Irrigator | 灌溉器 | ggq<br> sfkzq | Valve | ✅ |
 | Humidifier | 加湿器 | jsq | Humidifier Dehumidifier | ✅ |
 | Dehumidifier | 除湿机 | cs | Humidifier Dehumidifier | ✅ |
 | Fan | 风扇 | fs | Fanv2 | ✅ |
@@ -108,20 +108,20 @@ Most category code is pinyin abbreviation of Chinese name.
 | Name | Name (zh) | Code | Homebridge Service | Supported |
 | ---- | ---- | ---- | ---- | ---- |
 | Alarm Host | 报警主机 | mal | | |
-| Smart Camera | 智能摄像机 | sp | Motion Sensor, Doorbell | ✅ |
+| Smart Camera | 智能摄像机 | sp | Motion Sensor<br> Doorbell | ✅ |
 | Siren Alarm | 声光报警传感器 | sgbj | | |
 | Gas Alarm | 燃气报警传感器 | rqbj | Leak Sensor | ✅ |
 | Smoke Alarm | 烟雾报警传感器 | ywbj | Smoke Sensor | ✅ |
-| Temperature and Humidity Sensor | 温湿度传感器 | wsdcg | Temperature Sensor, Humidity Sensor | ✅ |
+| Temperature and Humidity Sensor | 温湿度传感器 | wsdcg | Temperature Sensor<br> Humidity Sensor | ✅ |
 | Contact Sensor | 门磁传感器 | mcs | Contact Sensor | ✅ |
 | Vibration Sensor | 震动传感器 | zd | | |
 | Water Detector | 水浸传感器 | sj | Leak Sensor | ✅ |
 | Luminance Sensor | 亮度传感器 | ldcg | Light Sensor | ✅ |
-| Pressure Sensor | 压力传感器 | ylcg, ylcgq | | |
+| Pressure Sensor | 压力传感器 | ylcg<br> ylcgq | | |
 | Emergency Button | 紧急按钮 | sos | | |
-| PM2.5 Detector | PM2.5传感器 | pm25, pm2.5, pm25cgq | Air Quality Sensor | ✅ |
-| CO Detector | CO报警传感器 | cobj, cocgq | Carbon Monoxide Sensor | ✅ |
-| CO2 Detector | CO2报警传感器 | co2bj, co2cgq | Carbon Dioxide Sensor | ✅ |
+| PM2.5 Detector | PM2.5传感器 | pm25<br> pm2.5<br> pm25cgq | Air Quality Sensor | ✅ |
+| CO Detector | CO报警传感器 | cobj<br> cocgq | Carbon Monoxide Sensor | ✅ |
+| CO2 Detector | CO2报警传感器 | co2bj<br> co2cgq | Carbon Dioxide Sensor | ✅ |
 | Multi-functional Sensor | 多功能传感器 | dgnbj | | |
 | Methane Detector | 甲烷报警传感器 | jwbj | Leak Sensor | ✅ |
 | Human Motion Sensor | 人体运动传感器 | pir | Motion Sensor | ✅ |
