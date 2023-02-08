@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { PlatformAccessory, Service, Characteristic } from 'homebridge';
 import { debounce } from 'debounce';
+import isEqual from 'lodash.isequal';
 
 import { TuyaDeviceSchema, TuyaDeviceSchemaMode, TuyaDeviceSchemaProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
@@ -242,7 +243,7 @@ export default class OverridedBaseAccessory extends BaseAccessory {
       return undefined;
     }
 
-    const oldSchema = this.device.schema.find(schema => schema.code === schemaConfig.oldCode);
+    const oldSchema = this.device.schema.find(schema => schema.code === schemaConfig.code);
     if (!oldSchema) {
       return undefined;
     }
@@ -254,7 +255,9 @@ export default class OverridedBaseAccessory extends BaseAccessory {
       property: schemaConfig.property || oldSchema.property,
     } as TuyaDeviceSchema;
 
-    this.log.debug('Override schema %o => %o', oldSchema, schema);
+    if (!isEqual(oldSchema, schema)) {
+      this.log.debug('Override schema %o => %o', oldSchema, schema);
+    }
 
     return schema;
   }
@@ -277,17 +280,19 @@ export default class OverridedBaseAccessory extends BaseAccessory {
       return undefined;
     }
 
-    const originalStatus = super.getStatus(schemaConfig.oldCode);
-    if (!originalStatus) {
+    const oldStatus = super.getStatus(schemaConfig.code);
+    if (!oldStatus) {
       return undefined;
     }
 
-    const status = { code: schemaConfig.code, value: originalStatus.value } as TuyaDeviceStatus;
+    const status = { code: schemaConfig.newCode || schemaConfig.code, value: oldStatus.value } as TuyaDeviceStatus;
     if (schemaConfig.onGet) {
-      status.value = this.eval(schemaConfig.onGet, this.device, originalStatus.value);
+      status.value = this.eval(schemaConfig.onGet, this.device, oldStatus.value);
     }
 
-    this.log.debug('Override status %o => %o', originalStatus, status);
+    if (!isEqual(oldStatus, status)) {
+      this.log.debug('Override status %o => %o', oldStatus, status);
+    }
 
     return status;
   }
@@ -306,14 +311,16 @@ export default class OverridedBaseAccessory extends BaseAccessory {
         continue;
       }
 
-      const originalCommand = { code: schemaConfig.oldCode, value: command.value } as TuyaDeviceStatus;
+      const oldCommand = { code: schemaConfig.code, value: command.value } as TuyaDeviceStatus;
       if (schemaConfig.onSet) {
-        originalCommand.value = this.eval(schemaConfig.onSet, this.device, command.value);
+        oldCommand.value = this.eval(schemaConfig.onSet, this.device, command.value);
       }
 
-      this.log.debug('Override command %o => %o', command, originalCommand);
-      command.code = originalCommand.code;
-      command.value = originalCommand.value;
+      if (!isEqual(oldCommand, command)) {
+        this.log.debug('Override command %o => %o', command, oldCommand);
+        command.code = oldCommand.code;
+        command.value = oldCommand.value;
+      }
     }
 
     super.sendCommands(commands, debounce);

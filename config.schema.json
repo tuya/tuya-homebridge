@@ -117,18 +117,17 @@
 									"items": {
 										"type": "object",
 										"properties": {
-											"oldCode": {
-												"title": "Original Schema Code",
+											"code": {
+												"title": "DP Code",
 												"type": "string",
 												"required": true
 											},
-											"code": {
-												"title": "New Schema Code",
-												"type": "string",
-												"required": true
+											"newCode": {
+												"title": "New DP Code",
+												"type": "string"
 											},
 											"type": {
-												"title": "New Schema Type",
+												"title": "New DP Type",
 												"type": "string",
 												"default": "Boolean",
 												"oneOf": [{
@@ -152,7 +151,7 @@
 												}]
 											},
 											"property": {
-												"title": "New Schema Property",
+												"title": "New DP Property",
 												"type": "object",
 												"properties": {
 													"min": {
@@ -180,6 +179,10 @@
 														}
 													}
 												}
+											},
+											"hidden": {
+												"title": "Hidden",
+												"type": "boolean"
 											}
 										}
 									}
