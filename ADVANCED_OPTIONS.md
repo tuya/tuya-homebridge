@@ -31,7 +31,23 @@ Before config, you may need to:
 
 ## Examples
 
+### Change category code
+
+```
+{
+  "options": {
+    // ...
+    "deviceOverrides": [{
+      "id": "{device_id}",
+      "category": "xxx"
+    }]
+  }
+}
+```
+
 ### Hide device / scene
+
+Just the same way as changing category code.
 
 ```js
 {
