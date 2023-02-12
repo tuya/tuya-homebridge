@@ -27,6 +27,7 @@ Before configuring, you may need to:
   - `onSet` - **optional**: A one-line JavaScript code to convert the new value to the old value. The function is called with two arguments: `device` and `value`. Returning `undefined` means to skip sending the command.
   - `hidden` - **optional**: Whether to hide the schema. Defaults to `false`.
 
+
 ## Examples
 
 ### Hide device / scene
@@ -42,6 +43,7 @@ Before configuring, you may need to:
   }
 }
 ```
+
 
 ### Offline as off
 
@@ -61,6 +63,7 @@ If you want to display off status when device is offline:
 }
 ```
 
+
 ### Change DP code
 
 ```js
@@ -77,6 +80,7 @@ If you want to display off status when device is offline:
   }
 }
 ```
+
 
 ### Convert from enum DP to boolean DP
 
@@ -97,6 +101,7 @@ A example of convert `open`/`close` into `true`/`false`.
   }
 }
 ```
+
 
 ### Adjust integer DP ranges
 
@@ -143,6 +148,7 @@ Here's the example config:
 
 After transform value using `onGet` and `onSet`, and new range in `property`, it should be working now.
 
+
 ### Reverse curtain motor's on/off state
 
 Most curtain motor have "reverse mode" setting in the Tuya App, if you don't have this, you can reverse `percent_control`/`position` and `percent_state` in the plugin config:
@@ -167,6 +173,7 @@ Most curtain motor have "reverse mode" setting in the Tuya App, if you don't hav
 }
 ```
 
+
 ### Skip send on/off command when touching brightness/speed slider
 
 Some products (dimmer, fan) having issue when sending brightness/speed command with on/off command together. Here's an example of skip on/off command.
@@ -185,6 +192,7 @@ Some products (dimmer, fan) having issue when sending brightness/speed command w
   }
 }
 ```
+
 
 ### Convert Fahrenheit to Celsius
 
