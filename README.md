@@ -8,19 +8,19 @@
 [![join-discord](https://badgen.net/badge/icon/discord?icon=discord&label=homebridge/tuya)](https://discord.gg/homebridge-432663330281226270)
 
 
-Fork version of official Tuya Homebridge plugin. Brings a bunch of bug fix and new device support.
+Fork version of the official Tuya Homebridge plugin, with a focus on fixing bugs and adding new device support.
 
 
 ## Features
 
-- Optimized code, improved code readability and maintainability.
-- Improved stability.
-- Less duplicate code.
-- Less API errors.
-- Less development costs for new accessory categroies.
-- Tuya Scene supported (Tap-to-Run).
-- Device overriding config supported. "Non-standard DP" have possibility to be supported now.
-- More than 40+ device categories supported, including most of the lights, switches, sensors, cameras ...
+- Optimized and improved code for better readability and maintainability.
+- Enhanced stability.
+- Reduced duplicate code.
+- Fewer API errors.
+- Lower development costs for new accessory categories.
+- Supports Tuya Scenes (Tap-to-Run).
+- Includes the ability to override device configurations, which enables support for "non-standard" DPs.
+- Supports over 40+ device categories, including most lights, switches, sensors, cameras, etc.
 
 
 ## Supported Tuya Devices
@@ -32,14 +32,15 @@ See [CHANGELOG.md](./CHANGELOG.md)
 
 
 ## Installation
-Before use, please uninstall `homebridge-tuya-platform` first. They can't run together. (But the config is compatible, no need to delete.)
+Before using this plugin, please make sure to uninstall `homebridge-tuya-platform` first as these two plugins cannot run simultaneously. However, the configuration files are compatible, so there's no need to delete them.
 
 #### For Homebridge Web UI Users
-Go to plugin page, search `@0x5e/homebridge-tuya-platform` and install.
+Go to plugin page, search for `@0x5e/homebridge-tuya-platform` and install it.
 
 
 #### For Homebridge Command Line Users
 
+Run the following command in the terminal:
 ```
 npm install @0x5e/homebridge-tuya-platform
 ```
@@ -47,44 +48,44 @@ npm install @0x5e/homebridge-tuya-platform
 
 ## Configuration
 
-There's two type of project: `Custom` and `Smart Home`.
-The differenct between them is:
-- `Custom` Project pull devices from project's asset.
-- `Smart Home` Project pull devices from Tuya App user's home.
+There are two types of projects: `Custom` and `Smart Home`.
+The difference between them is:
+- The `Custom` project pulls devices from the project's assets.
+- The `Smart Home` project pulls devices from the user's home in the Tuya app.
 
-If you are personal user and don't know which to choose, please use `Smart Home`.
+If you are a personal user and are unsure which one to choose, please use the `Smart Home` project.
 
-Before configuration, please goto [Tuya IoT Platform](https://iot.tuya.com)
-- Create a cloud develop project, select the data center where your app account located. See [Mappings Between OEM App Accounts and Data Centers](https://developer.tuya.com/en/docs/iot/oem-app-data-center-distributed?id=Kafi0ku9l07qb) (If you don't know where it is, just select all.)
-- Go to `Project Page` > `Devices Panel` > `Link Tuya App Account`, link your app account.
-- Go to `Project Page` > `Service API` > `Go to Authorize`, subscribe the following APIs (it's free for trial):
+Before you can configure, you must go to the [Tuya IoT Platform](https://iot.tuya.com):
+- Create a cloud development project, and select the data center where your app account is located. See [Mappings Between OEM App Accounts and Data Centers](https://developer.tuya.com/en/docs/iot/oem-app-data-center-distributed?id=Kafi0ku9l07qb) (If you don't know where it is, just select all.)
+- Go to the `Project Page` > `Devices Panel` > `Link Tuya App Account`, and link your app account.
+- Go to the `Project Page` > `Service API` > `Go to Authorize`, and subscribe to the following APIs (it is free for trial):
     - Authorization Token Management
     - Device Status Notification
     - IoT Core
-    - IoT Video Live Stream (for Camera)
-    - Industry Project Client Service (for "Custom" project)
-    - Smart Home Scene Linkage (for Scene)
-- **⚠️Extend the API trial period every 6 months here (first-time subscription only give 1 month): [Tuya IoT Platform > Cloud > Cloud Services > IoT Core](https://iot.tuya.com/cloud/products/detail?abilityId=1442730014117204014&id=p1668587814138nv4h3n&abilityAuth=0&tab=1)**
+    - IoT Video Live Stream (for cameras)
+    - Industry Project Client Service (for the `Custom` project)
+    - Smart Home Scene Linkage (for scenes)
+- **⚠️Remember to extend the API trial period every 6 months here [Tuya IoT Platform > Cloud > Cloud Services > IoT Core](https://iot.tuya.com/cloud/products/detail?abilityId=1442730014117204014&id=p1668587814138nv4h3n&abilityAuth=0&tab=1) (the first-time subscription only gives you 1 month).**
 
 #### For "Custom" Project
 
 - `platform` - **required** : Must be 'TuyaPlatform'
 - `options.projectType` - **required** : Must be '1'
-- `options.endpoint` - **required** : Endpoint URL from [API Reference > Endpoints](https://developer.tuya.com/en/docs/iot/api-request?id=Ka4a8uuo1j4t4#title-1-Endpoints) table.
-- `options.accessId` - **required** : Access ID from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
-- `options.accessKey` - **required** : Access Secret from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
+- `options.endpoint` - **required** : The endpoint URL taken from the [API Reference > Endpoints](https://developer.tuya.com/en/docs/iot/api-request?id=Ka4a8uuo1j4t4#title-1-Endpoints) table.
+- `options.accessId` - **required** : The Access ID obtained from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
+- `options.accessKey` - **required** : The Access Secret obtained from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
 
 #### For "Smart Home" Project
 
 - `platform` - **required** : Must be 'TuyaPlatform'
 - `options.projectType` - **required** : Must be '2'
-- `options.accessId` - **required** : Access ID from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
-- `options.accessKey` - **required** : Access Secret from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
-- `options.countryCode` - **required** : Country Code
-- `options.username` - **required** : App username.
-- `options.password` - **required** : App password. MD5 salted password is also available for better config security.
-- `options.appSchema` - **required** : App schema. 'tuyaSmart' for Tuya Smart App, 'smartlife' for Smart Life App.
-- `options.homeWhitelist` - **optional**: An array of integer home ID values to whitelist. If present, only includes devices matching this Home ID value. Home ID can be found in the homebridge log.
+- `options.accessId` - **required** : The Access ID obtained from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
+- `options.accessKey` - **required** : The Access Secret obtained from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
+- `options.countryCode` - **required** : The country code.
+- `options.username` - **required** : The app username.
+- `options.password` - **required** : The app password. MD5 salted password is also available for increased security.
+- `options.appSchema` - **required** : The app schema: 'tuyaSmart' for the Tuya Smart App, or 'smartlife' for the Smart Life App.
+- `options.homeWhitelist` - **optional**: An array of integer values for the home IDs you want to whitelist. If provided, only devices with matching Home IDs will be included. You can find the Home ID in the homebridge log.
 
 
 #### Advanced options
@@ -93,34 +94,33 @@ See [ADVANCED_OPTIONS.md](./ADVANCED_OPTIONS.md)
 
 ## Limitations
 - **⚠️Don't forget to extend the API trial period every 6 months. Maybe you can set up a reminder in calendar.**
-- The app account can't be used in multiple Homebridge/HomeAssistant instance at the same time! Please consider using different app accounts instead.
-- The plugin requires the internet access to Tuya Cloud, and the lan protocol is not supported. See [#90](https://github.com/0x5e/homebridge-tuya-platform/issues/90)
+- Using the same app account for multiple Homebridge/HomeAssistant instances is not supported. Please use separate app accounts for each instance.
+- The plugin requires an internet connection to the Tuya Cloud and does not support the LAN protocol. See [#90](https://github.com/0x5e/homebridge-tuya-platform/issues/90) for more information.
 
 ## FAQ
 
 #### What is "Standard DP" and "Non-standard DP"?
 
-If your device is working properly, you don't need to know this.
+<!-- If your device is working properly, you don't need to know this. -->
 
-"Standard DP" means the device's DP Code is matching the code in documentation at: [Tuya IoT Development Platform Documentation > Cloud Development > Standard Instruction Set](https://developer.tuya.com/en/docs/iot/standarddescription?id=K9i5ql6waswzq).
+"Standard DP" refers to device properties or functionalities that are specified in the Tuya IoT Development Platform documentation at [Tuya IoT Development Platform Documentation > Cloud Development > Standard Instruction Set](https://developer.tuya.com/en/docs/iot/standarddescription?id=K9i5ql6waswzq).
 
-For example, a Lightbulb must have `switch_led` for power on/off, and optional code
-`bright_value`/`bright_value_v2` for brightness, `temp_value`/`temp_value_v2` for color temperature, `work_mode` for change working mode. These code can be found from above documentation. 
+For example, a light bulb should have a standard DP code of `switch_led` for power on/off, and optional codes `bright_value`/`bright_value_v2` for brightness, `temp_value`/`temp_value_v2` for color temperature, and `work_mode` for changing the working mode. These codes can be found in the above documentation.
 
-If your Lightbulb can adjust brightness in Tuya App, but can't do with the plugin, then mostly it has an "Non-standard DP".
+If your light bulb can be adjusted in the Tuya app but not with the plugin, it most likely has "Non-standard DP."
 
 
 #### Can "Non-standard DP" be supportd by this plugin?
 
-Yes. The device should be in the support list, then you need do these steps before it's working.
-1. Change device's control mode on Tuya Platform.
+Yes. The device must be listed in the support list and the following steps must be completed before it will work:
+1. Change the device's control mode on the Tuya Platform:
   - Go to "[Tuya Platform Cloud Development](https://iot.tuya.com/cloud/) > Your Project > Devices > All Devices > View Devices by Product".
-  - Find your device-related product, click the "pencil" icon (Change Control Instruction Mode).
+  - Find the product related to your device, click the "pencil" icon (Change Control Instruction Mode).
   - <img width="500" alt="image" src="https://user-images.githubusercontent.com/5144674/202967707-8b934e05-36d6-4b42-bb7b-87e5b24474c4.png">
-  - The "Table of Instructions" shows the cloud mapping, you can know which DP Codes of your device is missing, you need to manually map them later.
+  - In the "Table of Instructions", you can see the cloud mapping and determine which DP codes are missing and need to be manually mapped later.
   - <img width="500" alt="image" src="https://user-images.githubusercontent.com/5144674/202967528-4838f9a1-0547-4102-afbb-180dc9b198b1.png">
   - Select "DP Instruction" and save.
-2. Override device schema, see [ADVANCED_OPTIONS.md](./ADVANCED_OPTIONS.md).
+2. Override the device schema, see [ADVANCED_OPTIONS.md](./ADVANCED_OPTIONS.md).
 
 
 #### Local support
@@ -131,17 +131,16 @@ Although the plugin didn't implemented tuya local protocol now, it still remains
 
 ## Troubleshooting
 
-If your device is not supported, please complete the following steps to collecting the data.
+If your device is not supported, please follow these steps to collect information.
 
 #### 1. Get Device Information
 
-After successful launching Homebridge, the device info list will be saved inside Homebridge's persist path.
-You can get the file path from homebridge log:
+After Homebridge has been successfully launched, the device information list will be saved in Homebridge's persist path. You can find the file path in the Homebridge log:
 ```
 [2022/11/3 18:37:43] [TuyaPlatform] Device list saved at /path/to/TuyaDeviceList.{uid}.json
 ```
 
-**⚠️Please remove the sensitive data such as `ip`, `lon`, `lat`, `local_key`, `uid` before submit the file.**
+**⚠️Please make sure to remove sensitive information such as `ip`, `lon`, `lat`, `local_key`, and `uid` before submitting the file.**
 
 
 #### 2. Enable Homebridge Debug Mode
@@ -152,11 +151,11 @@ For Homebridge Web UI users:
 - Restart Homebridge.
 
 For Homebridge Command Line Users:
-- Start Homebridge with `-D` flag: `homebridge -D`
+- Start Homebridge with the `-D` flag: `homebridge -D`
 
-#### 3. Collecting Logs
+#### 3. Collect Logs
 
-With debug mode on, you can now receive mqtt logs. Operate your device physically, or via Tuya App, then you will get mqtt logs like this:
+With debug mode enabled, you can now receive MQTT logs. Operate your device, either physically or through the Tuya App, to receive MQTT logs like this:
 
 ```
 [2022/12/8 12:51:59] [TuyaPlatform] [TuyaOpenMQ] onMessage:
@@ -177,9 +176,9 @@ message = {
 }
 ```
 
-If you can't get any mqtt logs when controlling the device, mostly means that your device probably have "Non-standard DP".
+If you are unable to receive any MQTT logs while controlling the device, it likely means that your device has "Non-standard DP".
 
-With the device info json and mqtt logs, please submit the issue to help us supporting new device category.
+By submitting the device information JSON and MQTT logs, you can help us support new device categories.
 
 
 ## Contributing
