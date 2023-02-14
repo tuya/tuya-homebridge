@@ -253,6 +253,7 @@ export default class OverridedBaseAccessory extends BaseAccessory {
       mode: oldSchema.mode,
       type: schemaConfig.type || oldSchema.type,
       property: schemaConfig.property || oldSchema.property,
+      _hidden: schemaConfig.hidden,
     } as TuyaDeviceSchema;
 
     if (!isEqual(oldSchema, schema)) {
@@ -267,6 +268,9 @@ export default class OverridedBaseAccessory extends BaseAccessory {
       const schema = this.getOverridedSchema(code) || super.getSchema(code);
       if (!schema) {
         continue;
+      }
+      if (schema['_hidden']) {
+        return undefined;
       }
       return schema;
     }
