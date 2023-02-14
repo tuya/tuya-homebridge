@@ -49,6 +49,40 @@ export type TuyaDeviceStatus = {
   value: string | number | boolean;
 };
 
+export type TuyaIRRemoteKeyListItem = {
+  key: string;
+  key_id: number;
+  key_name: string;
+  standard_key: boolean;
+};
+
+export type TuyaIRRemoteTempListItem = {
+  temp: number;
+  temp_name: string;
+  fan_list: TuyaIRRemoteFanListItem[];
+};
+
+export type TuyaIRRemoteKeyRangeItem = {
+  mode: number;
+  mode_name: string;
+  temp_list: TuyaIRRemoteTempListItem[];
+};
+
+export type TuyaIRRemoteFanListItem = {
+  fan: number;
+  fan_name: string;
+};
+
+export type TuyaIRRemoteKeys = {
+  category_id: number;
+  brand_id: number;
+  remote_index: number;
+  single_air: boolean;
+  duplicate_power: boolean;
+  key_list: TuyaIRRemoteKeyListItem[];
+  key_range: TuyaIRRemoteKeyRangeItem[];
+};
+
 export default class TuyaDevice {
 
   // device
@@ -80,6 +114,9 @@ export default class TuyaDevice {
   update_time!: number;
 
   // ...
+  parent_id!: string;
+  sub!: boolean;
+  remote_keys!: TuyaIRRemoteKeys;
 
   constructor(obj: Partial<TuyaDevice>) {
     Object.assign(this, obj);

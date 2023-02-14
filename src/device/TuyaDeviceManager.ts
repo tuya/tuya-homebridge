@@ -6,7 +6,6 @@ import TuyaDevice, {
   TuyaDeviceSchema,
   TuyaDeviceSchemaMode,
   TuyaDeviceSchemaProperty,
-  TuyaDeviceSchemaType,
   TuyaDeviceStatus,
 } from './TuyaDevice';
 
@@ -92,18 +91,10 @@ export default class TuyaDeviceManager extends EventEmitter {
 
     // Combine functions and status together, as it used to be.
     const schemas = new Map<string, TuyaDeviceSchema>();
-    for (const { code, type: rawType, values: rawValues } of [...res.result.status, ...res.result.functions]) {
+    for (const { code, type, values } of [...res.result.status, ...res.result.functions]) {
       if (schemas[code]) {
         continue;
       }
-
-      // Transform IR device's special schema.
-      const type = {
-        'BOOLEAN': TuyaDeviceSchemaType.Boolean,
-        'ENUM': TuyaDeviceSchemaType.Integer,
-        'STRING': TuyaDeviceSchemaType.Enum,
-      }[rawType] || rawType;
-      const values = (rawType === 'STRING') ? JSON.stringify({ range: [rawValues] }) : rawValues;
 
       const read = (res.result.status).find(schema => schema.code === code) !== undefined;
       const write = (res.result.functions).find(schema => schema.code === code) !== undefined;
@@ -120,13 +111,65 @@ export default class TuyaDeviceManager extends EventEmitter {
         property = JSON.parse(values);
         schemas[code] = { code, mode, type, property };
       } catch (error) {
-        this.log.error(error);
+        // ignore infrared remote's invalid schema because it's not used.
       }
     }
 
     return Object.values(schemas).sort((a, b) => a.code > b.code ? 1 : -1) as TuyaDeviceSchema[];
   }
 
+  async getInfraredRemotes(infraredID: string) {
+    const res = await this.api.get(`/v2.0/infrareds/${infraredID}/remotes`);
+    return res;
+  }
+
+  async getInfraredKeys(infraredID: string, remoteID: string) {
+    const res = await this.api.get(`/v2.0/infrareds/${infraredID}/remotes/${remoteID}/keys`);
+    return res;
+  }
+
+  async updateInfraredRemotes(allDevices: TuyaDevice[]) {
+
+    const irControlHubs = allDevices.filter(device => device.category === 'wnykq');
+    for (const irControlHub of irControlHubs) {
+      const res = await this.getInfraredRemotes(irControlHub.id);
+      if (!res.success) {
+        this.log.warn('Get infrared remotes failed. deviceId = %d, code = %s, msg = %s', irControlHub.id, res.code, res.msg);
+        continue;
+      }
+
+      for (const remoteInfo of res.result) {
+        const device = allDevices.find(device => device.id === remoteInfo.remote_id);
+        if (!device) {
+          continue;
+        }
+        device.parent_id = irControlHub.id;
+        device.schema = [];
+        const res = await this.getInfraredKeys(irControlHub.id, device.id);
+        if (!res.success) {
+          this.log.warn('Get infrared remote keys failed. deviceId = %d, code = %s, msg = %s', device.id, res.code, res.msg);
+          continue;
+        }
+        device.remote_keys = res.result;
+      }
+    }
+  }
+
+  async sendInfraredCommands(infraredID: string, remoteID: string, category_id: number, remote_index: number, key: string, key_id: number) {
+    const res = await this.api.post(`/v2.0/infrareds/${infraredID}/remotes/${remoteID}/raw/command`, {
+      category_id, remote_index, key, key_id,
+    });
+    return res;
+  }
+
+  async sendInfraredACCommands(infraredID: string, remoteID: string, power: number, mode: number, temp: number, wind: number) {
+    const commands = (power === 1) ? { power, mode, temp, wind } : { power };
+    const res = await this.api.post(`/v2.0/infrareds/${infraredID}/air-conditioners/${remoteID}/scenes/command`, commands);
+    if (!res.success) {
+      this.log.info('Send AC command failed. code = %d, msg = %s', res.code, res.msg);
+    }
+    return res;
+  }
 
   async sendCommands(deviceID: string, commands: TuyaDeviceStatus[]) {
     const res = await this.api.post(`/v1.0/devices/${deviceID}/commands`, { commands });

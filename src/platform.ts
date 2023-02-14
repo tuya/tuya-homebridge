@@ -90,7 +90,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
    */
   async initDevices() {
 
-    let devices;
+    let devices: TuyaDevice[] | undefined;
     if (this.options.projectType === '1') {
       devices = await this.initCustomProject();
     } else if (this.options.projectType === '2') {
@@ -99,12 +99,14 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       this.log.warn(`Unsupported projectType: ${this.config.options.projectType}.`);
     }
 
-    if (!devices) {
+    if (!devices || !this.deviceManager) {
       return;
     }
 
+    await this.deviceManager.updateInfraredRemotes(devices);
+
     this.log.info(`Got ${devices.length} device(s) and scene(s).`);
-    const file = path.join(this.api.user.persistPath(), `TuyaDeviceList.${this.deviceManager!.api.tokenInfo.uid}.json`);
+    const file = path.join(this.api.user.persistPath(), `TuyaDeviceList.${this.deviceManager.api.tokenInfo.uid}.json`);
     this.log.info('Device list saved at %s', file);
     if (!fs.existsSync(this.api.user.persistPath())) {
       await fs.promises.mkdir(this.api.user.persistPath());
@@ -158,7 +160,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
   async initCustomProject() {
     if (this.options.projectType !== '1') {
-      return null;
+      return undefined;
     }
 
     const DEFAULT_USER = 'homebridge';
@@ -173,7 +175,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     res = await api.getToken();
     if (res.success === false) {
       this.log.error(`Get token failed. code=${res.code}, msg=${res.msg}`);
-      return null;
+      return undefined;
     }
 
 
@@ -181,7 +183,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     res = await api.customGetUserInfo(DEFAULT_USER);
     if (res.success === false) {
       this.log.error(`Search user failed. code=${res.code}, msg=${res.msg}`);
-      return null;
+      return undefined;
     }
 
 
@@ -191,7 +193,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       res = await api.customCreateUser(DEFAULT_USER, DEFAULT_PASS);
       if (res.success === false) {
         this.log.error(`Create default user failed. code=${res.code}, msg=${res.msg}`);
-        return null;
+        return undefined;
       }
     } else {
       this.log.info(`Default user "${DEFAULT_USER}" exists.`);
@@ -203,7 +205,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     res = await deviceManager.getAssetList();
     if (res.success === false) {
       this.log.error(`Fetching asset list failed. code=${res.code}, msg=${res.msg}`);
-      return null;
+      return undefined;
     }
 
     const assetIDList: string[] = [];
@@ -214,7 +216,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
     if (assetIDList.length === 0) {
       this.log.warn('Asset list is empty. exit.');
-      return null;
+      return undefined;
     }
 
 
@@ -222,7 +224,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     res = await deviceManager.authorizeAssetList(uid, assetIDList, true);
     if (res.success === false) {
       this.log.error(`Authorize asset list failed. code=${res.code}, msg=${res.msg}`);
-      return null;
+      return undefined;
     }
 
 
@@ -233,7 +235,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       if (LOGIN_ERROR_MESSAGES[res.code]) {
         this.log.error(LOGIN_ERROR_MESSAGES[res.code]);
       }
-      return null;
+      return undefined;
     }
 
     this.log.info('Start MQTT connection.');
@@ -249,7 +251,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
   async initHomeProject() {
     if (this.options.projectType !== '2') {
-      return null;
+      return undefined;
     }
 
     let res;
@@ -264,7 +266,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       if (LOGIN_ERROR_MESSAGES[res.code]) {
         this.log.error(LOGIN_ERROR_MESSAGES[res.code]);
       }
-      return null;
+      return undefined;
     }
 
     this.log.info('Start MQTT connection.');
@@ -274,7 +276,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     res = await deviceManager.getHomeList();
     if (res.success === false) {
       this.log.error(`Fetching home list failed. code=${res.code}, msg=${res.msg}`);
-      return null;
+      return undefined;
     }
 
     const homeIDList: number[] = [];

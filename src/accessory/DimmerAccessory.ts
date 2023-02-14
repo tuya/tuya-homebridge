@@ -2,6 +2,7 @@ import { Service } from 'homebridge';
 import { TuyaDeviceSchemaIntegerProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { remap, limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
+import { configureName } from './characteristic/Name';
 import { configureOn } from './characteristic/On';
 
 const SCHEMA_CODE = {
@@ -31,12 +32,7 @@ export default class DimmerAccessory extends BaseAccessory {
       const service = this.accessory.getService(_schema.code)
         || this.accessory.addService(this.Service.Lightbulb, name, _schema.code);
 
-      service.setCharacteristic(this.Characteristic.Name, name);
-      if (!service.testCharacteristic(this.Characteristic.ConfiguredName)) {
-        service.addOptionalCharacteristic(this.Characteristic.ConfiguredName); // silence warning
-        service.setCharacteristic(this.Characteristic.ConfiguredName, name);
-      }
-
+      configureName(this, service, name);
       configureOn(this, service, this.getSchema('switch' + suffix, 'switch_led' + suffix));
       this.configureBrightness(service, suffix);
     }

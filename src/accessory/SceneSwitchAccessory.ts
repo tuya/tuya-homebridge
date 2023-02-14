@@ -1,5 +1,6 @@
 import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
+import { configureName } from './characteristic/Name';
 
 export default class SceneSwitchAccessory extends BaseAccessory {
 
@@ -19,11 +20,7 @@ export default class SceneSwitchAccessory extends BaseAccessory {
     const service = this.accessory.getService(schema.code)
       || this.accessory.addService(this.Service.Switch, name, schema.code);
 
-    service.setCharacteristic(this.Characteristic.Name, name);
-    if (!service.testCharacteristic(this.Characteristic.ConfiguredName)) {
-      service.addOptionalCharacteristic(this.Characteristic.ConfiguredName); // silence warning
-      service.setCharacteristic(this.Characteristic.ConfiguredName, name);
-    }
+    configureName(this, service, name);
 
     const suffix = schema.code.replace('switch', '');
     const modeSchema = this.getSchema('mode' + suffix);

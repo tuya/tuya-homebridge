@@ -1,5 +1,6 @@
 import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
+import { configureName } from './characteristic/Name';
 import { configureOn } from './characteristic/On';
 import { configureEnergyUsage } from './characteristic/EnergyUsage';
 import { configureCurrentTemperature } from './characteristic/CurrentTemperature';
@@ -53,12 +54,7 @@ export default class SwitchAccessory extends BaseAccessory {
     const service = this.accessory.getService(schema.code)
       || this.accessory.addService(this.mainService(), name, schema.code);
 
-    service.setCharacteristic(this.Characteristic.Name, name);
-    if (!service.testCharacteristic(this.Characteristic.ConfiguredName)) {
-      service.addOptionalCharacteristic(this.Characteristic.ConfiguredName); // silence warning
-      service.setCharacteristic(this.Characteristic.ConfiguredName, name);
-    }
-
+    configureName(this, service, name);
     configureOn(this, service, schema);
 
     if (schema.code === this.getSchema(...SCHEMA_CODE.ON)?.code) {

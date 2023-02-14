@@ -7,7 +7,7 @@ const SCHEMA_CODE = {
   CURRENT_HUMIDITY: ['va_humidity', 'humidity_value'],
 };
 
-export default class TemperatureHumidityIRSensorAccessory extends BaseAccessory {
+export default class IRControlHubAccessory extends BaseAccessory {
 
   requiredSchema() {
     return [];

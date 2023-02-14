@@ -1,6 +1,7 @@
 import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
+import { configureName } from './characteristic/Name';
 
 const SCHEMA_CODE = {
   ON: ['switch', 'switch_1'],
@@ -32,11 +33,8 @@ export default class ValveAccessory extends BaseAccessory {
     const service = this.accessory.getService(schema.code)
       || this.accessory.addService(this.Service.Valve, name, schema.code);
 
-    service.setCharacteristic(this.Characteristic.Name, name);
-    if (!service.testCharacteristic(this.Characteristic.ConfiguredName)) {
-      service.addOptionalCharacteristic(this.Characteristic.ConfiguredName); // silence warning
-      service.setCharacteristic(this.Characteristic.ConfiguredName, name);
-    }
+    configureName(this, service, name);
+
     service.setCharacteristic(this.Characteristic.ValveType, this.Characteristic.ValveType.IRRIGATION);
 
     const { NOT_IN_USE, IN_USE } = this.Characteristic.InUse;
