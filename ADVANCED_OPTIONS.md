@@ -2,32 +2,31 @@
 
 **During the beta version, the options are unstable, may get changed during updates.**
 
-The main function of `deviceOverrides` is to convert "non-standard schema" to "standard schema", making device compatible with this plugin.
+The main function of `deviceOverrides` is to convert "non-standard schema" to "standard schema", making the device compatible with this plugin.
 
-Before config, you may need to:
-- Have basic programming skills of JavaScript (Only used in `onGet`/`onSet` handler).
-- Understand the meaning of device schema (aka Data Type): [Tuya IoT Development Platform > Cloud Development > Standard Instruction Set > Data Type](https://developer.tuya.com/en/docs/iot/datatypedescription?id=K9i5ql2jo7j1k)
-- Find your device product's "Standard Instruction Set" and "Standard Status Set" documentation under [Tuya IoT Development Platform > Cloud Development > Standard Instruction Set](https://developer.tuya.com/en/docs/iot/datatypedescription?id=K9i5ql6waswzq)
-- Get your device's detail information from `/path/to/persist/TuyaDeviceList.xxx.json` (Full path can be found from logs).
-- Find the "wrong schema", then convert to the "correct schema" from product documentation.
+Before configuring, you may need to:
+- Have basic programming skills in JavaScript (Only used in `onGet`/`onSet` handlers).
+- Understand the concept of device schema (also known as Data Type): [Tuya IoT Development Platform > Cloud Development > Standard Instruction Set > Data Type](https://developer.tuya.com/en/docs/iot/datatypedescription?id=K9i5ql2jo7j1k)
+- Find the "Standard Instruction Set" and "Standard Status Set" documentation for your device product under [Tuya IoT Development Platform > Cloud Development > Standard Instruction Set](https://developer.tuya.com/en/docs/iot/datatypedescription?id=K9i5ql6waswzq)
+- Obtain detailed information about your device from `/path/to/persist/TuyaDeviceList.xxx.json` (the full path can be found from logs).
+- Identify the "incorrect schema" and convert it to the "correct schema" according to the product documentation.
 
 
 ### Configuration
 
-- `options.deviceOverrides` - **optional**: An array of device overriding config objects.
-- `options.deviceOverrides[].id` - **required**: Device ID, Product ID, Scene ID, or `global`.
-<!--
-- `options.deviceOverrides[].accessoryCategory` - **optional**: Accessory Category ID. Overriding this property can change accessory's icon. See: [Homebridge Plugin Documentation > Categories](https://developers.homebridge.io/#/categories)
--->
-- `options.deviceOverrides[].category` - **optional**: Device category code. See [SUPPORTED_DEVICES.md](./SUPPORTED_DEVICES.md). Also you can use `hidden` to hide device, product, or scene. **⚠️Overriding this property may leads to unexpected behaviors and exceptions. Please remove accessory cache after change this.**
+`options.deviceOverrides` is an **optional** array of device overriding config objects, which is used for converting "non-standard schema" to "standard schema", making the device compatible with this plugin. The structure of each element in the array is described as follows:
 
-- `options.deviceOverrides[].schema` - **optional**: An array of schema overriding config objects, used for describing datapoint(DP). When your device have non-standard DP, you need to transform them manually with config.
-- `options.deviceOverrides[].schema[].oldCode` - **required**: Original DP code.
-- `options.deviceOverrides[].schema[].code` - **required**: New DP code.
-- `options.deviceOverrides[].schema[].type` - **optional**: New DP type. One of the `Boolean`, `Integer`, `Enum`, `String`, `Json`, `Raw`.
-- `options.deviceOverrides[].schema[].property` - **optional**: New DP property object. For `Integer` type, the object should contains `min`, `max`, `scale`, `step`; For `Enum` type, the object should contains `range`. For detail information, please see `TuyaDeviceSchemaProperty` in [TuyaDevice.ts](./src/device/TuyaDevice.ts).
-- `options.deviceOverrides[].schema[].onGet` - **optional**: An one-line JavaScript code convert old value to new value. The function is called with two arguments: `device`, `value`.
-- `options.deviceOverrides[].schema[].onSet` - **optional**: An one-line JavaScript code convert new value to old value. The function is called with two arguments: `device`, `value`. return `undefined` means skip send this command.
+- `id` - **required**: Device ID, Product ID, Scene ID, or `global`.
+- `category` - **optional**: Device category code. See [SUPPORTED_DEVICES.md](./SUPPORTED_DEVICES.md). Also you can use `hidden` to hide the device, product, or scene. **⚠️Overriding this property may lead to unexpected behaviors and exceptions, so please remove the accessory cache after making changes.**
+- `schema` - **optional**: An array of schema overriding config objects, used for describing datapoint (DP). When your device has non-standard DP, you need to transform them manually with configuration. Each element in the schema array is described as follows:
+  - `code` - **required**: DP code.
+  - `newCode` - **optional**: New DP code.
+  - `type` - **optional**: New DP type. One of `Boolean`, `Integer`, `Enum`, `String`, `Json`, or `Raw`.
+  - `property` - **optional**: New DP property object. For `Integer` type, the object should contain `min`, `max`, `scale`, and `step`. For `Enum` type, the object should contain `range`. For more information, see `TuyaDeviceSchemaProperty` in [TuyaDevice.ts](./src/device/TuyaDevice.ts).
+  - `onGet` - **optional**: A one-line JavaScript code to convert the old value to the new value. The function is called with two arguments: `device` and `value`.
+  - `onSet` - **optional**: A one-line JavaScript code to convert the new value to the old value. The function is called with two arguments: `device` and `value`. Returning `undefined` means to skip sending the command.
+  - `hidden` - **optional**: Whether to hide the schema. Defaults to `false`.
+
 
 ## Examples
 
@@ -61,6 +60,7 @@ Just the same way as changing category code.
 }
 ```
 
+
 ### Offline as off
 
 If you want to display off status when device is offline:
@@ -71,7 +71,6 @@ If you want to display off status when device is offline:
     "deviceOverrides": [{
       "id": "{device_id}",
       "schema": [{
-        "oldCode": "{dp_code}",
         "code": "{dp_code}",
         "onGet": "(device.online && value)"
       }]
@@ -79,6 +78,7 @@ If you want to display off status when device is offline:
   }
 }
 ```
+
 
 ### Change DP code
 
@@ -97,6 +97,7 @@ If you want to display off status when device is offline:
 }
 ```
 
+
 ### Convert from enum DP to boolean DP
 
 A example of convert `open`/`close` into `true`/`false`.
@@ -107,8 +108,7 @@ A example of convert `open`/`close` into `true`/`false`.
     "deviceOverrides": [{
       "id": "{device_id}",
       "schema": [{
-        "oldCode": "{old_dp_code}",
-        "code": "{new_dp_code}",
+        "code": "{dp_code}",
         "type": "Boolean",
         "onGet": "(value === 'open') ? true : false;",
         "onSet": "(value === true) ? 'open' : 'close';"
@@ -117,6 +117,7 @@ A example of convert `open`/`close` into `true`/`false`.
   }
 }
 ```
+
 
 ### Adjust integer DP ranges
 
@@ -146,7 +147,6 @@ Here's the example config:
     "deviceOverrides": [{
       "id": "{device_id}",
       "schema": [{
-        "oldCode": "temp_set",
         "code": "temp_set",
         "onGet": "(value * 5);",
         "onSet": "(value / 5);",
@@ -164,6 +164,7 @@ Here's the example config:
 
 After transform value using `onGet` and `onSet`, and new range in `property`, it should be working now.
 
+
 ### Reverse curtain motor's on/off state
 
 Most curtain motor have "reverse mode" setting in the Tuya App, if you don't have this, you can reverse `percent_control`/`position` and `percent_state` in the plugin config:
@@ -175,12 +176,10 @@ Most curtain motor have "reverse mode" setting in the Tuya App, if you don't hav
     "deviceOverrides": [{
       "id": "{device_id}",
       "schema": [{
-        "oldCode": "percent_control",
         "code": "percent_control",
         "onGet": "(100 - value)",
         "onSet": "(100 - value)"
       }, {
-        "oldCode": "percent_state",
         "code": "percent_state",
         "onGet": "(100 - value)",
         "onSet": "(100 - value)"
@@ -189,6 +188,7 @@ Most curtain motor have "reverse mode" setting in the Tuya App, if you don't hav
   }
 }
 ```
+
 
 ### Skip send on/off command when touching brightness/speed slider
 
@@ -201,7 +201,6 @@ Some products (dimmer, fan) having issue when sending brightness/speed command w
     "deviceOverrides": [{
       "id": "{device_id}",
       "schema": [{
-        "oldCode": "switch_led",
         "code": "switch_led",
         "onSet": "(value === device.status.find(status => status.code === 'switch_led').value) ? undefined : value"
       }]
@@ -209,6 +208,7 @@ Some products (dimmer, fan) having issue when sending brightness/speed command w
   }
 }
 ```
+
 
 ### Convert Fahrenheit to Celsius
 
@@ -223,7 +223,6 @@ C = (F - 32) / 1.8
     "deviceOverrides": [{
       "id": "{device_id}",
       "schema": [{
-        "oldCode": "temp_current",
         "code": "temp_current",
         "onGet": "Math.round((value - 32) / 1.8);",
         "onSet": "Math.round(1.8 * value + 32);"

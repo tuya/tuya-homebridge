@@ -2,12 +2,13 @@ import { PlatformConfig } from 'homebridge';
 import { TuyaDeviceSchemaProperty, TuyaDeviceSchemaType } from './device/TuyaDevice';
 
 export interface TuyaPlatformDeviceSchemaConfig {
-  oldCode: string;
   code: string;
+  newCode: string;
   type: TuyaDeviceSchemaType;
   property: TuyaDeviceSchemaProperty;
   onGet: string;
   onSet: string;
+  hidden: boolean;
 }
 
 export interface TuyaPlatformDeviceConfig {
