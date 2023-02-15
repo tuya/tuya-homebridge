@@ -150,6 +150,15 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       return undefined;
     }
 
+    // migrate old config
+    deviceConfig.schema.forEach(item => {
+      if (item['oldCode']) {
+        item.newCode = item.code;
+        item.code = item['oldCode'];
+        item['oldCode'] = undefined;
+      }
+    });
+
     const schemaConfig = deviceConfig.schema.find(item => item.newCode ? item.newCode === code : item.code === code);
     if (!schemaConfig) {
       return undefined;
