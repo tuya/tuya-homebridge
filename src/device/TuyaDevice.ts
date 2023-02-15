@@ -127,4 +127,12 @@ export default class TuyaDevice {
     return this.id.startsWith('vdevo');
   }
 
+  isIRControlHub() {
+    return this.category === 'wnykq' || this.category === 'hwktwkq';
+  }
+
+  isIRRemoteControl() {
+    return this.remote_keys !== undefined;
+  }
+
 }

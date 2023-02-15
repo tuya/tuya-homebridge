@@ -171,19 +171,19 @@ export default class AccessoryFactory {
         handler = new HumanPresenceSensorAccessory(platform, accessory);
         break;
 
-      // IR Remote Control
-      case 'wnykq':
-        handler = new IRControlHubAccessory(platform, accessory);
-        break;
-
       // Other
       case 'scene':
         handler = new SceneAccessory(platform, accessory);
         break;
     }
 
+    // IR Control Hub
+    if (device.isIRControlHub()) {
+      handler = new IRControlHubAccessory(platform, accessory);
+    }
+
     // IR Remote Control
-    if (device.remote_keys) {
+    if (device.isIRRemoteControl()) {
       switch (device.remote_keys.category_id) {
         case 5: // AC
           handler = new IRAirConditionerAccessory(platform, accessory);

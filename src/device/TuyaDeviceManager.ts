@@ -130,11 +130,11 @@ export default class TuyaDeviceManager extends EventEmitter {
 
   async updateInfraredRemotes(allDevices: TuyaDevice[]) {
 
-    const irControlHubs = allDevices.filter(device => device.category === 'wnykq');
-    for (const irControlHub of irControlHubs) {
-      const res = await this.getInfraredRemotes(irControlHub.id);
+    const irDevices = allDevices.filter(device => device.isIRControlHub());
+    for (const irDevice of irDevices) {
+      const res = await this.getInfraredRemotes(irDevice.id);
       if (!res.success) {
-        this.log.warn('Get infrared remotes failed. deviceId = %d, code = %s, msg = %s', irControlHub.id, res.code, res.msg);
+        this.log.warn('Get infrared remotes failed. deviceId = %d, code = %s, msg = %s', irDevice.id, res.code, res.msg);
         continue;
       }
 
@@ -143,9 +143,9 @@ export default class TuyaDeviceManager extends EventEmitter {
         if (!device) {
           continue;
         }
-        device.parent_id = irControlHub.id;
+        device.parent_id = irDevice.id;
         device.schema = [];
-        const res = await this.getInfraredKeys(irControlHub.id, device.id);
+        const res = await this.getInfraredKeys(irDevice.id, device.id);
         if (!res.success) {
           this.log.warn('Get infrared remote keys failed. deviceId = %d, code = %s, msg = %s', device.id, res.code, res.msg);
           continue;

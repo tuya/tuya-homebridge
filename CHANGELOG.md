@@ -17,6 +17,7 @@
 - Add Environmental Detector support (`hjjcy`).
 - Add Water Valve Controller support (`sfkzq`).
 - Add IR/RF Remote Control support (`infrared_tv`, `infrared_stb`, `infrared_box`, `infrared_ac`, `infrared_fan`, `infrared_light`, `infrared_amplifier`, `infrared_projector`, `infrared_waterheater`, `infrared_airpurifier`).
+- Add IR AC Controller support (`hwktwkq`).
 
 
 ### Fixed
