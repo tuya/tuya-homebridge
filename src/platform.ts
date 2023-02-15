@@ -103,6 +103,16 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       return;
     }
 
+    // override device category
+    for (const device of devices) {
+      const deviceConfig = this.getDeviceConfig(device);
+      if (!deviceConfig || !deviceConfig.category) {
+        continue;
+      }
+      this.log.warn('Override %o category from %o to %o', device.name, device.category, deviceConfig.category);
+      device.category = deviceConfig.category;
+    }
+
     await this.deviceManager.updateInfraredRemotes(devices);
 
     this.log.info(`Got ${devices.length} device(s) and scene(s).`);
@@ -325,14 +335,9 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
   }
 
   addAccessory(device: TuyaDevice) {
-    const deviceConfig = this.getDeviceConfig(device);
-    if (deviceConfig?.category) {
-      this.log.warn('Override %o category to %o', device.name, deviceConfig.category);
-      device.category = deviceConfig.category;
-      if (deviceConfig.category === 'hidden') {
-        this.log.info('Hide Accessory:', device.name);
-        return;
-      }
+    if (device.category === 'hidden') {
+      this.log.info('Hide Accessory:', device.name);
+      return;
     }
 
     const uuid = this.api.hap.uuid.generate(device.id);
