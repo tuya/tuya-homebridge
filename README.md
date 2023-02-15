@@ -64,6 +64,7 @@ Before you can configure, you must go to the [Tuya IoT Platform](https://iot.tuy
     - IoT Core
     - IoT Video Live Stream (for cameras)
     - Industry Project Client Service (for the `Custom` project)
+    - IR Control Hub Open Service (for IR/RF devices)
     - Smart Home Scene Linkage (for scenes)
 - **⚠️Remember to extend the API trial period every 6 months here [Tuya IoT Platform > Cloud > Cloud Services > IoT Core](https://iot.tuya.com/cloud/products/detail?abilityId=1442730014117204014&id=p1668587814138nv4h3n&abilityAuth=0&tab=1) (the first-time subscription only gives you 1 month).**
 
