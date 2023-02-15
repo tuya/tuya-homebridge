@@ -89,8 +89,8 @@ If you want to display off status when device is offline:
     "deviceOverrides": [{
       "id": "{device_id}",
       "schema": [{
-          "oldCode": "{old_dp_code}",
-          "code": "{new_dp_code}"
+          "code": "{old_dp_code}",
+          "newCode": "{new_dp_code}"
       }]
     }]
   }
