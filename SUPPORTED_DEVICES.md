@@ -194,4 +194,9 @@ Most category code is pinyin abbreviation of Chinese name.
 
 ## Others
 
-For the undocumented product category, you can get code and name from `/v1.0/iot-03/device-categories`, no more detail informations.
+| Name | Name (zh) | Code | Homebridge Service | Supported | Links |
+| ---- | ---- | ---- | ---- | ---- | ---- |
+| Fingerbot | 手指机器人 | szjqr | Switch | ✅ | Documentation |
+
+
+For the undocumented product category, you can try override it to the most similar one. See [ADVANCED_OPTIONS.md](./ADVANCED_OPTIONS.md).
