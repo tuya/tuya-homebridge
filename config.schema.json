@@ -28,10 +28,7 @@
 					"endpoint": {
 						"title": "Endpoint URL",
 						"type": "string",
-						"format": "url",
-						"condition": {
-							"functionBody": "return model.options.projectType === '1';"
-						}
+						"format": "url"
 					},
 					"accessId": {
 						"title": "Access ID",

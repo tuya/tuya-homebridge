@@ -160,9 +160,10 @@ export default class TuyaOpenAPI {
    * @param username Username
    * @param password Password
    * @param appSchema App Schema: 'tuyaSmart', 'smartlife'
+   * @param endpoint Endpoint URL
    * @returns
    */
-  async homeLogin(countryCode: number, username: string, password: string, appSchema: string) {
+  async homeLogin(countryCode: number, username: string, password: string, appSchema: string, endpoint?: string) {
 
     if (this._isSaltedPassword(password)) {
       this.log.info('Login with md5 salted password.');
@@ -170,12 +171,17 @@ export default class TuyaOpenAPI {
       password = Crypto.createHash('md5').update(password).digest('hex');
     }
 
-    for (const _endpoint of Object.keys(DEFAULT_ENDPOINTS)) {
-      const countryCodeList = DEFAULT_ENDPOINTS[_endpoint];
-      if (countryCodeList.includes(countryCode)) {
-        this.endpoint = <Endpoints>_endpoint;
+    if (!endpoint) {
+      for (const _endpoint of Object.keys(DEFAULT_ENDPOINTS)) {
+        const countryCodeList = DEFAULT_ENDPOINTS[_endpoint];
+        if (countryCodeList.includes(countryCode)) {
+          endpoint = _endpoint;
+          break;
+        }
       }
     }
+    this.endpoint = <Endpoints>endpoint;
+    this.log.info('Login to: %s', endpoint);
 
     this.tokenInfo = { access_token: '', refresh_token: '', uid: '', expire: 0 };
     const res = await this.post('/v1.0/iot-01/associated-users/actions/authorized-login', {

@@ -274,12 +274,12 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     }
 
     let res;
-    const { accessId, accessKey, countryCode, username, password, appSchema } = this.options;
+    const { accessId, accessKey, countryCode, username, password, appSchema, endpoint } = this.options;
     const api = new TuyaOpenAPI(TuyaOpenAPI.Endpoints.AMERICA, accessId, accessKey, this.log);
     const deviceManager = new TuyaHomeDeviceManager(api);
 
     this.log.info('Log in to Tuya Cloud.');
-    res = await api.homeLogin(countryCode, username, password, appSchema);
+    res = await api.homeLogin(countryCode, username, password, appSchema, endpoint);
     if (res.success === false) {
       this.log.error(`Login failed. code=${res.code}, msg=${res.msg}`);
       if (LOGIN_ERROR_MESSAGES[res.code]) {

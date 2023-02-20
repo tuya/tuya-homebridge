@@ -56,7 +56,7 @@ The difference between them is:
 If you are a personal user and are unsure which one to choose, please use the `Smart Home` project.
 
 Before you can configure, you must go to the [Tuya IoT Platform](https://iot.tuya.com):
-- Create a cloud development project, and select the data center where your app account is located. See [Mappings Between OEM App Accounts and Data Centers](https://developer.tuya.com/en/docs/iot/oem-app-data-center-distributed?id=Kafi0ku9l07qb) (If you don't know where it is, just select all.)
+- Create a cloud development project, and select the data center where your app account is located. See [Mappings Between OEM App Accounts and Data Centers](https://developer.tuya.com/en/docs/iot/oem-app-data-center-distributed?id=Kafi0ku9l07qb)
 - Go to the `Project Page` > `Devices Panel` > `Link Tuya App Account`, and link your app account.
 - Go to the `Project Page` > `Service API` > `Go to Authorize`, and subscribe to the following APIs (it is free for trial):
     - Authorization Token Management
@@ -82,10 +82,11 @@ Before you can configure, you must go to the [Tuya IoT Platform](https://iot.tuy
 - `options.projectType` - **required** : Must be '2'
 - `options.accessId` - **required** : The Access ID obtained from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
 - `options.accessKey` - **required** : The Access Secret obtained from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
-- `options.countryCode` - **required** : The country code.
-- `options.username` - **required** : The app username.
-- `options.password` - **required** : The app password. MD5 salted password is also available for increased security.
+- `options.countryCode` - **required** : The country code of your app account's region.
+- `options.username` - **required** : The app account's username.
+- `options.password` - **required** : The app account's password. MD5 salted password is also available for increased security.
 - `options.appSchema` - **required** : The app schema: 'tuyaSmart' for the Tuya Smart App, or 'smartlife' for the Smart Life App.
+- `options.endpoint` - **optional** : The endpoint URL can be inferred from the [API Reference > Endpoints](https://developer.tuya.com/en/docs/iot/api-request?id=Ka4a8uuo1j4t4#title-1-Endpoints) table based on the country code provided. Only manually set this value if you encounter login issues and need to specify the endpoint for your account location.
 - `options.homeWhitelist` - **optional**: An array of integer values for the home IDs you want to whitelist. If provided, only devices with matching Home IDs will be included. You can find the Home ID in the homebridge log.
 
 
