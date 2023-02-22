@@ -26,6 +26,7 @@
 - Fix `bright_value` not sent for the `C/CW` lights who doesn't have `work_mode`. (#171)
 - Fix crash when camera sends an invalid status message.
 - Fix incorrect Door and Window Controller state. (#178)
+- Fix Thermostat cold mode not working (#242).
 
 
 ### Changed

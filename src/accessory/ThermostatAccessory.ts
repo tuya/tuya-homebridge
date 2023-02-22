@@ -149,7 +149,7 @@ export default class ThermostatAccessory extends BaseAccessory {
             if (property.range.includes('eco')) {
               commands.push({ code: schema.code, value: 'eco' });
             } else if (property.range.includes('cold')) {
-              commands.push({ code: schema.code, value: 'eco' });
+              commands.push({ code: schema.code, value: 'cold' });
             }
           } else if ((value === AUTO) && property.range.includes('auto')) {
             commands.push({ code: schema.code, value: 'auto' });
