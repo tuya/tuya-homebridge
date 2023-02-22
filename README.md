@@ -101,6 +101,18 @@ See [ADVANCED_OPTIONS.md](./ADVANCED_OPTIONS.md)
 
 ## FAQ
 
+#### About Login issue
+
+For most users, you can easily find your app account's data center through the [documentation](https://developer.tuya.com/en/docs/iot/oem-app-data-center-distributed?id=Kafi0ku9l07qb) and login without any issues. However, for some users, they may encounter error codes such as 1106 or 2406. If you encounter such errors, it's possible that there are differences between your data center and the documentation.
+
+To determine the data center, follow these steps:
+
+1. Open the app and navigate to "Me > Settings > Network Diagnosis".
+2. Start the diagnosis and select "Upload Log > Copy the Log to Clipboard".
+3. Paste the log anywhere and find the line beginning with "Region code:".
+4. Look for the following codes: "AY" for China, "AZ" for the West US, "EU" for Central Europe, and "IN" for India.
+
+
 #### What is "Standard DP" and "Non-standard DP"?
 
 <!-- If your device is working properly, you don't need to know this. -->
