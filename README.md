@@ -112,6 +112,8 @@ To determine the data center, follow these steps:
 3. Paste the log anywhere and find the line beginning with "Region code:".
 4. Look for the following codes: "AY" for China, "AZ" for the West US, "EU" for Central Europe, and "IN" for India.
 
+Then manually specify endpoint in the plugin config.
+
 
 #### What is "Standard DP" and "Non-standard DP"?
 
