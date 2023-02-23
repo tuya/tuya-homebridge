@@ -5,9 +5,9 @@ import { configureCurrentTemperature } from './characteristic/CurrentTemperature
 
 const SCHEMA_CODE = {
   PM2_5: ['pm25_value'],
-  PM10: ['pm10_value'],
+  PM10: ['pm10_value', 'pm10'],
   VOC: ['voc_value'],
-  CURRENT_TEMP: ['va_temperature', 'temp_indoor'],
+  CURRENT_TEMP: ['va_temperature', 'temp_indoor', 'temp_current'],
   CURRENT_HUMIDITY: ['va_humidity', 'humidity_value'],
 };
 
