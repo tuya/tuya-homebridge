@@ -13,6 +13,7 @@ import FanAccessory from './FanAccessory';
 import GarageDoorAccessory from './GarageDoorAccessory';
 import WindowAccessory from './WindowAccessory';
 import WindowCoveringAccessory from './WindowCoveringAccessory';
+import LockAccessory from './LockAccessory';
 import ThermostatAccessory from './ThermostatAccessory';
 import HeaterAccessory from './HeaterAccessory';
 import ValveAccessory from './ValveAccessory';
@@ -170,6 +171,10 @@ export default class AccessoryFactory {
         break;
       case 'hps':
         handler = new HumanPresenceSensorAccessory(platform, accessory);
+        break;
+      case 'ms':
+      case 'jtmspro':
+        handler = new LockAccessory(platform, accessory);
         break;
 
       // Other

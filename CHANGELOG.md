@@ -19,6 +19,7 @@
 - Add IR Remote Control support (`infrared_tv`, `infrared_stb`, `infrared_box`, `infrared_ac`, `infrared_fan`, `infrared_light`, `infrared_amplifier`, `infrared_projector`, `infrared_waterheater`, `infrared_airpurifier`).
 - Add IR AC Controller support (`hwktwkq`).
 - Add Fingerbot support (`szjqr`).
+- Add Smart Lock support (`ms`, `jtmspro`). Thanks @pfgimutao for the contribution
 
 
 ### Fixed

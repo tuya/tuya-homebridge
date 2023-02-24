@@ -126,7 +126,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Methane Detector | 甲烷报警传感器 | jwbj | Leak Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categoryjwbj?id=Kaiuz40u98lkm) |
 | Human Motion Sensor | 人体运动传感器 | pir | Motion Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categorypir?id=Kaiuz3ss11b80) |
 | Human Presence Sensor | 人体存在传感器 | hps | Occupancy Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categoryhps?id=Kaiuz42yhn1hs) |
-| Smart Lock | 智能门锁 | ms | | | [Documentation](https://developer.tuya.com/en/docs/iot/ms?id=Kb0o2s20fn9sy) |
+| Smart Lock | 智能门锁 | ms<br> jtmspro | LockMechanism | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/ms?id=Kb0o2s20fn9sy) |
 | Environmental Detector | 环境检测仪 | hjjcy | Air Quality Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/hjjcy?id=Kbeoad8y1nnlv) |
 
 

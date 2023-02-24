@@ -20,7 +20,7 @@ Fork version of the official Tuya Homebridge plugin, with a focus on fixing bugs
 - Lower development costs for new accessory categories.
 - Supports Tuya Scenes (Tap-to-Run).
 - Includes the ability to override device configurations, which enables support for "non-standard" DPs.
-- Supports over 60+ device categories, including most lights, switches, sensors, cameras, IR remote control, etc.
+- Supports over 60+ device categories, including most light, switch, sensor, camera, lock, IR remote control, etc.
 
 
 ## Supported Tuya Devices
