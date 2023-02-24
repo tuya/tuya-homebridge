@@ -12,6 +12,7 @@ const AirPurifierAccessory = require('./lib/air_purifier_accessory')
 const WindowCoveringAccessory = require('./lib/window_covering_accessory')
 const ContactSensorAccessory = require('./lib/contactsensor_accessory');
 const LeakSensorAccessory = require('./lib/leak_sensor_accessory')
+const SecuritySystem = require('./lib/security_system_accessory')
 
 const LogUtil = require('./util/logutil')
 const DataUtil = require('./util/datautil')
@@ -183,7 +184,19 @@ class TuyaPlatform {
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
+      case 'mal':
+        try {
+          deviceAccessory = new SecuritySystem(this, homebridgeAccessory, device);
+          this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+          this.deviceAccessories.set(uuid, deviceAccessory);
+        } catch (e) {
+          this.log.log(`Error creating security system accessory.
+          Error: ${e.message}.
+          The accessory ${device.name} will not be registered.`);
+        }
+        break;
       default:
+        this.log.log(`Unsupported accessory type: ${deviceType}`);
         break;
     }
 
@@ -241,7 +254,7 @@ class TuyaPlatform {
   // Sample function to show how developer can remove accessory dynamically from outside event
   removeAccessory(accessory) {
     if (accessory) {
-      this.log.log(`Remove Accessory ${accessory}`);
+      this.log.log(`Remove Accessory ${accessory.displayName}`);
       this.api.unregisterPlatformAccessories("homebridge-tuya-platform", "TuyaPlatform", [accessory]);
       this.accessories.delete(accessory.uuid);
       this.deviceAccessories.delete(accessory.uuid);
