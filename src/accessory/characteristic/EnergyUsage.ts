@@ -10,6 +10,7 @@ export function configureEnergyUsage(
   currentSchema?: TuyaDeviceSchema,
   powerSchema?: TuyaDeviceSchema,
   voltageSchema?: TuyaDeviceSchema,
+  totalSchema?: TuyaDeviceSchema,
 ) {
 
   if (currentSchema) {
@@ -44,6 +45,17 @@ export function configureEnergyUsage(
       }
     } else {
       accessory.log.warn('Unsupported voltage unit %p', currentSchema);
+    }
+  }
+
+  if (totalSchema) {
+    if (isUnit(totalSchema, 'kWh', 'kwh')) {
+      const kwh = createKilowattHourCharacteristic(api);
+      if (!service.testCharacteristic(kwh)) {
+        service.addCharacteristic(kwh).onGet(createStatusGetter(accessory, totalSchema));
+      }
+    } else {
+      accessory.log.warn('Unsupported total power unit %p', totalSchema);
     }
   }
 }
@@ -99,6 +111,20 @@ function createVoltsCharacteristic(api: API) {
         format: api.hap.Formats.FLOAT,
         perms: [api.hap.Perms.NOTIFY, api.hap.Perms.PAIRED_READ],
         unit: 'V',
+      });
+    }
+  };
+}
+
+function createKilowattHourCharacteristic(api: API) {
+  return class Watts extends api.hap.Characteristic {
+    static readonly UUID = 'E863F10C-079E-48FF-8F27-9C2605A29F52';
+
+    constructor() {
+      super('Total Consumption', Watts.UUID, {
+        format: api.hap.Formats.FLOAT,
+        perms: [api.hap.Perms.NOTIFY, api.hap.Perms.PAIRED_READ],
+        unit: 'kWh',
       });
     }
   };

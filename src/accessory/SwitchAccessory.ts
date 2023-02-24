@@ -11,6 +11,7 @@ const SCHEMA_CODE = {
   CURRENT: ['cur_current'],
   POWER: ['cur_power'],
   VOLTAGE: ['cur_voltage'],
+  TOTAL_POWER: ['add_ele'],
   CURRENT_TEMP: ['va_temperature', 'temp_current'],
   CURRENT_HUMIDITY: ['va_humidity', 'humidity_value'],
 };
@@ -65,6 +66,7 @@ export default class SwitchAccessory extends BaseAccessory {
         this.getSchema(...SCHEMA_CODE.CURRENT),
         this.getSchema(...SCHEMA_CODE.POWER),
         this.getSchema(...SCHEMA_CODE.VOLTAGE),
+        this.getSchema(...SCHEMA_CODE.TOTAL_POWER),
       );
     }
   }
