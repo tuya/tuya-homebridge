@@ -37,6 +37,7 @@ import AirConditionerAccessory from './AirConditionerAccessory';
 import IRControlHubAccessory from './IRControlHubAccessory';
 import IRGenericAccessory from './IRGenericAccessory';
 import IRAirConditionerAccessory from './IRAirConditionerAccessory';
+import SecuritySystemAccessory from './SecuritySystemAccessory';
 
 
 export default class AccessoryFactory {
@@ -175,6 +176,9 @@ export default class AccessoryFactory {
       case 'ms':
       case 'jtmspro':
         handler = new LockAccessory(platform, accessory);
+        break;
+      case 'mal':
+        handler = new SecuritySystemAccessory(platform, accessory);
         break;
 
       // Other
