@@ -16,10 +16,11 @@
 - Add Temperature Control Socket support (`wkcz`).
 - Add Environmental Detector support (`hjjcy`).
 - Add Water Valve Controller support (`sfkzq`).
-- Add IR Remote Control support (`infrared_tv`, `infrared_stb`, `infrared_box`, `infrared_ac`, `infrared_fan`, `infrared_light`, `infrared_amplifier`, `infrared_projector`, `infrared_waterheater`, `infrared_airpurifier`).
+- Add IR Remote Control support (`infrared_tv`, `infrared_stb`, `infrared_box`, `infrared_ac`, `infrared_fan`, `infrared_light`, `infrared_amplifier`, `infrared_projector`, `infrared_waterheater`, `infrared_airpurifier`). (#191)
 - Add IR AC Controller support (`hwktwkq`).
 - Add Fingerbot support (`szjqr`).
-- Add Smart Lock support (`ms`, `jtmspro`). Thanks @pfgimutao for the contribution
+- Add Smart Lock support (`ms`, `jtmspro`). (#120) Thanks @pfgimutao for the contribution
+- Add Alarm Host support (`mal`). (#246) Thanks @bFollon for the contribution
 
 
 ### Fixed
