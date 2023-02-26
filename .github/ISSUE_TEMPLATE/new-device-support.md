@@ -9,4 +9,4 @@ assignees: ''
 
 
 **Device info**
-Please refer to the troubleshooting section to get device list info. https://github.com/0x5e/homebridge-tuya-platform#troubleshooting
+<!-- Please refer to the troubleshooting section to get device list info. https://github.com/0x5e/homebridge-tuya-platform#troubleshooting -->
