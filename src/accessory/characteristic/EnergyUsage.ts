@@ -14,48 +14,32 @@ export function configureEnergyUsage(
 ) {
 
   if (currentSchema) {
-    if (isUnit(currentSchema, 'A', 'mA')) {
-      const amperes = createAmperesCharacteristic(api);
-      if (!service.testCharacteristic(amperes)) {
-        service.addCharacteristic(amperes).onGet(
-          createStatusGetter(accessory, currentSchema, isUnit(currentSchema, 'mA') ? 1000 : 0),
-        );
-      }
-    } else {
-      accessory.log.warn('Unsupported current unit %p', currentSchema);
+    const amperes = createAmperesCharacteristic(api);
+    if (!service.testCharacteristic(amperes)) {
+      service.addCharacteristic(amperes).onGet(
+        createStatusGetter(accessory, currentSchema, isUnit(currentSchema, 'mA') ? 1000 : 0),
+      );
     }
   }
 
   if (powerSchema) {
-    if (isUnit(powerSchema, 'W')) {
-      const watts = createWattsCharacteristic(api);
-      if (!service.testCharacteristic(watts)) {
-        service.addCharacteristic(watts).onGet(createStatusGetter(accessory, powerSchema));
-      }
-    } else {
-      accessory.log.warn('Unsupported power unit %p', currentSchema);
+    const watts = createWattsCharacteristic(api);
+    if (!service.testCharacteristic(watts)) {
+      service.addCharacteristic(watts).onGet(createStatusGetter(accessory, powerSchema));
     }
   }
 
   if (voltageSchema) {
-    if (isUnit(voltageSchema, 'V')) {
-      const volts = createVoltsCharacteristic(api);
-      if (!service.testCharacteristic(volts)) {
-        service.addCharacteristic(volts).onGet(createStatusGetter(accessory, voltageSchema));
-      }
-    } else {
-      accessory.log.warn('Unsupported voltage unit %p', currentSchema);
+    const volts = createVoltsCharacteristic(api);
+    if (!service.testCharacteristic(volts)) {
+      service.addCharacteristic(volts).onGet(createStatusGetter(accessory, voltageSchema));
     }
   }
 
   if (totalSchema) {
-    if (isUnit(totalSchema, 'kWh', 'kwh')) {
-      const kwh = createKilowattHourCharacteristic(api);
-      if (!service.testCharacteristic(kwh)) {
-        service.addCharacteristic(kwh).onGet(createStatusGetter(accessory, totalSchema));
-      }
-    } else {
-      accessory.log.warn('Unsupported total power unit %p', totalSchema);
+    const kwh = createKilowattHourCharacteristic(api);
+    if (!service.testCharacteristic(kwh)) {
+      service.addCharacteristic(kwh).onGet(createStatusGetter(accessory, totalSchema));
     }
   }
 }
