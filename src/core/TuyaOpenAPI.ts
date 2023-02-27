@@ -171,7 +171,7 @@ export default class TuyaOpenAPI {
       password = Crypto.createHash('md5').update(password).digest('hex');
     }
 
-    if (!endpoint) {
+    if (!endpoint || endpoint.length === 0) {
       for (const _endpoint of Object.keys(DEFAULT_ENDPOINTS)) {
         const countryCodeList = DEFAULT_ENDPOINTS[_endpoint];
         if (countryCodeList.includes(countryCode)) {
@@ -280,6 +280,13 @@ export default class TuyaOpenAPI {
     this.log.debug('Request:\nmethod = %s\nendpoint = %s\npath = %s\nquery = %s\nheaders = %s\nbody = %s',
       method, this.endpoint, path, JSON.stringify(params, null, 2), JSON.stringify(headers, null, 2), JSON.stringify(body, null, 2));
 
+    let host = '';
+    try {
+      host = new URL(this.endpoint).host;
+    } catch (error) {
+      this.log.error('Invalid endpoint:', this.endpoint);
+    }
+
     if (params) {
       path += '?' + new URLSearchParams(params).toString();
     }
@@ -287,7 +294,7 @@ export default class TuyaOpenAPI {
     const res: TuyaOpenAPIResponse = await new Promise((resolve, reject) => {
 
       const req = https.request({
-        host: new URL(this.endpoint).host,
+        host,
         method,
         headers,
         path,
