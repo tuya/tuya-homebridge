@@ -89,6 +89,16 @@ export default class TuyaOpenAPI {
     this.log = new PrefixLogger(log, TuyaOpenAPI.name);
   }
 
+  static getDefaultEndpoint(countryCode: number) {
+    for (const endpoint of Object.keys(DEFAULT_ENDPOINTS)) {
+      const countryCodeList = DEFAULT_ENDPOINTS[endpoint];
+      if (countryCodeList.includes(countryCode)) {
+        return <Endpoints>endpoint;
+      }
+    }
+    return Endpoints.AMERICA;
+  }
+
   isLogin() {
     return this.tokenInfo.access_token.length > 0;
   }
@@ -160,10 +170,9 @@ export default class TuyaOpenAPI {
    * @param username Username
    * @param password Password
    * @param appSchema App Schema: 'tuyaSmart', 'smartlife'
-   * @param endpoint Endpoint URL
    * @returns
    */
-  async homeLogin(countryCode: number, username: string, password: string, appSchema: string, endpoint?: string) {
+  async homeLogin(countryCode: number, username: string, password: string, appSchema: string) {
 
     if (this._isSaltedPassword(password)) {
       this.log.info('Login with md5 salted password.');
@@ -171,17 +180,7 @@ export default class TuyaOpenAPI {
       password = Crypto.createHash('md5').update(password).digest('hex');
     }
 
-    if (!endpoint || endpoint.length === 0) {
-      for (const _endpoint of Object.keys(DEFAULT_ENDPOINTS)) {
-        const countryCodeList = DEFAULT_ENDPOINTS[_endpoint];
-        if (countryCodeList.includes(countryCode)) {
-          endpoint = _endpoint;
-          break;
-        }
-      }
-    }
-    this.endpoint = <Endpoints>endpoint;
-    this.log.info('Login to: %s', endpoint);
+    this.log.info('Login to: %s', this.endpoint);
 
     this.tokenInfo = { access_token: '', refresh_token: '', uid: '', expire: 0 };
     const res = await this.post('/v1.0/iot-01/associated-users/actions/authorized-login', {
@@ -280,13 +279,6 @@ export default class TuyaOpenAPI {
     this.log.debug('Request:\nmethod = %s\nendpoint = %s\npath = %s\nquery = %s\nheaders = %s\nbody = %s',
       method, this.endpoint, path, JSON.stringify(params, null, 2), JSON.stringify(headers, null, 2), JSON.stringify(body, null, 2));
 
-    let host = '';
-    try {
-      host = new URL(this.endpoint).host;
-    } catch (error) {
-      this.log.error('Invalid endpoint:', this.endpoint);
-    }
-
     if (params) {
       path += '?' + new URLSearchParams(params).toString();
     }
@@ -294,7 +286,7 @@ export default class TuyaOpenAPI {
     const res: TuyaOpenAPIResponse = await new Promise((resolve, reject) => {
 
       const req = https.request({
-        host,
+        host: new URL(this.endpoint).host,
         method,
         headers,
         path,
