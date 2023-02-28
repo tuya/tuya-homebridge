@@ -14,7 +14,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Ambiance Light | 氛围灯 | fwd | Lightbulb | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/ambient-light?id=Kaiuz06amhe6g) |
 | String Lights | 灯串 | dc | Lightbulb | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/dc?id=Kaof7taxmvadu) |
 | Strip Lights | 灯带 | dd | Lightbulb | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/dd?id=Kaof804aibg2l) |
-| Motion Sensor Light | 感应灯 | gyd | Lightbulb | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/gyd?id=Kaof8a8hycfmy) |
+| Motion Sensor Light | 感应灯 | gyd | Lightbulb<br> MotionSensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/gyd?id=Kaof8a8hycfmy) |
 | Ceiling Fan Light | 风扇灯 | fsd | Lightbulb<br> Fanv2 | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/fsd?id=Kaof8eiei4c2v) |
 | Solar Light | 太阳能灯 | tyndj | Lightbulb | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/tynd?id=Kaof8j02e1t98) |
 | Dimmer | 调光器 | tgq | Lightbulb | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/tgq?id=Kaof8ke9il4k4) |
@@ -49,8 +49,8 @@ Most category code is pinyin abbreviation of Chinese name.
 | Refrigerator | 冰箱 | bx | | | [Documentation](https://developer.tuya.com/en/docs/iot/categorybx?id=Kaiuz0s58ia6h) |
 | Bathtub | 浴缸 | yg | | | [Documentation](https://developer.tuya.com/en/docs/iot/categoryyg?id=Kaiuz0uoisp47) |
 | Washing Machine | 洗衣机 | xy | | | [Documentation](https://developer.tuya.com/en/docs/iot/categoryxy?id=Kaiuz0wxh08jf) |
-| Air Conditioner | 空调 | kt | Heater Cooler<br> Humidifier Dehumidifier<br> Fanv2 | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categorykt?id=Kaiuz0z71ov2n) |
-| Air Conditioner Controller | 空调控制器 | ktkzq | Heater Cooler<br> Humidifier Dehumidifier<br> Fanv2 | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categoryktkzq?id=Kaiuz11eqy892) |
+| Air Conditioner | 空调 | kt | Heater Cooler<br> Humidifier Dehumidifier<br> Fanv2<br> Temperature Sensor<br> Humidity Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categorykt?id=Kaiuz0z71ov2n) |
+| Air Conditioner Controller | 空调控制器 | ktkzq | Heater Cooler<br> Humidifier Dehumidifier<br> Fanv2<br> Temperature Sensor<br> Humidity Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categoryktkzq?id=Kaiuz11eqy892) |
 | Boiler | 壁挂炉 | bgl | | | [Documentation](https://developer.tuya.com/en/docs/iot/boilerbgl?id=Kaiuz13shgrhp) |
 
 
