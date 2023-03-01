@@ -1,0 +1,47 @@
+name: Bug report
+description: Create a report to help us improve
+labels: ['bug']
+body:
+- type: checkboxes
+  id: prerequisite
+  attributes:
+    label: Prerequisite
+    description: Have you read the [Readme - FAQ](https://github.com/0x5e/homebridge-tuya-platform#faq) and [Readme - Troubleshooting](https://github.com/0x5e/homebridge-tuya-platform#troubleshooting) section?
+    options:
+      - label: 'Yes'
+        required: true
+- type: input
+  id: version
+  attributes:
+    label: Version
+    description: The version of this plugin you are using.
+    placeholder: 1.7.0-beta.xx
+  validations:
+    required: true
+- type: textarea
+  id: devide-info
+  attributes:
+    label: Device Infomation JSON File
+    description: If it's related to a device, please paste `TuyaDeviceInfo.{uid}.json` content here.
+    render: json
+- type: dropdown
+  id: control-mode
+  attributes:
+    label: Device Control Mode
+    description: If it's related to a device, please select the device control mode.
+    options:
+      - Standard Instruction
+      - DP Instruction
+- type: textarea
+  id: logs
+  attributes:
+    label: Logs
+    description: Please paste homebridge logs with debug mode on.
+    render: shell
+- type: textarea
+  id: infos
+  attributes:
+    label: Other Infomations
+    description: Also tell us, what did you expect to happen.
+  validations:
+    required: true

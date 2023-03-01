@@ -1,5 +1,5 @@
-# blank_issues_enabled: false
-# contact_links:
-#   - name: Homebridge Discord Community
-#     url: https://discord.gg/kqNCe2D
-#     about: Ask your questions in the #YOUR_CHANNEL_HERE channel
+blank_issues_enabled: false
+contact_links:
+  - name: Homebridge Discord Community
+    url: https://discord.gg/homebridge-432663330281226270
+    about: 'Ask your questions in the #tuya channel'

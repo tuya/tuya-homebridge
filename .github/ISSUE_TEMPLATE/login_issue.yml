@@ -1,0 +1,54 @@
+name: Login issue
+description: Failed to login Tuya Cloud
+labels: ['login issue']
+body:
+  - type: checkboxes
+    id: prerequisite
+    attributes:
+      label: Prerequisite
+      description: Have you read the [Readme - FAQ](https://github.com/0x5e/homebridge-tuya-platform#faq) and [Readme - Troubleshooting](https://github.com/0x5e/homebridge-tuya-platform#troubleshooting) section?
+      options:
+        - label: 'Yes'
+          required: true
+  - type: checkboxes
+    id: accounts
+    attributes:
+      label: Accounts
+      description: Do you know Tuya IoT Platform and Tuya App are using different account?
+      options:
+        - label: 'Yes'
+          required: true
+  - type: input
+    id: country-code
+    attributes:
+      label: Country Code
+      description: The country code of your app account.
+      placeholder: ex. 1
+    validations:
+      required: true
+  - type: dropdown
+    id: region-code
+    attributes:
+      label: Region Code
+      description: The region code from app network diagnosis result.
+      options:
+        - AY (China)
+        - AZ (West US)
+        - EU (Central Europe)
+        - IN (India)
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Please post homebridge logs. Logs with debug mode on will be better.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: infos
+    attributes:
+      label: Other Infomations
+      description: Any information might relate to this issue.
+  

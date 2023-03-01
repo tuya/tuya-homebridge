@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest an idea for this project
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: devide-info
+    attributes:
+      label: Device Infomation JSON File
+      description: If it's related to a device, please paste `TuyaDeviceInfo.{uid}.json` content here.
+      render: json
+  - type: textarea
+    id: infos
+    attributes:
+      label: Detail Informations
+    validations:
+      required: true
