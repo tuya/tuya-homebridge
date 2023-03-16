@@ -54,6 +54,7 @@ export type TuyaIRRemoteKeyListItem = {
   key_id: number;
   key_name: string;
   standard_key: boolean;
+  learning_code?: string; // IR DIY device learning code.
 };
 
 export type TuyaIRRemoteTempListItem = {

@@ -38,8 +38,11 @@ export default class IRGenericAccessory extends BaseAccessory {
   async sendInfraredCommands(key: TuyaIRRemoteKeyListItem) {
     const { parent_id, id } = this.device;
     const { category_id, remote_index } = this.device.remote_keys;
-    const res = await this.deviceManager.sendInfraredCommands(parent_id, id, category_id, remote_index, key.key, key.key_id);
-    return res;
+    if (key.learning_code) {
+      await this.deviceManager.sendInfraredDIYCommands(parent_id, id, key.learning_code);
+    } else {
+      await this.deviceManager.sendInfraredCommands(parent_id, id, category_id, remote_index, key.key, key.key_id);
+    }
   }
 
 }
