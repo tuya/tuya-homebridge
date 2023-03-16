@@ -38,6 +38,7 @@ import IRControlHubAccessory from './IRControlHubAccessory';
 import IRGenericAccessory from './IRGenericAccessory';
 import IRAirConditionerAccessory from './IRAirConditionerAccessory';
 import SecuritySystemAccessory from './SecuritySystemAccessory';
+import VibrationSensorAccessory from './VibrationSensorAccessory';
 
 
 export default class AccessoryFactory {
@@ -141,6 +142,9 @@ export default class AccessoryFactory {
         break;
       case 'mcs':
         handler = new ContactSensorAccessory(platform, accessory);
+        break;
+      case 'zd':
+        handler = new VibrationSensorAccessory(platform, accessory);
         break;
       case 'rqbj':
       case 'jwbj':

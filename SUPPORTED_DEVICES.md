@@ -114,7 +114,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Smoke Alarm | 烟雾报警传感器 | ywbj | Smoke Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categoryywbj?id=Kaiuz3f6sf952) |
 | Temperature and Humidity Sensor | 温湿度传感器 | wsdcg | Temperature Sensor<br> Humidity Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categorywsdcg?id=Kaiuz3hinij34) |
 | Contact Sensor | 门磁传感器 | mcs | Contact Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categorymcs?id=Kaiuz3bnflmh2) |
-| Vibration Sensor | 震动传感器 | zd | | | [Documentation](https://developer.tuya.com/en/docs/iot/categoryzd?id=Kaiuz3a5vrzno) |
+| Vibration Sensor | 震动传感器 | zd | Motion Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categoryzd?id=Kaiuz3a5vrzno) |
 | Water Detector | 水浸传感器 | sj | Leak Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categorysj?id=Kaiuz3iub2sli) |
 | Luminance Sensor | 亮度传感器 | ldcg | Light Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/categoryldcg?id=Kaiuz3n7u69l8) |
 | Pressure Sensor | 压力传感器 | ylcg<br> ylcgq | | | [Documentation](https://developer.tuya.com/en/docs/iot/categoryylcg?id=Kaiuz3kc2e4gm) |
