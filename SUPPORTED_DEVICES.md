@@ -173,7 +173,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Tracker | 定位器 | tracker | | | [Documentation](https://developer.tuya.com/en/docs/iot/tracker?id=Kajk21wwy2mhi) |
 
 
-## IR/RF Remote Control
+## IR Remote Control
 
 | Name | Name (zh) | Code | Homebridge Service | Supported | Links |
 | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -190,6 +190,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | Camera | 相机 | qt | Switch | ✅ | [Documentation](https://developer.tuya.com/en/docs/cloud/infrared-common-apis?id=Kb3oe2o7z0so9) |
 | Water Heater | 热水器 | infrared_waterheater | Switch | ✅ | [Documentation](https://developer.tuya.com/en/docs/cloud/infrared-common-apis?id=Kb3oe2o7z0so9) |
 | Air Purifier | 净化器 | infrared_airpurifier | Switch | ✅ | [Documentation](https://developer.tuya.com/en/docs/cloud/infrared-common-apis?id=Kb3oe2o7z0so9) |
+| DIY | - | qt | Switch | ✅ | [Documentation](https://developer.tuya.com/en/docs/cloud/infrared-learning-apis?id=Kb3oeap4nqqm3) |
 
 
 ## Others
