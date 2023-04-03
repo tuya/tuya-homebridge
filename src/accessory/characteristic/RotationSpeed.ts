@@ -1,6 +1,6 @@
 import { Service } from 'homebridge';
 import { TuyaDeviceSchema, TuyaDeviceSchemaEnumProperty, TuyaDeviceSchemaIntegerProperty } from '../../device/TuyaDevice';
-import { limit, remap } from '../../util/util';
+import { limit } from '../../util/util';
 import BaseAccessory from '../BaseAccessory';
 
 export function configureRotationSpeed(
@@ -13,18 +13,25 @@ export function configureRotationSpeed(
     return;
   }
 
-  const { min, max } = schema.property as TuyaDeviceSchemaIntegerProperty;
+  const property = schema.property as TuyaDeviceSchemaIntegerProperty;
+  const multiple = Math.pow(10, property.scale);
+  const props = {
+    minValue: property.min / multiple,
+    maxValue: property.max / multiple,
+    minStep: Math.max(1, property.step / multiple),
+  };
   service.getCharacteristic(accessory.Characteristic.RotationSpeed)
     .onGet(() => {
       const status = accessory.getStatus(schema.code)!;
-      const value = Math.round(remap(status.value as number, min, max, 0, 100));
-      return limit(value, 0, 100);
+      const value = status.value as number / multiple;
+      return limit(value, props.minValue, props.maxValue);
     })
     .onSet(value => {
-      let speed = Math.round(remap(value as number, 0, 100, min, max));
-      speed = limit(speed, min, max);
+      const speed = (value as number) * multiple;
       accessory.sendCommands([{ code: schema.code, value: speed }], true);
-    });
+    })
+    .setProps(props);
+
 }
 
 export function configureRotationSpeedLevel(
