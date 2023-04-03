@@ -322,4 +322,13 @@ export function configureLight(
       configureSaturation(accessory, service, lightType, colorSchema!, modeSchema);
       break;
   }
+
+  // Adaptive Lighting
+  if (brightSchema && tempSchema) {
+    const { AdaptiveLightingController } = accessory.platform.api.hap;
+    const controller = new AdaptiveLightingController(service);
+    accessory.accessory.configureController(controller);
+    accessory.adaptiveLightingController = controller;
+  }
+
 }

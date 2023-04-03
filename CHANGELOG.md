@@ -22,6 +22,7 @@
 - Add Smart Lock support (`ms`, `jtmspro`). (#120) Thanks @pfgimutao for the contribution
 - Add Alarm Host support (`mal`). (#246) Thanks @bFollon for the contribution
 - Add Vibration Sensor support (`zd`).
+- Add adaptive lighting support.
 
 
 ### Fixed

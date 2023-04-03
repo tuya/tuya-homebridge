@@ -33,6 +33,8 @@ class BaseAccessory {
   public log = new PrefixLogger(this.platform.log, this.device.name.length > 0 ? this.device.name : this.device.id);
   public intialized = false;
 
+  public adaptiveLightingController?;
+
   constructor(
     public readonly platform: TuyaPlatform,
     public readonly accessory: PlatformAccessory,
