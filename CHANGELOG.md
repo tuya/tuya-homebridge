@@ -22,7 +22,7 @@
 - Add Smart Lock support (`ms`, `jtmspro`). (#120) Thanks @pfgimutao for the contribution
 - Add Alarm Host support (`mal`). (#246) Thanks @bFollon for the contribution
 - Add Vibration Sensor support (`zd`).
-- Add adaptive lighting support.
+- Add adaptive lighting support. (#272)
 
 
 ### Fixed
@@ -39,7 +39,7 @@
 - Print scene id in logs.
 - Update support for RGB Power Switch (`dj`).
 - Support showing device online status via `StatusActive`. (#172)
-- Update unit and range of `RotationSpeed` with level, need clean accessory cache to take effect. (#174)
+- Update unit and range of `RotationSpeed`, need clean accessory cache to take effect. (#174, #273)
 - Support Diffuser RGB light. (#184)
 - Support Fan light temperature and color. (#184)
 - Support Humidifier light. (#184)
