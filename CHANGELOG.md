@@ -23,6 +23,7 @@
 - Add Alarm Host support (`mal`). (#246) Thanks @bFollon for the contribution
 - Add Vibration Sensor support (`zd`).
 - Add adaptive lighting support. (#272)
+- Add Wireless Doorbell support (`wxml`).
 
 
 ### Fixed

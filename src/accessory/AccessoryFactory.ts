@@ -39,6 +39,7 @@ import IRGenericAccessory from './IRGenericAccessory';
 import IRAirConditionerAccessory from './IRAirConditionerAccessory';
 import SecuritySystemAccessory from './SecuritySystemAccessory';
 import VibrationSensorAccessory from './VibrationSensorAccessory';
+import DoorbellAccessory from './DoorbellAccessory';
 
 
 export default class AccessoryFactory {
@@ -183,6 +184,9 @@ export default class AccessoryFactory {
         break;
       case 'mal':
         handler = new SecuritySystemAccessory(platform, accessory);
+        break;
+      case 'wxml':
+        handler = new DoorbellAccessory(platform, accessory);
         break;
 
       // Other

@@ -40,7 +40,7 @@ export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Ser
     if (url.length === 0) {
       return;
     }
-    accessory.log.info('Doorbell picture:', url);
+    accessory.log.info('Alarm message:', url);
     value = SINGLE_PRESS;
   } else if (schema.type === TuyaDeviceSchemaType.Enum) {
     if (status.value === 'click' || status.value === 'single_click' || status.value === '1') {
