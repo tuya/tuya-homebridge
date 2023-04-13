@@ -3,18 +3,18 @@ import { TuyaDeviceSchemaProperty, TuyaDeviceSchemaType } from './device/TuyaDev
 
 export interface TuyaPlatformDeviceSchemaConfig {
   code: string;
-  newCode: string;
-  type: TuyaDeviceSchemaType;
-  property: TuyaDeviceSchemaProperty;
-  onGet: string;
-  onSet: string;
-  hidden: boolean;
+  newCode?: string;
+  type?: TuyaDeviceSchemaType;
+  property?: TuyaDeviceSchemaProperty;
+  onGet?: string;
+  onSet?: string;
+  hidden?: boolean;
 }
 
 export interface TuyaPlatformDeviceConfig {
   id: string;
-  category: string;
-  schema: Array<TuyaPlatformDeviceSchemaConfig>;
+  category?: string;
+  schema?: Array<TuyaPlatformDeviceSchemaConfig>;
 }
 
 export interface TuyaPlatformCustomConfigOptions {
@@ -24,7 +24,7 @@ export interface TuyaPlatformCustomConfigOptions {
   accessKey: string;
   username: string;
   password: string;
-  deviceOverrides: Array<TuyaPlatformDeviceConfig>;
+  deviceOverrides?: Array<TuyaPlatformDeviceConfig>;
 }
 
 export interface TuyaPlatformHomeConfigOptions {
@@ -36,8 +36,8 @@ export interface TuyaPlatformHomeConfigOptions {
   username: string;
   password: string;
   appSchema: string;
-  homeWhitelist: Array<number>;
-  deviceOverrides: Array<TuyaPlatformDeviceConfig>;
+  homeWhitelist?: Array<number>;
+  deviceOverrides?: Array<TuyaPlatformDeviceConfig>;
 }
 
 export type TuyaPlatformConfigOptions = TuyaPlatformCustomConfigOptions | TuyaPlatformHomeConfigOptions;
