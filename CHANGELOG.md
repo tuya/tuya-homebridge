@@ -21,9 +21,9 @@
 - Add Fingerbot support (`szjqr`).
 - Add Smart Lock support (`ms`, `jtmspro`). (#120) Thanks @pfgimutao for the contribution
 - Add Alarm Host support (`mal`). (#246) Thanks @bFollon for the contribution
-- Add Vibration Sensor support (`zd`).
+- Add Vibration Sensor support (`zd`). (#262)
 - Add adaptive lighting support. (#272)
-- Add Wireless Doorbell support (`wxml`).
+- Add Wireless Doorbell support (`wxml`). (277)
 
 
 ### Fixed
@@ -45,7 +45,7 @@
 - Support Fan light temperature and color. (#184)
 - Support Humidifier light. (#184)
 - Expose energy usage for outlets/switches. (#190) Thanks @lstrojny for the contribution
-- Strict config validate for `deviceOverrides`.
+- Strict config validate for `deviceOverrides`. (#278)
 
 
 ## [1.6.0] - (2022.12.3)
