@@ -58,8 +58,12 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
   }
 
   validateDeviceOverrides() {
+    if (!this.options.deviceOverrides) {
+      return true;
+    }
+
     const idMap = new Map();
-    for (const item of this.options.deviceOverrides!) {
+    for (const item of this.options.deviceOverrides) {
       if (idMap.has(item.id)) {
         idMap.get(item.id)?.push(item);
       } else {
@@ -76,7 +80,11 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
   }
 
   validateSchema() {
-    for (const deviceOverride of this.options.deviceOverrides!) {
+    if (!this.options.deviceOverrides) {
+      return true;
+    }
+
+    for (const deviceOverride of this.options.deviceOverrides) {
       if (!deviceOverride.schema) {
         continue;
       }
