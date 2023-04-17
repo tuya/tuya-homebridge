@@ -1,6 +1,7 @@
 import { TuyaDeviceSchemaType } from '../device/TuyaDevice';
 import BaseAccessory from './BaseAccessory';
 import { configureActive } from './characteristic/Active';
+import { configureAirQuality } from './characteristic/AirQuality';
 import { configureLockPhysicalControls } from './characteristic/LockPhysicalControls';
 import { configureRotationSpeed, configureRotationSpeedLevel } from './characteristic/RotationSpeed';
 
@@ -10,6 +11,9 @@ const SCHEMA_CODE = {
   LOCK: ['lock'],
   SPEED: ['speed'],
   SPEED_LEVEL: ['fan_speed_enum', 'speed'],
+  AIR_QUALITY: ['air_quality'],
+  PM2_5: ['pm25'],
+  VOC: ['tvoc'],
 };
 
 export default class AirPurifierAccessory extends BaseAccessory {
@@ -28,6 +32,16 @@ export default class AirPurifierAccessory extends BaseAccessory {
     } else if (this.getFanSpeedLevelSchema()) {
       configureRotationSpeedLevel(this, this.mainService(), this.getFanSpeedLevelSchema());
     }
+
+    // Other
+    configureAirQuality(
+      this,
+      undefined,
+      this.getSchema(...SCHEMA_CODE.AIR_QUALITY),
+      this.getSchema(...SCHEMA_CODE.PM2_5),
+      undefined,
+      this.getSchema(...SCHEMA_CODE.VOC),
+    );
   }
 
 
