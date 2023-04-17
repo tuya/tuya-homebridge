@@ -1,14 +1,14 @@
 import BaseAccessory from './BaseAccessory';
 
 const SCHEMA_CODE = {
-  LOCK_CURRENT_STATE: ['lock_motor_state'],
+  LOCK_CURRENT_STATE: ['door_opened', 'lock_motor_state'],
   LOCK_TARGET_STATE: ['lock_motor_state'],
 };
 
 export default class LockAccessory extends BaseAccessory {
 
   requiredSchema() {
-    return [SCHEMA_CODE.LOCK_TARGET_STATE];
+    return [SCHEMA_CODE.LOCK_CURRENT_STATE];
   }
 
   configureServices() {
