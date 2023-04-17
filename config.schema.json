@@ -5,6 +5,11 @@
 	"headerDisplay": "",
 	"footerDisplay": "",
 	"schema": {
+		"name": {
+			"type": "string",
+			"title": "Name",
+			"default": "Tuya"
+		},
 		"type": "object",
 		"properties": {
 			"options": {
@@ -126,7 +131,6 @@
 											"type": {
 												"title": "New DP Type",
 												"type": "string",
-												"default": "Boolean",
 												"oneOf": [{
 													"title": "Boolean",
 													"enum": ["Boolean"]
