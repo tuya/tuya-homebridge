@@ -50,6 +50,10 @@ export function onProgrammableSwitchEvent(accessory: BaseAccessory, service: Ser
     } else if (status.value === 'press' || status.value === 'long_press') {
       value = LONG_PRESS;
     }
+  } else if (schema.type === TuyaDeviceSchemaType.Integer) {
+    if (status.value as number > 0) {
+      value = SINGLE_PRESS;
+    }
   }
 
   if (value === undefined) {

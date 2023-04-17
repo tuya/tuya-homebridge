@@ -3,21 +3,22 @@ import BaseAccessory from './BaseAccessory';
 import { configureProgrammableSwitchEvent, onProgrammableSwitchEvent } from './characteristic/ProgrammableSwitchEvent';
 
 const SCHEMA_CODE = {
-  ALARM_MESSAGE: ['alarm_message'],
-  ALARM_SWITCH: ['alarm_propel_switch'],
-  VOLUME: ['doorbell_volume_value'],
+  // ALARM_MESSAGE: ['alarm_message'],
+  // ALARM_SWITCH: ['alarm_propel_switch'],
+  // VOLUME: ['doorbell_volume_value'],
+  DOORBELL_CALL: ['doorbell_call'],
 };
 
 export default class DoorbellAccessory extends BaseAccessory {
 
   requiredSchema() {
-    return [SCHEMA_CODE.ALARM_MESSAGE];
+    return [SCHEMA_CODE.DOORBELL_CALL];
   }
 
   configureServices() {
     this.log.warn('HomeKit Doorbell service does not work without camera anymore.');
     this.log.warn('Downgrade to StatelessProgrammableSwitch. "Mute" and "Volume" not available.');
-    configureProgrammableSwitchEvent(this, this.getDoorbellService(), this.getSchema(...SCHEMA_CODE.ALARM_MESSAGE));
+    configureProgrammableSwitchEvent(this, this.getDoorbellService(), this.getSchema(...SCHEMA_CODE.DOORBELL_CALL));
     // this.configureMute();
     // this.configureVolume();
   }
@@ -81,12 +82,10 @@ export default class DoorbellAccessory extends BaseAccessory {
   async onDeviceStatusUpdate(status: TuyaDeviceStatus[]) {
     super.onDeviceStatusUpdate(status);
 
-    const alarmMessageSchema = this.getSchema(...SCHEMA_CODE.ALARM_MESSAGE);
-    if (alarmMessageSchema) {
-      const alarmMessageStatus = status.find(_status => _status.code === alarmMessageSchema.code);
-      if (alarmMessageStatus && (alarmMessageStatus.value as string).length > 1) {
-        onProgrammableSwitchEvent(this, this.getDoorbellService(), alarmMessageStatus);
-      }
+    const doorbellCallSchema = this.getSchema(...SCHEMA_CODE.DOORBELL_CALL);
+    if (doorbellCallSchema) {
+      const doorbellCallStatus = status.find(_status => _status.code === doorbellCallSchema.code);
+      doorbellCallStatus && onProgrammableSwitchEvent(this, this.getDoorbellService(), doorbellCallStatus);
     }
   }
 
