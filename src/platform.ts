@@ -169,6 +169,16 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       this.log.warn('Override %o category from %o to %o', device.name, device.category, deviceConfig.category);
       device.category = deviceConfig.category;
     }
+    // override device bridged
+    for (const device of devices) {
+      const deviceConfig = this.getDeviceConfig(device);
+      if (!deviceConfig || !deviceConfig.unbridged) {
+        continue;
+      }
+
+      this.log.warn('Unbridge %o category %o', device.name, device.category );
+      device.unbridged = deviceConfig.unbridged;
+    }
 
     await this.deviceManager.updateInfraredRemotes(devices);
 
@@ -403,7 +413,7 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
 
     const uuid = this.api.hap.uuid.generate(device.id);
     const existingAccessory = this.cachedAccessories.find(accessory => accessory.UUID === uuid);
-    if (existingAccessory) {
+    if (existingAccessory && !device.unbridged) {
       this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
 
       // Update context
@@ -435,7 +445,11 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
       this.accessoryHandlers.push(handler);
 
       // link the accessory to your platform
-      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+      if (device.unbridged) {
+        this.api.publishExternalAccessories(PLUGIN_NAME, [accessory]);
+      } else {
+        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+      }
     }
   }
 

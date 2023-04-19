@@ -98,6 +98,7 @@ export default class TuyaDevice {
   product_name!: string;
   icon!: string;
   category!: string;
+  unbridged?: boolean;
   schema!: TuyaDeviceSchema[];
 
   // status
