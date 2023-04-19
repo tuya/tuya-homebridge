@@ -23,8 +23,10 @@
 - Add Alarm Host support (`mal`). (#246) Thanks @bFollon for the contribution
 - Add Vibration Sensor support (`zd`). (#262)
 - Add adaptive lighting support. (#272)
-- Add Wireless Doorbell support (`wxml`). (277)
+- Add Wireless Doorbell support (`wxml`). (#277)
 - Add IR Remote Control support (`wsdykq`).
+- Add Layout to display schema in sections. (#283) Thanks @donavanbecker for the contribution
+- Add option to make accessory and unbridged accessory (#285) Thanks @donavanbecker for the contribution
 
 
 ### Fixed
