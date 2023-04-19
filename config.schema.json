@@ -242,7 +242,7 @@
             "expanded": false,
             "items": [
                 "options.projectType",
-                "options.appSchema",
+                "options.endpoint",
                 "options.accessId",
                 "options.accessKey",
                 "options.countryCode",
