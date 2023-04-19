@@ -30,17 +30,7 @@ export default class CameraAccessory extends BaseAccessory {
     this.configureDoorbell();
     this.configureCamera();
     this.configureMotion();
-
-    // FloodLight
-    configureLight(
-      this,
-      this.getLightService(),
-      this.getSchema(...SCHEMA_CODE.LIGHT_ON),
-      this.getSchema(...SCHEMA_CODE.LIGHT_BRIGHT),
-      undefined,
-      undefined,
-      undefined,
-    );
+    this.configureFloodLight();
   }
 
   configureMotion() {
@@ -80,6 +70,22 @@ export default class CameraAccessory extends BaseAccessory {
 
     this.stream = new TuyaStreamingDelegate(this);
     this.accessory.configureController(this.stream.controller);
+  }
+
+  configureFloodLight() {
+    if (!this.getSchema(...SCHEMA_CODE.LIGHT_ON)) {
+      return;
+    }
+
+    configureLight(
+      this,
+      this.getLightService(),
+      this.getSchema(...SCHEMA_CODE.LIGHT_ON),
+      this.getSchema(...SCHEMA_CODE.LIGHT_BRIGHT),
+      undefined,
+      undefined,
+      undefined,
+    );
   }
 
   getLightService() {
