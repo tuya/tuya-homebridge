@@ -25,7 +25,8 @@ Before configuring, you may need to:
   - `property` - **optional**: New DP property object. For `Integer` type, the object should contain `min`, `max`, `scale`, and `step`. For `Enum` type, the object should contain `range`. For more information, see `TuyaDeviceSchemaProperty` in [TuyaDevice.ts](./src/device/TuyaDevice.ts).
   - `onGet` - **optional**: A one-line JavaScript code to convert the old value to the new value. The function is called with two arguments: `device` and `value`.
   - `onSet` - **optional**: A one-line JavaScript code to convert the new value to the old value. The function is called with two arguments: `device` and `value`. Returning `undefined` means to skip sending the command.
-  - `hidden` - **optional**: Whether to hide the schema. Defaults to `false`.
+  - `hidden` - **optional**: Hide the schema. Defaults to `false`.
+  - `unbridged` - **optional**: Unbridge accessories. Defaults to `false`.
 
 
 ## Examples
