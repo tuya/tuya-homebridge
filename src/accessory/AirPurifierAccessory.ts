@@ -11,7 +11,7 @@ const SCHEMA_CODE = {
   LOCK: ['lock'],
   SPEED: ['speed'],
   SPEED_LEVEL: ['fan_speed_enum', 'speed'],
-  AIR_QUALITY: ['air_quality'],
+  AIR_QUALITY: ['air_quality', 'pm25'],
   PM2_5: ['pm25'],
   VOC: ['tvoc'],
 };
