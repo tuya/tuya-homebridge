@@ -178,7 +178,7 @@ Most category code is pinyin abbreviation of Chinese name.
 
 | Name | Name (zh) | Code | Homebridge Service | Supported | Links |
 | ---- | ---- | ---- | ---- | ---- | ---- |
-| Universal Remote Control | 万能遥控器 | wnykq<br> hwktwkq | Temperature Sensor<br> Humidity Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/cloud/ir-control-hub-open-service?id=Kb3oe2mk8ya72) |
+| Universal Remote Control | 万能遥控器 | wnykq<br> hwktwkq<br> wsdykq | Temperature Sensor<br> Humidity Sensor | ✅ | [Documentation](https://developer.tuya.com/en/docs/cloud/ir-control-hub-open-service?id=Kb3oe2mk8ya72) |
 | TV | 电视 | infrared_tv | Switch | ✅ | [Documentation](https://developer.tuya.com/en/docs/cloud/infrared-common-apis?id=Kb3oe2o7z0so9) |
 | STB | 机顶盒 | infrared_stb | Switch | ✅ | [Documentation](https://developer.tuya.com/en/docs/cloud/infrared-common-apis?id=Kb3oe2o7z0so9) |
 | TV Box | 电视盒子 | infrared_box | Switch | ✅ | [Documentation](https://developer.tuya.com/en/docs/cloud/infrared-common-apis?id=Kb3oe2o7z0so9) |

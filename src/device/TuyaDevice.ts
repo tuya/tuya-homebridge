@@ -130,7 +130,8 @@ export default class TuyaDevice {
   }
 
   isIRControlHub() {
-    return this.category === 'wnykq' || this.category === 'hwktwkq';
+    return ['wnykq', 'hwktwkq', 'wsdykq']
+      .includes(this.category);
   }
 
   isIRRemoteControl() {

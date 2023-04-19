@@ -24,6 +24,7 @@
 - Add Vibration Sensor support (`zd`). (#262)
 - Add adaptive lighting support. (#272)
 - Add Wireless Doorbell support (`wxml`). (277)
+- Add IR Remote Control support (`wsdykq`).
 
 
 ### Fixed
