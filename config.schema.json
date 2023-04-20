@@ -6,14 +6,14 @@
     "footerDisplay": "",
     "customUi": false,
     "schema": {
-        "name": {
-            "type": "string",
-            "title": "Name",
-            "required": true,
-            "default": "Tuya"
-        },
         "type": "object",
         "properties": {
+            "name": {
+                "type": "string",
+                "title": "Name",
+                "required": true,
+                "default": "Tuya"
+            },
             "options": {
                 "title": "Project Info",
                 "type": "object",
@@ -125,12 +125,18 @@
                                 "category": {
                                     "title": "Category",
                                     "description": "Category Code or `hidden`",
-                                    "type": "string"
+                                    "type": "string",
+                                    "condition": {
+                                        "functionBody": "return (model.options && model.options.deviceOverrides);"
+                                    }
                                 },
                                 "unbridged": {
                                     "title": "Unbridge",
                                     "description": "Would you like to make this device be an external device?",
-                                    "type": "boolean"
+                                    "type": "boolean",
+                                    "condition": {
+                                        "functionBody": "return (model.options && model.options.deviceOverrides);"
+                                    }
                                 },
                                 "schema": {
                                     "title": "Schema Overriding Configs",
@@ -141,11 +147,17 @@
                                             "code": {
                                                 "title": "DP Code",
                                                 "type": "string",
-                                                "required": true
+                                                "required": true,
+                                                "condition": {
+                                                    "functionBody": "return (model.options && model.options.deviceOverrides);"
+                                                }
                                             },
                                             "newCode": {
                                                 "title": "New DP Code",
-                                                "type": "string"
+                                                "type": "string",
+                                                "condition": {
+                                                    "functionBody": "return (model.options && model.options.deviceOverrides && model.options.deviceOverrides[arrayIndices[0]].schema && model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].code && !model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].hidden);"
+                                                }
                                             },
                                             "type": {
                                                 "title": "New DP Type",
@@ -188,7 +200,10 @@
                                                             "Raw"
                                                         ]
                                                     }
-                                                ]
+                                                ],
+                                                "condition": {
+                                                    "functionBody": "return (model.options && model.options.deviceOverrides && model.options.deviceOverrides[arrayIndices[0]].schema && model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].code && !model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].hidden);"
+                                                }
                                             },
                                             "property": {
                                                 "title": "New DP Property",
@@ -196,19 +211,31 @@
                                                 "properties": {
                                                     "min": {
                                                         "title": "min",
-                                                        "type": "integer"
+                                                        "type": "integer",
+                                                        "condition": {
+                                                            "functionBody": "return (model.options && model.options.deviceOverrides && model.options.deviceOverrides[arrayIndices[0]].schema && model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].type === 'Integer' && !model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].hidden);"
+                                                        }
                                                     },
                                                     "max": {
                                                         "title": "max",
-                                                        "type": "integer"
+                                                        "type": "integer",
+                                                        "condition": {
+                                                            "functionBody": "return (model.options && model.options.deviceOverrides && model.options.deviceOverrides[arrayIndices[0]].schema && model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].type === 'Integer' && !model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].hidden);"
+                                                        }
                                                     },
                                                     "scale": {
                                                         "title": "scale",
-                                                        "type": "integer"
+                                                        "type": "integer",
+                                                        "condition": {
+                                                            "functionBody": "return (model.options && model.options.deviceOverrides && model.options.deviceOverrides[arrayIndices[0]].schema && model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].type === 'Integer' && !model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].hidden);"
+                                                        }
                                                     },
                                                     "step": {
                                                         "title": "step",
-                                                        "type": "integer"
+                                                        "type": "integer",
+                                                        "condition": {
+                                                            "functionBody": "return (model.options && model.options.deviceOverrides && model.options.deviceOverrides[arrayIndices[0]].schema && model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].type === 'Integer' && !model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].hidden);"
+                                                        }
                                                     },
                                                     "range": {
                                                         "title": "range",
@@ -216,15 +243,27 @@
                                                         "items": {
                                                             "title": "value",
                                                             "type": "string"
+                                                        },
+                                                        "condition": {
+                                                            "functionBody": "return (model.options && model.options.deviceOverrides && model.options.deviceOverrides[arrayIndices[0]].schema && model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].type === 'Enum' && !model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].hidden);"
                                                         }
                                                     }
+                                                },
+                                                "condition": {
+                                                    "functionBody": "return (model.options && model.options.deviceOverrides && model.options.deviceOverrides[arrayIndices[0]].schema && model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].code && !model.options.deviceOverrides[arrayIndices[0]].schema[arrayIndices[1]].hidden);"
                                                 }
                                             },
                                             "hidden": {
                                                 "title": "Hidden",
-                                                "type": "boolean"
+                                                "type": "boolean",
+                                                "condition": {
+                                                    "functionBody": "return (model.options && model.options.deviceOverrides);"
+                                                }
                                             }
                                         }
+                                    },
+                                    "condition": {
+                                        "functionBody": "return (model.options && model.options.deviceOverrides);"
                                     }
                                 }
                             }
@@ -340,6 +379,7 @@
                                                 },
                                                 {
                                                     "key": "options.deviceOverrides[].schema[].property",
+                                                    "notitle": false,
                                                     "items": [
                                                         "options.deviceOverrides[].schema[].property.min",
                                                         "options.deviceOverrides[].schema[].property.max",
