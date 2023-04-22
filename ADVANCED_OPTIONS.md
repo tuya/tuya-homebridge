@@ -18,6 +18,7 @@ Before configuring, you may need to:
 
 - `id` - **required**: Device ID, Product ID, Scene ID, or `global`.
 - `category` - **optional**: Device category code. See [SUPPORTED_DEVICES.md](./SUPPORTED_DEVICES.md). Also you can use `hidden` to hide the device, product, or scene. **⚠️Overriding this property may lead to unexpected behaviors and exceptions, so please remove the accessory cache after making changes.**
+- `unbridged` - **optional**: Unbridge accessories. Defaults to `false`.
 - `schema` - **optional**: An array of schema overriding config objects, used for describing datapoint (DP). When your device has non-standard DP, you need to transform them manually with configuration. Each element in the schema array is described as follows:
   - `code` - **required**: DP code.
   - `newCode` - **optional**: New DP code.
@@ -26,14 +27,13 @@ Before configuring, you may need to:
   - `onGet` - **optional**: A one-line JavaScript code to convert the old value to the new value. The function is called with two arguments: `device` and `value`.
   - `onSet` - **optional**: A one-line JavaScript code to convert the new value to the old value. The function is called with two arguments: `device` and `value`. Returning `undefined` means to skip sending the command.
   - `hidden` - **optional**: Hide the schema. Defaults to `false`.
-  - `unbridged` - **optional**: Unbridge accessories. Defaults to `false`.
 
 
 ## Examples
 
 ### Change category code
 
-```
+```js
 {
   "options": {
     // ...
@@ -61,6 +61,23 @@ Just the same way as changing category code.
 }
 ```
 
+### Hide DP
+
+An example of hide camera's floodlight (`floodlight_switch`):
+```js
+{
+  "options": {
+    // ...
+    "deviceOverrides": [{
+      "id": "{device_id}",
+      "schema": [{
+        "code": "floodlight_switch",
+        "hidden": true
+      }]
+    }]
+  }
+}
+```
 
 ### Offline as off
 
@@ -101,7 +118,7 @@ If you want to display off status when device is offline:
 
 ### Convert from enum DP to boolean DP
 
-A example of convert `open`/`close` into `true`/`false`.
+An example of convert `open`/`close` into `true`/`false`:
 ```js
 {
   "options": {
