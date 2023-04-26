@@ -8,7 +8,15 @@ body:
     label: Prerequisite
     description: Have you read the [Readme - FAQ](https://github.com/0x5e/homebridge-tuya-platform#faq) and [Readme - Troubleshooting](https://github.com/0x5e/homebridge-tuya-platform#troubleshooting) section?
     options:
-      - label: 'Yes'
+      - label: Yes, I've read the readme completely.
+        required: true
+- type: checkboxes
+  id: cache
+  attributes:
+    label: Cache
+    description: Have you tried clean homebridge accessory cache and restart the service?
+    options:
+      - label: Yes, I've cleaned accessory cache and the issue still exists.
         required: true
 - type: input
   id: version
