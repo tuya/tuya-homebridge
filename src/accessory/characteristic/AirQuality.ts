@@ -1,5 +1,5 @@
 import { Service } from 'homebridge';
-import { TuyaDeviceSchema, TuyaDeviceSchemaType } from '../../device/TuyaDevice';
+import { TuyaDeviceSchema, TuyaDeviceSchemaIntegerProperty, TuyaDeviceSchemaType } from '../../device/TuyaDevice';
 import BaseAccessory from '../BaseAccessory';
 import { limit } from '../../util/util';
 
@@ -20,12 +20,14 @@ export function configureAirQuality(
       || accessory.accessory.addService(accessory.Service.AirQualitySensor);
   }
 
+  const property = airQualitySchema.property as TuyaDeviceSchemaIntegerProperty;
+  const multiple = Math.pow(10, property ? property.scale : 0);
   const { UNKNOWN, EXCELLENT, GOOD, FAIR, INFERIOR, POOR } = accessory.Characteristic.AirQuality;
   service.getCharacteristic(accessory.Characteristic.AirQuality)
     .onGet(() => {
       const status = accessory.getStatus(airQualitySchema.code)!;
       if (airQualitySchema.type === TuyaDeviceSchemaType.Integer) {
-        const value = limit(status.value as number, 0, 1000);
+        const value = limit(status.value as number / multiple, 0, 1000);
         if (value <= 10) {
           return EXCELLENT;
         } else if (value <= 50) {
@@ -69,10 +71,12 @@ function configureDensity(
     return;
   }
 
+  const property = schema.property as TuyaDeviceSchemaIntegerProperty;
+  const multiple = Math.pow(10, property ? property.scale : 0);
   service.getCharacteristic(characteristic)
     .onGet(() => {
       const status = accessory.getStatus(schema.code)!;
-      const value = limit(status.value as number, 0, 1000);
+      const value = limit(status.value as number / multiple, 0, 1000);
       return value;
     });
 }

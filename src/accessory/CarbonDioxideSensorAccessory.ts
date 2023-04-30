@@ -1,3 +1,4 @@
+import { TuyaDeviceSchemaIntegerProperty } from '../device/TuyaDevice';
 import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 
@@ -44,10 +45,12 @@ export default class CarbonDioxideSensorAccessory extends BaseAccessory {
       return;
     }
 
+    const property = schema.property as TuyaDeviceSchemaIntegerProperty;
+    const multiple = Math.pow(10, property ? property.scale : 0);
     this.mainService().getCharacteristic(this.Characteristic.CarbonDioxideLevel)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
-        const value = limit(status.value as number, 0, 100000);
+        const value = limit(status.value as number / multiple, 0, 100000);
         return value;
       });
   }

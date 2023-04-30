@@ -4,7 +4,7 @@ import { PlatformAccessory, Service, Characteristic } from 'homebridge';
 import { debounce } from 'debounce';
 import isEqual from 'lodash.isequal';
 
-import { TuyaDeviceSchema, TuyaDeviceSchemaMode, TuyaDeviceSchemaProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
+import { TuyaDeviceSchema, TuyaDeviceSchemaIntegerProperty, TuyaDeviceSchemaMode, TuyaDeviceSchemaProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
 import { PrefixLogger } from '../util/Logger';
@@ -81,10 +81,12 @@ class BaseAccessory {
         });
     }
 
+    const property = percentSchema.property as TuyaDeviceSchemaIntegerProperty;
+    const multiple = Math.pow(10, property ? property.scale : 0);
     service.getCharacteristic(this.Characteristic.BatteryLevel)
       .onGet(() => {
         const status = this.getStatus(percentSchema.code)!;
-        return limit(status.value as number, 0, 100);
+        return limit(status.value as number / multiple, 0, 100);
       });
 
     const chargingSchema = this.getSchema(...SCHEMA_CODE.BATTERY_CHARGING);
