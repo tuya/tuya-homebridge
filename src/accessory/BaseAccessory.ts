@@ -4,7 +4,7 @@ import { PlatformAccessory, Service, Characteristic } from 'homebridge';
 import { debounce } from 'debounce';
 import isEqual from 'lodash.isequal';
 
-import { TuyaDeviceSchema, TuyaDeviceSchemaIntegerProperty, TuyaDeviceSchemaMode, TuyaDeviceSchemaProperty, TuyaDeviceStatus } from '../device/TuyaDevice';
+import { TuyaDeviceSchema, TuyaDeviceSchemaIntegerProperty, TuyaDeviceSchemaMode, TuyaDeviceStatus } from '../device/TuyaDevice';
 import { TuyaPlatform } from '../platform';
 import { limit } from '../util/util';
 import { PrefixLogger } from '../util/Logger';
