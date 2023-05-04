@@ -12,10 +12,11 @@ export interface TuyaPlatformDeviceSchemaConfig {
 }
 
 export interface TuyaPlatformDeviceConfig {
-  unbridged?: boolean;
   id: string;
   category?: string;
   schema?: Array<TuyaPlatformDeviceSchemaConfig>;
+  unbridged?: boolean;
+  adaptiveLighting?: boolean;
 }
 
 export interface TuyaPlatformCustomConfigOptions {

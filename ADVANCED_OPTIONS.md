@@ -19,6 +19,7 @@ Before configuring, you may need to:
 - `id` - **required**: Device ID, Product ID, Scene ID, or `global`.
 - `category` - **optional**: Device category code. See [SUPPORTED_DEVICES.md](./SUPPORTED_DEVICES.md). Also you can use `hidden` to hide the device, product, or scene. **⚠️Overriding this property may lead to unexpected behaviors and exceptions, so please remove the accessory cache after making changes.**
 - `unbridged` - **optional**: Unbridge accessories. Defaults to `false`.
+- `adaptiveLighting` - **optional**: Adaptive Lighting. Defaults to `false`. Not all light device support this feature, please use it on demand.
 - `schema` - **optional**: An array of schema overriding config objects, used for describing datapoint (DP). When your device has non-standard DP, you need to transform them manually with configuration. Each element in the schema array is described as follows:
   - `code` - **required**: DP code.
   - `newCode` - **optional**: New DP code.

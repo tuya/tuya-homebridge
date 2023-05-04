@@ -323,12 +323,30 @@ export function configureLight(
       break;
   }
 
-  // Adaptive Lighting
-  if (brightSchema && tempSchema) {
-    const { AdaptiveLightingController } = accessory.platform.api.hap;
-    const controller = new AdaptiveLightingController(service);
-    accessory.accessory.configureController(controller);
-    accessory.adaptiveLightingController = controller;
+  configureAdaptiveLighting(accessory, service, brightSchema, tempSchema);
+
+}
+
+function configureAdaptiveLighting(
+  accessory: BaseAccessory,
+  service: Service,
+  brightSchema?: TuyaDeviceSchema,
+  tempSchema?: TuyaDeviceSchema,
+) {
+  const config = accessory.platform.getDeviceConfig(accessory.device);
+  if (!config || config.adaptiveLighting !== true) {
+    accessory.log.info('Adaptive Lighting disabled.');
+    return;
+  }
+  accessory.log.info('Adaptive Lighting enabled.');
+
+  if (!brightSchema || !tempSchema) {
+    accessory.log.warn('Adaptive Lighting not supported. Missing brightness or color temperature schema.');
+    return;
   }
 
+  const { AdaptiveLightingController } = accessory.platform.api.hap;
+  const controller = new AdaptiveLightingController(service);
+  accessory.accessory.configureController(controller);
+  accessory.adaptiveLightingController = controller;
 }
