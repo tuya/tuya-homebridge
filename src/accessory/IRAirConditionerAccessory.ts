@@ -173,8 +173,8 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
   }
 
   getPower() {
-    const status = this.getStatus('power')!;
-    return (status.value === true || parseInt(status.value.toString()) === 1) ? POWER_ON : POWER_OFF;
+    const value = this.getStatus('power')?.value || '0';
+    return (value === true || parseInt(value.toString()) === 1) ? POWER_ON : POWER_OFF;
   }
 
   setPower(value) {
@@ -183,8 +183,8 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
   }
 
   getMode() {
-    const status = this.getStatus('mode')!;
-    return parseInt(status.value.toString());
+    const value = this.getStatus('mode')?.value || '0';
+    return parseInt(value.toString());
   }
 
   setMode(value) {
@@ -193,8 +193,8 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
   }
 
   getWind() {
-    const status = this.getStatus('wind')!;
-    return parseInt(status.value.toString());
+    const value = this.getStatus('wind')?.value || '0';
+    return parseInt(value.toString());
   }
 
   setWind(value) {
@@ -203,8 +203,8 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
   }
 
   getTemp() {
-    const status = this.getStatus('temp')!;
-    return parseInt(status.value.toString());
+    const value = this.getStatus('temp')?.value || '0';
+    return parseInt(value.toString());
   }
 
   setTemp(value) {
