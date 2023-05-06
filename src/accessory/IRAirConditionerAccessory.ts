@@ -56,7 +56,7 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
     // Optional Characteristics
     this.configureRotationSpeed(service);
 
-    const key_range = this.device.remote_keys.key_range;
+    const key_range = this.device.remote_keys?.key_range || [];
     if (key_range.find(item => item.mode === AC_MODE_HEAT)) {
       const [minValue, maxValue] = this.getTempRange(AC_MODE_HEAT)!;
       service.getCharacteristic(this.Characteristic.HeatingThresholdTemperature)
@@ -213,7 +213,8 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
   }
 
   getKeyRangeItem(mode: number) {
-    return this.device.remote_keys.key_range.find(item => item.mode === mode);
+    const key_range = this.device.remote_keys?.key_range || [];
+    return key_range.find(item => item.mode === mode);
   }
 
   supportDehumidifier() {
@@ -243,7 +244,7 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
     const { AUTO, HEAT, COOL } = this.Characteristic.TargetHeaterCoolerState;
 
     const validValues: number[] = [];
-    const key_range = this.device.remote_keys.key_range;
+    const key_range = this.device.remote_keys?.key_range || [];
     if (key_range.find(item => item.mode === AC_MODE_AUTO)) {
       validValues.push(AUTO);
     }
@@ -313,6 +314,6 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
 
   async sendACCommands() {
     const { parent_id, id } = this.device;
-    await this.deviceManager.sendInfraredACCommands(parent_id, id, this.getPower(), this.getMode(), this.getTemp(), this.getWind());
+    await this.deviceManager.sendInfraredACCommands(parent_id!, id, this.getPower(), this.getMode(), this.getTemp(), this.getWind());
   }
 }

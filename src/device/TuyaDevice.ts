@@ -116,9 +116,9 @@ export default class TuyaDevice {
   update_time!: number;
 
   // ...
-  parent_id!: string;
   sub!: boolean;
-  remote_keys!: TuyaIRRemoteKeys;
+  parent_id?: string;
+  remote_keys?: TuyaIRRemoteKeys;
 
   constructor(obj: Partial<TuyaDevice>) {
     Object.assign(this, obj);

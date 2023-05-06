@@ -5,11 +5,8 @@ import { configureName } from './characteristic/Name';
 export default class IRGenericAccessory extends BaseAccessory {
 
   configureServices() {
-    if (!this.device.remote_keys) {
-      return;
-    }
-
-    for (const key of this.device.remote_keys.key_list) {
+    const key_list = this.device.remote_keys?.key_list || [];
+    for (const key of key_list) {
       this.configureSwitch(key);
     }
   }
@@ -37,11 +34,11 @@ export default class IRGenericAccessory extends BaseAccessory {
 
   async sendInfraredCommands(key: TuyaIRRemoteKeyListItem) {
     const { parent_id, id } = this.device;
-    const { category_id, remote_index } = this.device.remote_keys;
+    const { category_id, remote_index } = this.device.remote_keys!;
     if (key.learning_code) {
-      await this.deviceManager.sendInfraredDIYCommands(parent_id, id, key.learning_code);
+      await this.deviceManager.sendInfraredDIYCommands(parent_id!, id, key.learning_code);
     } else {
-      await this.deviceManager.sendInfraredCommands(parent_id, id, category_id, remote_index, key.key, key.key_id);
+      await this.deviceManager.sendInfraredCommands(parent_id!, id, category_id, remote_index, key.key, key.key_id);
     }
   }
 

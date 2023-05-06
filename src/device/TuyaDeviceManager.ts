@@ -175,7 +175,8 @@ export default class TuyaDeviceManager extends EventEmitter {
             this.log.warn('Get infrared diy keys failed. deviceId = %d, code = %s, msg = %s', subDevice.id, res.code, res.msg);
             continue;
           }
-          for (const key of subDevice.remote_keys.key_list) {
+          const key_list = subDevice.remote_keys?.key_list || [];
+          for (const key of key_list) {
             const item = (res.result as []).find(item => item['id'] === key.key_id && item['key'] === key.key);
             if (!item) {
               continue;

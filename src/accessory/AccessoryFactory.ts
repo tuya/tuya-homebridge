@@ -202,7 +202,7 @@ export default class AccessoryFactory {
 
     // IR Remote Control
     if (device.isIRRemoteControl()) {
-      switch (device.remote_keys.category_id) {
+      switch (device.remote_keys?.category_id) {
         case 5: // AC
           handler = new IRAirConditionerAccessory(platform, accessory);
           break;
