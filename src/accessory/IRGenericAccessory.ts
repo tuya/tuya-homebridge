@@ -5,7 +5,15 @@ import { configureName } from './characteristic/Name';
 export default class IRGenericAccessory extends BaseAccessory {
 
   configureServices() {
-    const key_list = this.device.remote_keys?.key_list || [];
+    let key_list = this.device.remote_keys?.key_list || [];
+
+    // Max 99 services allowed (one for AccessoryInformation)
+    if (key_list.length > 99) {
+      this.log.warn(`Skipping ${key_list.length - 99} keys for ${this.device.name}, ` +
+        'as we reached the limit of HomeKit (100 services per accessory)');
+    }
+    key_list = key_list.slice(0, 99);
+
     for (const key of key_list) {
       this.configureSwitch(key);
     }
