@@ -26,9 +26,9 @@ export function configureRotationSpeed(
       const value = status.value as number / multiple;
       return limit(value, props.minValue, props.maxValue);
     })
-    .onSet(value => {
+    .onSet(async value => {
       const speed = (value as number) * multiple;
-      accessory.sendCommands([{ code: schema.code, value: speed }], true);
+      await accessory.sendCommands([{ code: schema.code, value: speed }], true);
     })
     .setProps(props);
 
@@ -65,7 +65,7 @@ export function configureRotationSpeedLevel(
 
   service.getCharacteristic(accessory.Characteristic.RotationSpeed)
     .onGet(onGetHandler)
-    .onSet(value => {
+    .onSet(async value => {
       accessory.log.debug('Set RotationSpeed to:', value);
       const index = Math.round(value as number - 1);
       if (index < 0 || index >= range.length) {
@@ -74,7 +74,7 @@ export function configureRotationSpeedLevel(
       }
       const speedLevel = range[index].toString();
       accessory.log.debug('Set RotationSpeedLevel to:', speedLevel);
-      accessory.sendCommands([{ code: schema.code, value: speedLevel }], true);
+      await accessory.sendCommands([{ code: schema.code, value: speedLevel }], true);
     })
     .updateValue(onGetHandler()) // ensure the value is correct before set props
     .setProps(props);

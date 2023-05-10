@@ -69,13 +69,13 @@ export function configureSecuritySystemTargetState(accessory: SecuritySystemAcce
 
       return tuyaHomebridgeMap.get(currentState);
     })
-    .onSet(value => {
+    .onSet(async value => {
 
       const sosState = accessory.getStatus(sosStateSchema.code)?.value;
 
       // If we received a request to disarm the alarm, we make sure sos_state is set to false
       if (sosState && value === accessory.Characteristic.SecuritySystemTargetState.DISARM) {
-        accessory.sendCommands([{
+        await accessory.sendCommands([{
           code: sosStateSchema.code,
           value: false,
         }], true);
@@ -83,7 +83,7 @@ export function configureSecuritySystemTargetState(accessory: SecuritySystemAcce
 
       accessory.isNightArm = value === accessory.Characteristic.SecuritySystemTargetState.NIGHT_ARM;
 
-      accessory.sendCommands([{
+      await accessory.sendCommands([{
         code: masterModeSchema.code,
         value: tuyaHomebridgeMap.get(value),
       }], true);

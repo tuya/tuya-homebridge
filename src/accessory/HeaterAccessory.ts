@@ -67,7 +67,7 @@ export default class HeaterAccessory extends BaseAccessory {
       .onGet(() => {
         return AUTO;
       })
-      .onSet(value => {
+      .onSet(async value => {
         // TODO
       })
       .setProps({ validValues });
@@ -94,8 +94,8 @@ export default class HeaterAccessory extends BaseAccessory {
         const temp = status.value as number / multiple;
         return limit(temp, props.minValue, props.maxValue);
       })
-      .onSet(value => {
-        this.sendCommands([{ code: schema.code, value: (value as number) * multiple}]);
+      .onSet(async value => {
+        await this.sendCommands([{ code: schema.code, value: (value as number) * multiple}]);
       })
       .setProps(props);
   }

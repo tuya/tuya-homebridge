@@ -10,11 +10,12 @@ export function configureActive(accessory: BaseAccessory, service: Service, sche
   const { ACTIVE, INACTIVE } = accessory.Characteristic.Active;
   service.getCharacteristic(accessory.Characteristic.Active)
     .onGet(() => {
+      accessory.checkOnlineStatus();
       const status = accessory.getStatus(schema.code)!;
       return status.value as boolean ? ACTIVE : INACTIVE;
     })
-    .onSet(value => {
-      accessory.sendCommands([{
+    .onSet(async value => {
+      await accessory.sendCommands([{
         code: schema.code,
         value: (value === ACTIVE) ? true : false,
       }], true);

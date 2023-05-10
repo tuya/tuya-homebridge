@@ -50,6 +50,7 @@
 - Expose energy usage for outlets/switches. (#190) Thanks @lstrojny for the contribution
 - Strict config validate for `deviceOverrides`. (#278)
 - Support AirPurifier air quality.
+- Throw `HapStatusError` when device is offline.
 
 
 ## [1.6.0] - (2022.12.3)

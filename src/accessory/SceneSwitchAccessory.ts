@@ -29,16 +29,16 @@ export default class SceneSwitchAccessory extends BaseAccessory {
         const status = this.getStatus(schema.code)!;
         return status.value as boolean;
       })
-      .onSet((value) => {
+      .onSet(async value => {
         if (modeSchema) {
           const mode = this.getStatus(modeSchema.code)!;
           if ((mode.value as string).startsWith('scene')) {
-            this.sendCommands([{ code: schema.code, value: false }]);
+            await this.sendCommands([{ code: schema.code, value: false }]);
             return;
           }
         }
 
-        this.sendCommands([{ code: schema.code, value: value as boolean }]);
+        await this.sendCommands([{ code: schema.code, value: value as boolean }]);
       });
   }
 

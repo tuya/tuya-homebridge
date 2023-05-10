@@ -36,9 +36,9 @@ export default class DoorbellAccessory extends BaseAccessory {
         const value = !(status.value as boolean);
         return value;
       })
-      .onSet(value => {
+      .onSet(async value => {
         const mute = !(value as boolean);
-        this.sendCommands([{ code: schema.code, value: mute }], true);
+        await this.sendCommands([{ code: schema.code, value: mute }], true);
       });
   }
 
@@ -61,9 +61,9 @@ export default class DoorbellAccessory extends BaseAccessory {
         const value = status.value as number / multiple;
         return value;
       })
-      .onSet(value => {
+      .onSet(async value => {
         const volume = (value as number) * multiple;
-        this.sendCommands([{ code: schema.code, value: volume }], true);
+        await this.sendCommands([{ code: schema.code, value: volume }], true);
       })
       .setProps(props);
   }

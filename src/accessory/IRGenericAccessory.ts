@@ -27,7 +27,7 @@ export default class IRGenericAccessory extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.On)
       .onGet(() => false)
-      .onSet(value => {
+      .onSet(async value => {
         if (value === false) {
           return;
         }

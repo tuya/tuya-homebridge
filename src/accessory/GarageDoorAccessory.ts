@@ -61,8 +61,8 @@ export default class GarageDoorAccessory extends BaseAccessory {
         const status = this.getStatus(schema.code)!;
         return status.value as boolean ? OPEN : CLOSED;
       })
-      .onSet(value => {
-        this.sendCommands([{
+      .onSet(async value => {
+        await this.sendCommands([{
           code: schema.code,
           value: (value === OPEN) ? true : false,
         }]);

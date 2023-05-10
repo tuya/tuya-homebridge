@@ -13,7 +13,7 @@ export default class SceneAccessory extends BaseAccessory {
 
     service.getCharacteristic(this.Characteristic.On)
       .onGet(() => false)
-      .onSet(async (value) => {
+      .onSet(async value => {
         if (value === false) {
           return;
         }
@@ -24,7 +24,8 @@ export default class SceneAccessory extends BaseAccessory {
         }, 150);
         if (res.success === false) {
           this.log.warn('ExecuteScene failed. homeId = %s, code = %s, msg = %s', this.device.owner_id, res.code, res.msg);
-          throw new this.platform.api.hap.HapStatusError(HAPStatus.SERVICE_COMMUNICATION_FAILURE);
+          const { HapStatusError, HAPStatus } = this.platform.api.hap;
+          throw new HapStatusError(HAPStatus.SERVICE_COMMUNICATION_FAILURE);
         }
       });
   }

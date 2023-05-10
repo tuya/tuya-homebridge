@@ -60,7 +60,7 @@ export default class AirConditionerAccessory extends BaseAccessory {
         const modeStatus = this.getStatus(modeSchema.code)!;
         return (activeStatus.value === true && AC_MODES.includes(modeStatus.value as string)) ? ACTIVE : INACTIVE;
       })
-      .onSet(value => {
+      .onSet(async value => {
         const commands: TuyaDeviceStatus[] = [{
           code: activeSchema.code,
           value: (value === ACTIVE) ? true : false,
@@ -76,7 +76,7 @@ export default class AirConditionerAccessory extends BaseAccessory {
           }
         }
 
-        this.sendCommands(commands, true);
+        await this.sendCommands(commands, true);
       });
 
     this.configureCurrentState();
@@ -110,8 +110,8 @@ export default class AirConditionerAccessory extends BaseAccessory {
         const modeStatus = this.getStatus(modeSchema.code)!;
         return (activeStatus.value === true && modeStatus.value === DEHUMIDIFIER_MODE) ? ACTIVE : INACTIVE;
       })
-      .onSet(value => {
-        this.sendCommands([{
+      .onSet(async value => {
+        await this.sendCommands([{
           code: activeSchema.code,
           value: (value === ACTIVE) ? true : false,
         }, {
@@ -159,8 +159,8 @@ export default class AirConditionerAccessory extends BaseAccessory {
         const modeStatus = this.getStatus(modeSchema.code)!;
         return (activeStatus.value === true && modeStatus.value === FAN_MODE) ? ACTIVE : INACTIVE;
       })
-      .onSet(value => {
-        this.sendCommands([{
+      .onSet(async value => {
+        await this.sendCommands([{
           code: activeSchema.code,
           value: (value === ACTIVE) ? true : false,
         }, {
@@ -246,7 +246,7 @@ export default class AirConditionerAccessory extends BaseAccessory {
 
         return validValues.includes(AUTO) ? AUTO : validValues[0];
       })
-      .onSet(value => {
+      .onSet(async value => {
 
         let mode: string;
         if (value === HEAT) {
@@ -257,7 +257,7 @@ export default class AirConditionerAccessory extends BaseAccessory {
           mode = 'auto';
         }
 
-        this.sendCommands([{ code: schema.code, value: mode }], true);
+        await this.sendCommands([{ code: schema.code, value: mode }], true);
       })
       .setProps({ validValues });
   }
@@ -288,7 +288,7 @@ export default class AirConditionerAccessory extends BaseAccessory {
         const temp = status.value as number / multiple;
         return limit(temp, props.minValue, props.maxValue);
       })
-      .onSet(value => {
+      .onSet(async value => {
         const modeSchema = this.getSchema(...SCHEMA_CODE.MODE);
         if (modeSchema && this.getStatus(modeSchema.code)!.value === 'auto') {
           this.mainService().getCharacteristic(this.Characteristic.CoolingThresholdTemperature)
@@ -296,7 +296,7 @@ export default class AirConditionerAccessory extends BaseAccessory {
           return;
         }
 
-        this.sendCommands([{ code: schema.code, value: (value as number) * multiple}], true);
+        await this.sendCommands([{ code: schema.code, value: (value as number) * multiple}], true);
       })
       .setProps(props);
   }
@@ -327,7 +327,7 @@ export default class AirConditionerAccessory extends BaseAccessory {
         const temp = status.value as number / multiple;
         return limit(temp, props.minValue, props.maxValue);
       })
-      .onSet(value => {
+      .onSet(async value => {
         const modeSchema = this.getSchema(...SCHEMA_CODE.MODE);
         if (modeSchema && this.getStatus(modeSchema.code)!.value === 'auto') {
           this.mainService().getCharacteristic(this.Characteristic.HeatingThresholdTemperature)
@@ -335,7 +335,7 @@ export default class AirConditionerAccessory extends BaseAccessory {
           return;
         }
 
-        this.sendCommands([{ code: schema.code, value: (value as number) * multiple}], true);
+        await this.sendCommands([{ code: schema.code, value: (value as number) * multiple}], true);
       })
       .setProps(props);
   }

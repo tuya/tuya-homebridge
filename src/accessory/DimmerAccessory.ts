@@ -72,13 +72,13 @@ export default class DimmerAccessory extends BaseAccessory {
         value = limit(value, props.minValue, props.maxValue);
         return value;
       })
-      .onSet((value) => {
+      .onSet(async value => {
         this.log.debug(`Characteristic.Brightness set to: ${value}`);
         let brightValue = value as number;
         brightValue = remap(brightValue, 0, 100, 0, range);
         brightValue = Math.round(brightValue);
         brightValue = limit(brightValue, min, max);
-        this.sendCommands([{ code: schema.code, value: brightValue }], true);
+        await this.sendCommands([{ code: schema.code, value: brightValue }], true);
       })
       .setProps(props);
 

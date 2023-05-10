@@ -22,9 +22,9 @@ export function configureRelativeHumidityDehumidifierThreshold(accessory: BaseAc
       const status = accessory.getStatus(schema.code)!;
       return limit(status.value as number / multiple, 0, 100);
     })
-    .onSet(value => {
+    .onSet(async value => {
       const dehumidity_set = limit(value as number * multiple, property.min, property.max);
-      accessory.sendCommands([{ code: schema.code, value: dehumidity_set }]);
+      await accessory.sendCommands([{ code: schema.code, value: dehumidity_set }]);
     })
     .setProps(props);
 }

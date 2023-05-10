@@ -93,8 +93,8 @@ export default class AirPurifierAccessory extends BaseAccessory {
         const status = this.getStatus(schema.code)!;
         return (status.value === 'auto') ? AUTO : MANUAL;
       })
-      .onSet(value => {
-        this.sendCommands([{
+      .onSet(async value => {
+        await this.sendCommands([{
           code: schema.code,
           value: (value === AUTO) ? 'auto' : 'manual',
         }], true);

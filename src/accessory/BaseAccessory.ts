@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { PlatformAccessory, Service, Characteristic } from 'homebridge';
+import { PlatformAccessory, Service, Characteristic, Nullable, CharacteristicValue } from 'homebridge';
 import { debounce } from 'debounce';
 import isEqual from 'lodash.isequal';
 
@@ -113,22 +113,41 @@ class BaseAccessory {
   async updateAllValues() {
     for (const service of this.accessory.services) {
       for (const characteristic of service.characteristics) {
-        const getHandler = characteristic['getHandler'];
-        const newValue = getHandler ? (await getHandler()) : characteristic.value;
-        if (characteristic.value === newValue) {
+        if (characteristic.UUID === this.Characteristic.ProgrammableSwitchEvent.UUID) {
           continue;
         }
 
-        this.log.debug(
-          '[%s/%s/%s] Update value: %o => %o',
-          service.constructor.name,
-          service.subtype,
-          characteristic.constructor.name,
-          characteristic.value,
-          newValue,
-        );
+        let newValue: Nullable<CharacteristicValue> | Error = characteristic.value;
+        const getHandler = characteristic['getHandler'];
+        if (getHandler) {
+          try {
+            newValue = await getHandler();
+          } catch (error) {
+            // TODO: why `characteristic.updateValue(HapStatusError)` not working?
+            // newValue = error as Error;
+            continue;
+          }
+        }
+
+        if (characteristic.value !== newValue && !(newValue instanceof Error)) {
+          this.log.debug(
+            '[%s/%s/%s] Update value: %o => %o',
+            service.constructor.name,
+            service.subtype,
+            characteristic.constructor.name,
+            characteristic.value,
+            newValue,
+          );
+        }
         characteristic.updateValue(newValue);
       }
+    }
+  }
+
+  checkOnlineStatus() {
+    if (!this.device.online) {
+      const { HapStatusError, HAPStatus } = this.platform.api.hap;
+      throw new HapStatusError(HAPStatus.SERVICE_COMMUNICATION_FAILURE);
     }
   }
 
@@ -174,6 +193,8 @@ class BaseAccessory {
     if (this.device.online === false) {
       this.log.warn('Device is offline, skip send command.');
       this.updateAllValues();
+      const { HapStatusError, HAPStatus } = this.platform.api.hap;
+      throw new HapStatusError(HAPStatus.SERVICE_COMMUNICATION_FAILURE);
       return;
     }
 
@@ -331,6 +352,6 @@ export default class OverridedBaseAccessory extends BaseAccessory {
       }
     }
 
-    super.sendCommands(commands, debounce);
+    await super.sendCommands(commands, debounce);
   }
 }

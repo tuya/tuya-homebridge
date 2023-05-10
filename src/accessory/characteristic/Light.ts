@@ -132,7 +132,7 @@ function configureBrightness(
         return 100;
       }
     })
-    .onSet((value) => {
+    .onSet(async value => {
       accessory.log.debug(`Characteristic.Brightness set to: ${value}`);
       if (inColorMode(accessory, lightType, modeSchema) && colorSchema) {
         // Color mode, set brightness to `color_data.v`
@@ -140,13 +140,13 @@ function configureBrightness(
         const colorValue = getColorValue(accessory, colorSchema);
         colorValue.v = Math.round(value as number * max / 100);
         colorValue.v = limit(colorValue.v, min, max);
-        accessory.sendCommands([{ code: colorSchema.code, value: JSON.stringify(colorValue) }], true);
+        await accessory.sendCommands([{ code: colorSchema.code, value: JSON.stringify(colorValue) }], true);
       } else if (inWhiteMode(accessory, lightType, modeSchema) && brightSchema) {
         // White mode, set brightness to `brightness_value`
         const { min, max } = brightSchema.property as TuyaDeviceSchemaIntegerProperty;
         let brightValue = Math.round(value as number * max / 100);
         brightValue = limit(brightValue, min, max);
-        accessory.sendCommands([{ code: brightSchema.code, value: brightValue }], true);
+        await accessory.sendCommands([{ code: brightSchema.code, value: brightValue }], true);
       } else {
         // Unsupported mode
         accessory.log.warn('Neither color mode nor white mode.');
@@ -182,7 +182,7 @@ function configureColourTemperature(
       const mired = Math.round(kelvinToMired(kelvin));
       return limit(mired, props.minValue, props.maxValue);
     })
-    .onSet((value) => {
+    .onSet(async value => {
       accessory.log.debug(`Characteristic.ColorTemperature set to: ${value}`);
 
       const commands: TuyaDeviceStatus[] = [];
@@ -197,7 +197,7 @@ function configureColourTemperature(
         commands.push({ code: tempSchema.code, value: temp });
       }
 
-      accessory.sendCommands(commands, true);
+      await accessory.sendCommands(commands, true);
     })
     .setProps(props);
 
@@ -220,7 +220,7 @@ function configureHue(
       const hue = Math.round(360 * getColorValue(accessory, colorSchema).h / max);
       return limit(hue, 0, 360);
     })
-    .onSet((value) => {
+    .onSet(async value => {
       accessory.log.debug(`Characteristic.Hue set to: ${value}`);
       const colorValue = getColorValue(accessory, colorSchema);
       colorValue.h = Math.round(value as number * max / 360);
@@ -234,7 +234,7 @@ function configureHue(
         commands.push({ code: modeSchema.code, value: 'colour' });
       }
 
-      accessory.sendCommands(commands, true);
+      await accessory.sendCommands(commands, true);
     });
 }
 
@@ -255,7 +255,7 @@ function configureSaturation(
       const saturation = Math.round(100 * getColorValue(accessory, colorSchema).s / max);
       return limit(saturation, 0, 100);
     })
-    .onSet((value) => {
+    .onSet(async value => {
       accessory.log.debug(`Characteristic.Saturation set to: ${value}`);
       const colorValue = getColorValue(accessory, colorSchema);
       colorValue.s = Math.round(value as number * max / 100);
@@ -269,7 +269,7 @@ function configureSaturation(
         commands.push({ code: modeSchema.code, value: 'colour' });
       }
 
-      accessory.sendCommands(commands, true);
+      await accessory.sendCommands(commands, true);
     });
 }
 

@@ -101,11 +101,11 @@ export default class HumidifierAccessory extends BaseAccessory {
         const status = this.getStatus(schema.code)!;
         return limit(status.value as number / multiple, 0, 100);
       })
-      .onSet(value => {
+      .onSet(async value => {
         const humidity_set = limit(value as number * multiple, property.min, property.max);
-        this.sendCommands([{ code: schema.code, value: humidity_set }]);
+        await this.sendCommands([{ code: schema.code, value: humidity_set }]);
         // also set spray mode to humidity
-        this.setSprayModeToHumidity();
+        await this.setSprayModeToHumidity();
       }).setProps(props);
   }
 
@@ -133,10 +133,10 @@ export default class HumidifierAccessory extends BaseAccessory {
             break;
         }
         return remap(v, 0, 3, 0, 100);
-      }).onSet(v => {
-        v = Math.round(remap(v as number, 0, 100, 0, 3));
+      }).onSet(async value => {
+        value = Math.round(remap(value as number, 0, 100, 0, 3));
         let mode = 'small';
-        switch (v) {
+        switch (value) {
           case 2:
             mode = 'middle';
             break;
@@ -144,17 +144,17 @@ export default class HumidifierAccessory extends BaseAccessory {
             mode = 'large';
             break;
         }
-        this.sendCommands([{ code: schema.code, value: mode }]);
+        await this.sendCommands([{ code: schema.code, value: mode }]);
       });
   }
 
-  setSprayModeToHumidity() {
+  async setSprayModeToHumidity() {
     const schema = this.getSchema('spray_mode');
     if (!schema) {
       this.log.debug('Spray mode not supported.');
       return;
     }
-    this.sendCommands([{ code: schema.code, value: 'humidity' }]);
+    await this.sendCommands([{ code: schema.code, value: 'humidity' }]);
   }
 
 }

@@ -13,13 +13,13 @@ export function configureTempDisplayUnits(accessory: BaseAccessory, service: Ser
       const status = accessory.getStatus(schema.code)!;
       return ((status.value as string).toLowerCase() === 'c') ? CELSIUS : FAHRENHEIT;
     })
-    .onSet(value => {
+    .onSet(async value => {
       const status = accessory.getStatus(schema.code)!;
       const isLowerCase = (status.value as string).toLowerCase() === status.value;
 
       let unit = (value === CELSIUS) ? 'c' : 'f';
       unit = isLowerCase ? unit.toLowerCase() : unit.toUpperCase();
-      accessory.sendCommands([{
+      await accessory.sendCommands([{
         code: schema.code,
         value: unit,
       }]);

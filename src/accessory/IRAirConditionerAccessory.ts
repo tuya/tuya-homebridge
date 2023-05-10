@@ -33,7 +33,7 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
       .onGet(() => {
         return ([AC_MODE_COOL, AC_MODE_HEAT, AC_MODE_AUTO].includes(this.getMode()) && this.getPower() === POWER_ON) ? ACTIVE : INACTIVE;
       })
-      .onSet(value => {
+      .onSet(async value => {
         if (value === ACTIVE) {
           // Turn off Dehumidifier & Fan
           this.supportDehumidifier() && this.dehumidifierService().getCharacteristic(this.Characteristic.Active).updateValue(INACTIVE);
@@ -66,7 +66,7 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
           }
           return this.getTemp();
         })
-        .onSet(value => {
+        .onSet(async value => {
           if (this.getMode() === AC_MODE_AUTO) {
             return;
           }
@@ -96,7 +96,7 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
       .onGet(() => {
         return (this.getMode() === AC_MODE_DEHUMIDIFIER && this.getPower() === POWER_ON) ? ACTIVE : INACTIVE;
       })
-      .onSet(value => {
+      .onSet(async value => {
         if (value === ACTIVE) {
           // Turn off AC & Fan
           this.mainService().getCharacteristic(this.Characteristic.Active).updateValue(INACTIVE);
@@ -141,7 +141,7 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
       .onGet(() => {
         return (this.getMode() === AC_MODE_FAN && this.getPower() === POWER_ON) ? ACTIVE : INACTIVE;
       })
-      .onSet(value => {
+      .onSet(async value => {
         if (value === ACTIVE) {
           // Turn off AC & Dehumidifier
           this.mainService().getCharacteristic(this.Characteristic.Active).updateValue(INACTIVE);
@@ -266,7 +266,7 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
         [AC_MODE_HEAT.toString()]: HEAT,
         [AC_MODE_AUTO.toString()]: AUTO,
       }[this.getMode().toString()] || AUTO))
-      .onSet(value => {
+      .onSet(async value => {
         this.setMode({
           [COOL.toString()]: AC_MODE_COOL,
           [HEAT.toString()]: AC_MODE_HEAT,
@@ -291,7 +291,7 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
     const { MANUAL, AUTO } = this.Characteristic.TargetFanState;
     service.getCharacteristic(this.Characteristic.TargetFanState)
       .onGet(() => (this.getWind() === FAN_SPEED_AUTO) ? AUTO : MANUAL)
-      .onSet(value => {
+      .onSet(async value => {
         this.setWind((value === AUTO) ? FAN_SPEED_AUTO : FAN_SPEED_LOW);
       });
   }
@@ -299,7 +299,7 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
   configureRotationSpeed(service) {
     service.getCharacteristic(this.Characteristic.RotationSpeed)
       .onGet(() => (this.getWind() === FAN_SPEED_AUTO) ? FAN_SPEED_HIGH : this.getWind())
-      .onSet(value => {
+      .onSet(async value => {
         // if (this.getWind() === FAN_SPEED_AUTO) {
         //   return;
         // }

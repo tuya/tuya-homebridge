@@ -13,8 +13,8 @@ export function configureSwingMode(accessory: BaseAccessory, service: Service, s
       const status = accessory.getStatus(schema.code)!;
       return (status.value as boolean) ? SWING_ENABLED : SWING_DISABLED;
     })
-    .onSet((value) => {
-      accessory.sendCommands([{
+    .onSet(async (value) => {
+      await accessory.sendCommands([{
         code: schema.code,
         value: (value === SWING_ENABLED) ? true : false,
       }], true);

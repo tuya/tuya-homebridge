@@ -97,8 +97,8 @@ export default class WindowCoveringAccessory extends BaseAccessory {
         const status = this.getStatus(schema.code)!;
         return limit(status.value as number, 0, 100);
       })
-      .onSet(value => {
-        this.sendCommands([{ code: schema.code, value: value as number }], true);
+      .onSet(async value => {
+        await this.sendCommands([{ code: schema.code, value: value as number }], true);
       });
   }
 
@@ -124,7 +124,7 @@ export default class WindowCoveringAccessory extends BaseAccessory {
         this.log.warn('Unknown TargetPosition:', status.value);
         return 50;
       })
-      .onSet(value => {
+      .onSet(async value => {
         let control: string;
         if (value === 0) {
           control = isOldSchema ? 'FZ' : 'close';
@@ -133,7 +133,7 @@ export default class WindowCoveringAccessory extends BaseAccessory {
         } else {
           control = isOldSchema ? 'STOP' :'stop';
         }
-        this.sendCommands([{ code: schema.code, value: control }], true);
+        await this.sendCommands([{ code: schema.code, value: control }], true);
       })
       .setProps({
         minStep: 50,

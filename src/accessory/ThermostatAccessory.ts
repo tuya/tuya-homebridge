@@ -123,7 +123,7 @@ export default class ThermostatAccessory extends BaseAccessory {
         // Don't know how to display unsupported mode.
         return AUTO;
       })
-      .onSet(value => {
+      .onSet(async value => {
         const commands: TuyaDeviceStatus[] = [];
 
         // Thermostat valve may not support 'Power Off'
@@ -157,7 +157,7 @@ export default class ThermostatAccessory extends BaseAccessory {
         }
 
         if (commands.length !== 0) {
-          this.sendCommands(commands);
+          await this.sendCommands(commands);
         }
       })
       .setProps({ validValues });
@@ -191,8 +191,8 @@ export default class ThermostatAccessory extends BaseAccessory {
         const temp = status.value as number / multiple;
         return limit(temp, props.minValue, props.maxValue);
       })
-      .onSet(value => {
-        this.sendCommands([{
+      .onSet(async value => {
+        await this.sendCommands([{
           code: schema.code,
           value: value as number * multiple,
         }]);

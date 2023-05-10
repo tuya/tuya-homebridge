@@ -132,8 +132,8 @@ export default class FanAccessory extends BaseAccessory {
         const status = this.getStatus(schema.code)!;
         return (status.value !== 'reverse') ? CLOCKWISE : COUNTER_CLOCKWISE;
       })
-      .onSet(value => {
-        this.sendCommands([{ code: schema.code, value: (value === CLOCKWISE) ? 'forward' : 'reverse' }]);
+      .onSet(async value => {
+        await this.sendCommands([{ code: schema.code, value: (value === CLOCKWISE) ? 'forward' : 'reverse' }]);
       });
   }
 

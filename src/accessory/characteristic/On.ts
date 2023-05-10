@@ -14,11 +14,12 @@ export function configureOn(accessory: BaseAccessory, service?: Service, schema?
 
   service.getCharacteristic(accessory.Characteristic.On)
     .onGet(() => {
+      accessory.checkOnlineStatus();
       const status = accessory.getStatus(schema.code)!;
       return status.value as boolean;
     })
-    .onSet((value) => {
-      accessory.sendCommands([{
+    .onSet(async value => {
+      await accessory.sendCommands([{
         code: schema.code,
         value: value as boolean,
       }], true);
