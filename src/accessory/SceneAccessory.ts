@@ -1,4 +1,4 @@
-import { HAPStatus, PlatformAccessory } from 'homebridge';
+import { PlatformAccessory } from 'homebridge';
 import TuyaHomeDeviceManager from '../device/TuyaHomeDeviceManager';
 import { TuyaPlatform } from '../platform';
 import BaseAccessory from './BaseAccessory';
