@@ -14,6 +14,7 @@ const SCHEMA_CODE = {
   TOTAL_POWER: ['add_ele'],
   CURRENT_TEMP: ['va_temperature', 'temp_current'],
   CURRENT_HUMIDITY: ['va_humidity', 'humidity_value'],
+  INCHING: ['switch_inching'],
 };
 
 export default class SwitchAccessory extends BaseAccessory {
@@ -43,6 +44,7 @@ export default class SwitchAccessory extends BaseAccessory {
     // Other
     configureCurrentTemperature(this, undefined, this.getSchema(...SCHEMA_CODE.CURRENT_TEMP));
     configureCurrentRelativeHumidity(this, undefined, this.getSchema(...SCHEMA_CODE.CURRENT_HUMIDITY));
+    this.configureInching();
   }
 
 
@@ -69,6 +71,37 @@ export default class SwitchAccessory extends BaseAccessory {
         this.getSchema(...SCHEMA_CODE.TOTAL_POWER),
       );
     }
+  }
+
+  configureInching() {
+    const schema = this.getSchema(...SCHEMA_CODE.INCHING);
+    if (!schema || schema.type !== TuyaDeviceSchemaType.String) {
+      return;
+    }
+
+    const service = this.accessory.getService(schema.code)
+      || this.accessory.addService(this.Service.Switch, schema.code, schema.code);
+
+    configureName(this, service, schema.code);
+    service.getCharacteristic(this.Characteristic.On)
+      .onGet(() => {
+        this.checkOnlineStatus();
+        const status = this.getStatus(schema.code)!;
+        const buffer = Buffer.from(status.value as string, 'base64');
+        return (buffer.length === 3) && (buffer[0] === 1);
+      })
+      .onSet(async value => {
+        const status = this.getStatus(schema.code)!;
+        let buffer = Buffer.from(status.value as string, 'base64');
+        if (buffer.length !== 3) {
+          buffer = Buffer.alloc(3);
+        }
+        buffer[0] = (value as boolean) ? 1 : 0;
+        await this.sendCommands([{
+          code: schema.code,
+          value: buffer.toString('base64'),
+        }], true);
+      });
   }
 
 }
