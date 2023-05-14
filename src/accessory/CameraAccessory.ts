@@ -9,7 +9,7 @@ const SCHEMA_CODE = {
   MOTION_ON: ['motion_switch'],
   MOTION_DETECT: ['movement_detect_pic'],
   // Indicates that this is possibly a doorbell
-  DOORBELL: ['wireless_powermode', 'doorbell_ring_exist'],
+  DOORBELL: ['doorbell_ring_exist'],
   // Notifies when a doorbell ring occurs.
   DOORBELL_RING: ['doorbell_pic'],
   // Notifies when a doorbell ring occurs.
