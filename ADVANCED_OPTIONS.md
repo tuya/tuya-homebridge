@@ -80,6 +80,21 @@ An example of hide camera's floodlight (`floodlight_switch`):
 }
 ```
 
+### Enable Adaptive Lighting
+
+```js
+{
+  "options": {
+    // ...
+    "deviceOverrides": [{
+      "id": "{device_id}",
+      "adaptiveLighting": true
+    }]
+  }
+}
+```
+
+
 ### Offline as off
 
 If you want to display off status when device is offline:
