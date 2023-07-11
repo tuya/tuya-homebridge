@@ -37,8 +37,9 @@ export default class TuyaOpenMQ {
   constructor(
     public api: TuyaOpenAPI,
     public log: Logger = console,
+    public debug = false,
   ) {
-    this.log = new PrefixLogger(log, TuyaOpenMQ.name);
+    this.log = new PrefixLogger(log, TuyaOpenMQ.name, debug);
   }
 
   start() {

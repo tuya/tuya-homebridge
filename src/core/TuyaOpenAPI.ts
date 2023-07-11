@@ -85,8 +85,9 @@ export default class TuyaOpenAPI {
     public accessKey: string,
     public log: Logger = console,
     public lang = 'en',
+    public debug = false,
   ) {
-    this.log = new PrefixLogger(log, TuyaOpenAPI.name);
+    this.log = new PrefixLogger(log, TuyaOpenAPI.name, debug);
   }
 
   static getDefaultEndpoint(countryCode: number) {

@@ -182,32 +182,24 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
       try {
         session.socket?.close();
       } catch (error) {
-        this.camera.log.error(`Error occurred closing socket: ${error}`, this.camera.accessory.displayName, 'Homebridge');
+        this.camera.log.error(`Error occurred closing socket: ${error}`);
       }
 
       try {
         session.mainProcess?.stop();
       } catch (error) {
-        this.camera.log.error(
-          `Error occurred terminating main FFmpeg process: ${error}`,
-          this.camera.accessory.displayName,
-          'Homebridge',
-        );
+        this.camera.log.error(`Error occurred terminating main FFmpeg process: ${error}`);
       }
 
       try {
         session.returnProcess?.stop();
       } catch (error) {
-        this.camera.log.error(
-          `Error occurred terminating two-way FFmpeg process: ${error}`,
-          this.camera.accessory.displayName,
-          'Homebridge',
-        );
+        this.camera.log.error(`Error occurred terminating two-way FFmpeg process: ${error}`);
       }
 
       delete this.ongoingSessions[sessionId];
 
-      this.camera.log.info('Stopped video stream.', this.camera.accessory.displayName);
+      this.camera.log.info('Stopped video stream.');
     }
   }
 
@@ -220,14 +212,11 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
     callback: SnapshotRequestCallback,
   ) {
     try {
-      this.camera.log.debug(`Snapshot requested: ${request.width} x ${request.height}`, this.camera.accessory.displayName);
+      this.camera.log.debug(`Snapshot requested: ${request.width} x ${request.height}`);
 
       const snapshot = await this.fetchSnapshot();
 
-      this.camera.log.debug(
-        'Sending snapshot',
-        this.camera.accessory.displayName,
-      );
+      this.camera.log.debug('Sending snapshot');
 
       callback(undefined, snapshot);
     } catch (error) {
@@ -291,27 +280,21 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
   ) {
     switch (request.type) {
       case this.hap.StreamRequestTypes.START: {
-        this.camera.log.debug(
-          `Start stream requested: ${request.video.width}x${request.video.height}, ${request.video.fps} fps, ${request.video.max_bit_rate} kbps`,
-          this.camera.accessory.displayName,
-        );
+        this.camera.log.debug(`Start stream requested: ${request.video.width}x${request.video.height}, ${request.video.fps} fps, ${request.video.max_bit_rate} kbps`);
 
         await this.startStream(request, callback);
         break;
       }
 
       case this.hap.StreamRequestTypes.RECONFIGURE: {
-        this.camera.log.debug(
-          `Reconfigure stream requested: ${request.video.width}x${request.video.height}, ${request.video.fps} fps, ${request.video.max_bit_rate} kbps (Ignored)`,
-          this.camera.accessory.displayName,
-        );
+        this.camera.log.debug(`Reconfigure stream requested: ${request.video.width}x${request.video.height}, ${request.video.fps} fps, ${request.video.max_bit_rate} kbps (Ignored)`);
 
         callback();
         break;
       }
 
       case this.hap.StreamRequestTypes.STOP: {
-        this.camera.log.debug('Stop stream requested', this.camera.accessory.displayName);
+        this.camera.log.debug('Stop stream requested');
 
         this.stopStream(request.sessionID);
         callback();
@@ -335,7 +318,7 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
     const sessionInfo = this.pendingSessions[request.sessionID];
 
     if (!sessionInfo) {
-      this.camera.log.error('Error finding session information.', this.camera.accessory.displayName);
+      this.camera.log.error('Error finding session information.');
       callback(new Error('Error finding session information'));
     }
 
@@ -408,11 +391,7 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
         `srtp://${sessionInfo.address}:${sessionInfo.audioPort}?rtcpport=${sessionInfo.audioPort}&pkt_size=188`,
       );
     } else {
-      this.camera.log.error(
-        `Unsupported audio codec requested: ${request.audio.codec}`,
-        this.camera.accessory.displayName,
-        'Homebridge',
-      );
+      this.camera.log.error(`Unsupported audio codec requested: ${request.audio.codec}`);
     }
 
     ffmpegArgs.push('-progress', 'pipe:1');
@@ -422,7 +401,7 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
     activeSession.socket = createSocket(sessionInfo.addressVersion === 'ipv6' ? 'udp6' : 'udp4');
 
     activeSession.socket.on('error', (err: Error) => {
-      this.camera.log.error('Socket error: ' + err.message, this.camera.accessory.displayName);
+      this.camera.log.error('Socket error: ' + err.message);
       this.stopStream(request.sessionID);
     });
 
@@ -431,7 +410,7 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
         clearTimeout(activeSession.timeout);
       }
       activeSession.timeout = setTimeout(() => {
-        this.camera.log.info('Device appears to be inactive. Stopping stream.', this.camera.accessory.displayName);
+        this.camera.log.info('Device appears to be inactive. Stopping stream.');
         this.controller.forceStopStreamingSession(request.sessionID);
         this.stopStream(request.sessionID);
       }, request.video.rtcp_interval * 5 * 1000);
@@ -440,12 +419,10 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
     activeSession.socket.bind(sessionInfo.videoIncomingPort);
 
     activeSession.mainProcess = new FfmpegStreamingProcess(
-      this.camera.accessory.displayName,
       request.sessionID,
       defaultFfmpegPath,
       ffmpegArgs,
       this.camera.log,
-      true,
       this,
       callback,
     );
@@ -455,10 +432,9 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
   }
 
   private async fetchSnapshot(): Promise<Buffer> {
-    this.camera.log.debug('Running Snapshot commands for %s', this.camera.accessory.displayName);
-
     if (!this.camera.device.online) {
-      throw new Error(`${this.camera.accessory.displayName} is currently offline.`);
+      this.camera.log.debug('Device is currently offline.');
+      throw new Error('Device is currently offline.');
     }
 
     // TODO: Check if there is a stream already running to fetch snapshot.
@@ -478,6 +454,8 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
 
     return new Promise((resolve, reject) => {
 
+      this.camera.log.debug(`Running Snapshot command: ${defaultFfmpegPath} ${ffmpegArgs.map(value => JSON.stringify(value)).join(' ')}`);
+
       const ffmpeg = spawn(
         defaultFfmpegPath,
         ffmpegArgs.map(x => x.toString()),
@@ -493,10 +471,7 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
       });
 
       ffmpeg.on('error', (error) => {
-        this.camera.log.error(
-          `FFmpeg process creation failed: ${error.message} - Showing "offline" image instead.`,
-          this.camera.accessory.displayName,
-        );
+        this.camera.log.error(`FFmpeg process creation failed: ${error.message} - Showing "offline" image instead.`);
         reject('Failed to fetch snapshot.');
       });
 
@@ -509,13 +484,13 @@ export class TuyaStreamingDelegate implements CameraStreamingDelegate, FfmpegStr
         if (snapshotBuffer.length > 0) {
           resolve(snapshotBuffer);
         } else {
-          this.camera.log.error('Failed to fetch snapshot. Showing "offline" image instead.', this.camera.accessory.displayName);
+          this.camera.log.error('Failed to fetch snapshot. Showing "offline" image instead.');
 
           if (errors.length > 0) {
-            this.camera.log.error(errors.join(' - '), this.camera.accessory.displayName, 'Homebridge');
+            this.camera.log.error(errors.join(' - '));
           }
 
-          reject(`Unable to fetch snapshot for: ${this.camera.accessory.displayName}`);
+          reject('Unable to fetch snapshot.');
         }
       });
     });

@@ -253,9 +253,10 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     const DEFAULT_PASS = 'homebridge';
 
     let res;
-    const { endpoint, accessId, accessKey } = this.options;
-    const api = new TuyaOpenAPI(endpoint, accessId, accessKey, this.log);
-    const deviceManager = new TuyaCustomDeviceManager(api);
+    const { endpoint, accessId, accessKey, debug, debugLevel } = this.options;
+    const debugMode = debug && ((debugLevel ?? '').length > 0 ? debugLevel?.includes('api') : true);
+    const api = new TuyaOpenAPI(endpoint, accessId, accessKey, this.log, 'en', debugMode);
+    const deviceManager = new TuyaCustomDeviceManager(api, debugMode);
 
     this.log.info('Get token.');
     res = await api.getToken();
@@ -341,13 +342,16 @@ export class TuyaPlatform implements DynamicPlatformPlugin {
     }
 
     let res;
-    const { accessId, accessKey, countryCode, username, password, appSchema, endpoint } = this.options;
+    const { accessId, accessKey, countryCode, username, password, appSchema, endpoint, debug, debugLevel } = this.options;
+    const debugMode = debug && ((debugLevel ?? '').length > 0 ? debugLevel?.includes('api') : true);
     const api = new TuyaOpenAPI(
       (endpoint && endpoint.length > 0) ? endpoint : TuyaOpenAPI.getDefaultEndpoint(countryCode),
       accessId,
       accessKey,
-      this.log);
-    const deviceManager = new TuyaHomeDeviceManager(api);
+      this.log,
+      'en',
+      debugMode);
+    const deviceManager = new TuyaHomeDeviceManager(api, debugMode);
 
     this.log.info('Log in to Tuya Cloud.');
     res = await api.homeLogin(countryCode, username, password, appSchema);

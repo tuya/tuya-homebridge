@@ -30,7 +30,14 @@ class BaseAccessory {
 
   public deviceManager = this.platform.deviceManager!;
   public device = this.deviceManager.getDevice(this.accessory.context.deviceID)!;
-  public log = new PrefixLogger(this.platform.log, this.device.name.length > 0 ? this.device.name : this.device.id);
+  public log = new PrefixLogger(
+    this.platform.log,
+    this.device.name.length > 0 ? this.device.name : this.device.id,
+    this.platform.options.debug && ((this.platform.options.debugLevel ?? '').length > 0
+      ? this.platform.options.debugLevel?.includes(this.device.id)
+      : true),
+  );
+
   public intialized = false;
 
   public adaptiveLightingController?;

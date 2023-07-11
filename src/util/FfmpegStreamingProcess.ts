@@ -36,17 +36,15 @@ export class FfmpegStreamingProcess {
   readonly stdin: Writable;
 
   constructor(
-    cameraName: string,
     sessionId: string,
     videoProcessor: string,
     ffmpegArgs: string[],
     log: PrefixLogger,
-    debug = false,
     delegate: StreamingDelegate,
     callback?: StreamRequestCallback,
   ) {
 
-    log.debug('Stream command: ' + videoProcessor + ' ' + ffmpegArgs.join(' '), cameraName, debug);
+    log.debug(`Stream command: ${videoProcessor} ${ffmpegArgs.map(value => JSON.stringify(value)).join(' ')}`);
 
     let started = false;
     const startTime = Date.now();
@@ -63,11 +61,11 @@ export class FfmpegStreamingProcess {
           const runtime = (Date.now() - startTime) / 1000;
           const message = 'Getting the first frames took ' + runtime + ' seconds.';
           if (runtime < 5) {
-            log.debug(message, cameraName, debug);
+            log.debug(message);
           } else if (runtime < 22) {
-            log.warn(message, cameraName);
+            log.warn(message);
           } else {
-            log.error(message, cameraName);
+            log.error(message);
           }
         }
       }
@@ -81,14 +79,12 @@ export class FfmpegStreamingProcess {
         callback();
         callback = undefined;
       }
-      if (debug && line.match(/\[(panic|fatal|error)\]/)) { // For now only write anything out when debug is set
-        log.error(line, cameraName);
-      } else if (debug) {
-        log.debug(line, cameraName, true);
+      if (line.match(/\[(panic|fatal|error)\]/)) {
+        log.error(line);
       }
     });
     this.process.on('error', (error: Error) => {
-      log.error('FFmpeg process creation failed: ' + error.message, cameraName);
+      log.error('FFmpeg process creation failed: ' + error.message);
       if (callback) {
         callback(new Error('FFmpeg process creation failed'));
       }
@@ -102,15 +98,15 @@ export class FfmpegStreamingProcess {
       const message = 'FFmpeg exited with code: ' + code + ' and signal: ' + signal;
 
       if (this.killTimeout && code === 0) {
-        log.debug(message + ' (Expected)', cameraName, debug);
+        log.debug(message + ' (Expected)');
       } else if (code === null || code === 255) {
         if (this.process.killed) {
-          log.debug(message + ' (Forced)', cameraName, debug);
+          log.debug(message + ' (Forced)');
         } else {
-          log.error(message + ' (Unexpected)', cameraName);
+          log.error(message + ' (Unexpected)');
         }
       } else {
-        log.error(message + ' (Error)', cameraName);
+        log.error(message + ' (Error)');
         delegate.stopStream(sessionId);
         if (!started && callback) {
           callback(new Error(message));

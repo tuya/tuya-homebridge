@@ -27,6 +27,8 @@ export interface TuyaPlatformCustomConfigOptions {
   username: string;
   password: string;
   deviceOverrides?: Array<TuyaPlatformDeviceConfig>;
+  debug?: boolean;
+  debugLevel?: string;
 }
 
 export interface TuyaPlatformHomeConfigOptions {
@@ -40,6 +42,8 @@ export interface TuyaPlatformHomeConfigOptions {
   appSchema: string;
   homeWhitelist?: Array<number>;
   deviceOverrides?: Array<TuyaPlatformDeviceConfig>;
+  debug?: boolean;
+  debugLevel?: string;
 }
 
 export type TuyaPlatformConfigOptions = TuyaPlatformCustomConfigOptions | TuyaPlatformHomeConfigOptions;
@@ -54,6 +58,8 @@ export const customOptionsSchema = {
     accessId: { type: 'string', required: true },
     accessKey: { type: 'string', required: true },
     deviceOverrides: { 'type': 'array' },
+    debug: { type: 'boolean' },
+    debugLevel: { 'type': 'string' },
   },
 };
 
@@ -68,5 +74,7 @@ export const homeOptionsSchema = {
     appSchema: { 'type': 'string', required: true },
     homeWhitelist: { 'type': 'array' },
     deviceOverrides: { 'type': 'array' },
+    debug: { type: 'boolean' },
+    debugLevel: { 'type': 'string' },
   },
 };

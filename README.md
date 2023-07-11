@@ -76,6 +76,8 @@ Before you can configure, you must go to the [Tuya IoT Platform](https://iot.tuy
 - `options.endpoint` - **required** : The endpoint URL taken from the [API Reference > Endpoints](https://developer.tuya.com/en/docs/iot/api-request?id=Ka4a8uuo1j4t4#title-1-Endpoints) table.
 - `options.accessId` - **required** : The Access ID obtained from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
 - `options.accessKey` - **required** : The Access Secret obtained from [Tuya IoT Platform > Cloud Develop](https://iot.tuya.com/cloud)
+- `options.debug` - **optional**: Includes debugging output in the Homebridge log. (Default: `false`)
+- `options.debugLevel` - **optional**: An optional list of strings seperated with comma `,`. `api` represents for HTTP API log, `mqtt` represents for MQTT log, and device ID represents for device log. If blank, all logs are outputed.
 
 #### For "Smart Home" Project
 
@@ -88,7 +90,9 @@ Before you can configure, you must go to the [Tuya IoT Platform](https://iot.tuy
 - `options.password` - **required** : The app account's password. MD5 salted password is also available for increased security.
 - `options.appSchema` - **required** : The app schema: 'tuyaSmart' for the Tuya Smart App, or 'smartlife' for the Smart Life App.
 - `options.endpoint` - **optional** : The endpoint URL can be inferred from the [API Reference > Endpoints](https://developer.tuya.com/en/docs/iot/api-request?id=Ka4a8uuo1j4t4#title-1-Endpoints) table based on the country code provided. Only manually set this value if you encounter login issues and need to specify the endpoint for your account location.
-- `options.homeWhitelist` - **optional**: An array of integer values for the home IDs you want to whitelist. If provided, only devices with matching Home IDs will be included. You can find the Home ID in the homebridge log.
+- `options.homeWhitelist` - **optional**: An array of integer values for the home IDs you want to whitelist. If provided, only devices with matching Home IDs will be included. You can find the Home ID in the Homebridge log.
+- `options.debug` - **optional**: Includes debugging output in the Homebridge log. (Default: `false`)
+- `options.debugLevel` - **optional**: An optional list of strings seperated with comma `,`. `api` represents for API and MQTT log, device ID represents for specific device log. If blank, all logs are outputed.
 
 
 #### Advanced options
@@ -160,15 +164,9 @@ After Homebridge has been successfully launched, the device information list wil
 **⚠️Please make sure to remove sensitive information such as `ip`, `lon`, `lat`, `local_key`, and `uid` before submitting the file.**
 
 
-#### 2. Enable Homebridge Debug Mode
+#### 2. Enable Debug Mode
 
-For Homebridge Web UI users:
-- Go to the `Homebridge Setting` page
-- Turn on the `Homebridge Debug Mode -D` switch
-- Restart Homebridge.
-
-For Homebridge Command Line Users:
-- Start Homebridge with the `-D` flag: `homebridge -D`
+Add debug option in the plugin config, then restart Homebridge.
 
 #### 3. Collect Logs
 

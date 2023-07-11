@@ -6,8 +6,9 @@ export default class TuyaCustomDeviceManager extends TuyaDeviceManager {
 
   constructor(
     public api: TuyaOpenAPI,
+    public debug = false,
   ) {
-    super(api);
+    super(api, debug);
     this.mq.version = '2.0';
   }
 
