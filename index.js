@@ -8,10 +8,11 @@ const SmokeSensorAccessory = require('./lib/smokesensor_accessory');
 const Fanv2Accessory = require('./lib/fanv2_accessory');
 const HeaterAccessory = require('./lib/heater_accessory');
 const GarageDoorAccessory = require('./lib/garagedoor_accessory');
-const AirPurifierAccessory = require('./lib/air_purifier_accessory')
-const WindowCoveringAccessory = require('./lib/window_covering_accessory')
+const AirPurifierAccessory = require('./lib/air_purifier_accessory');
+const WindowCoveringAccessory = require('./lib/window_covering_accessory');
 const ContactSensorAccessory = require('./lib/contactsensor_accessory');
-const LeakSensorAccessory = require('./lib/leak_sensor_accessory')
+const LeakSensorAccessory = require('./lib/leak_sensor_accessory');
+const CameraAccessory = require('./lib/camera_accessory');
 
 const LogUtil = require('./util/logutil')
 const DataUtil = require('./util/datautil')
@@ -118,6 +119,11 @@ class TuyaPlatform {
     switch (deviceType) {
       case 'kj':
         deviceAccessory = new AirPurifierAccessory(this, homebridgeAccessory, device);
+        this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+        this.deviceAccessories.set(uuid, deviceAccessory);
+        break;
+      case 'sp':
+        deviceAccessory = new CameraAccessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;

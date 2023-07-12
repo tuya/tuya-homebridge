@@ -1,0 +1,6 @@
+{
+    "watch": ["index.js","lib"],
+    "ext": "js",
+    "ignore": [],
+    "exec": "homebridge -D -I"
+  } 
