@@ -428,6 +428,17 @@
                     ]
                 }
             ]
+        },
+        {
+            "type": "fieldset",
+            "title": "Advance Settings",
+            "expandable": true,
+            "expanded": true,
+            "notitle": false,
+            "items": [
+                "options.debug",
+                "options.debugLevel",
+            ]
         }
     ]
 }
