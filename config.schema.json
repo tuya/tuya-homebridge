@@ -437,7 +437,7 @@
             "notitle": false,
             "items": [
                 "options.debug",
-                "options.debugLevel",
+                "options.debugLevel"
             ]
         }
     ]
