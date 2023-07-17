@@ -2,44 +2,56 @@ import { TuyaDeviceSchemaEnumProperty } from '../device/TuyaDevice';
 import { limit } from '../util/util';
 import BaseAccessory from './BaseAccessory';
 
-const SCHEMA_CODE = {
-  CURRENT_POSITION: ['percent_state'],
-  TARGET_POSITION_CONTROL: ['control', 'mach_operate'],
-  TARGET_POSITION_PERCENT: ['percent_control', 'position'],
-  // POSITION_STATE: ['work_state'],
-
-  // conflit in different products, see: https://github.com/0x5e/homebridge-tuya-platform/issues/179#issuecomment-1367922879
-  // REVERSE_MODE: ['control_back_mode', 'control_back'],
-};
+const SCHEMA_CODE = [
+  {
+    NAME : 'control',
+    CURRENT_POSITION: ['percent_state'],
+    TARGET_POSITION_CONTROL: ['control', 'mach_operate'],
+    TARGET_POSITION_PERCENT: ['percent_control', 'position'],
+  },
+  {
+    NAME : 'control_2',
+    CURRENT_POSITION: ['percent_state'],
+    TARGET_POSITION_CONTROL: ['control_2', 'mach_operate'],
+    TARGET_POSITION_PERCENT: ['percent_control_2', 'position'],
+  },
+];
 
 export default class WindowCoveringAccessory extends BaseAccessory {
 
   requiredSchema() {
-    return [SCHEMA_CODE.TARGET_POSITION_CONTROL];
+    return [SCHEMA_CODE[0].TARGET_POSITION_CONTROL];//, SCHEMA_CODE[1].TARGET_POSITION_CONTROL];
   }
 
   configureServices() {
-    this.configureCurrentPosition();
-    this.configurePositionState();
-    if (this.getSchema(...SCHEMA_CODE.TARGET_POSITION_PERCENT)) {
-      this.configureTargetPositionPercent();
-    } else {
-      this.configureTargetPositionControl();
+
+    let amount = 1;
+    const schema = this.getSchema('control_2');
+    if (schema) {
+      amount = 2;
+    }
+    this.log.warn('Curtain amount:', amount);
+    for (let i = 0; i < amount; i++) {
+
+      this.configureCurrentPosition(i);
+      this.configurePositionState(i);
+      if (this.getSchema(...SCHEMA_CODE[i].TARGET_POSITION_PERCENT)) {
+        this.configureTargetPositionPercent(i);
+      } else {
+        this.configureTargetPositionControl(i);
+      }
     }
   }
 
+  configureCurrentPosition(i : number) {
+    const currentSchema = this.getSchema(...SCHEMA_CODE[i].CURRENT_POSITION);
+    const targetSchema = this.getSchema(...SCHEMA_CODE[i].TARGET_POSITION_PERCENT);
+    const targetControlSchema = this.getSchema(...SCHEMA_CODE[i].TARGET_POSITION_CONTROL)!;
 
-  mainService() {
-    return this.accessory.getService(this.Service.WindowCovering)
-      || this.accessory.addService(this.Service.WindowCovering);
-  }
+    const service = this.accessory.getService(SCHEMA_CODE[i].NAME) ||
+       this.accessory.addService(this.Service.WindowCovering, SCHEMA_CODE[i].NAME, SCHEMA_CODE[i].NAME);
 
-  configureCurrentPosition() {
-    const currentSchema = this.getSchema(...SCHEMA_CODE.CURRENT_POSITION);
-    const targetSchema = this.getSchema(...SCHEMA_CODE.TARGET_POSITION_PERCENT);
-    const targetControlSchema = this.getSchema(...SCHEMA_CODE.TARGET_POSITION_CONTROL)!;
-
-    this.mainService().getCharacteristic(this.Characteristic.CurrentPosition)
+    service.getCharacteristic(this.Characteristic.CurrentPosition)
       .onGet(() => {
         if (currentSchema) {
           const status = this.getStatus(currentSchema.code)!;
@@ -63,12 +75,16 @@ export default class WindowCoveringAccessory extends BaseAccessory {
       });
   }
 
-  configurePositionState() {
-    const currentSchema = this.getSchema(...SCHEMA_CODE.CURRENT_POSITION);
-    const targetSchema = this.getSchema(...SCHEMA_CODE.TARGET_POSITION_PERCENT);
+  configurePositionState(i : number) {
+    const currentSchema = this.getSchema(...SCHEMA_CODE[i].CURRENT_POSITION);
+    const targetSchema = this.getSchema(...SCHEMA_CODE[i].TARGET_POSITION_PERCENT);
 
     const { DECREASING, INCREASING, STOPPED } = this.Characteristic.PositionState;
-    this.mainService().getCharacteristic(this.Characteristic.PositionState)
+
+    const service = this.accessory.getService(SCHEMA_CODE[i].NAME) ||
+       this.accessory.addService(this.Service.WindowCovering, SCHEMA_CODE[i].NAME, SCHEMA_CODE[i].NAME);
+
+    service.getCharacteristic(this.Characteristic.PositionState)
       .onGet(() => {
         if (!currentSchema || !targetSchema) {
           return STOPPED;
@@ -86,13 +102,16 @@ export default class WindowCoveringAccessory extends BaseAccessory {
       });
   }
 
-  configureTargetPositionPercent() {
-    const schema = this.getSchema(...SCHEMA_CODE.TARGET_POSITION_PERCENT);
+  configureTargetPositionPercent(i : number) {
+    const schema = this.getSchema(...SCHEMA_CODE[i].TARGET_POSITION_PERCENT);
     if (!schema) {
       return;
     }
 
-    this.mainService().getCharacteristic(this.Characteristic.TargetPosition)
+    const service = this.accessory.getService(SCHEMA_CODE[i].NAME) ||
+       this.accessory.addService(this.Service.WindowCovering, SCHEMA_CODE[i].NAME, SCHEMA_CODE[i].NAME);
+
+    service.getCharacteristic(this.Characteristic.TargetPosition)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
         return limit(status.value as number, 0, 100);
@@ -102,15 +121,18 @@ export default class WindowCoveringAccessory extends BaseAccessory {
       });
   }
 
-  configureTargetPositionControl() {
-    const schema = this.getSchema(...SCHEMA_CODE.TARGET_POSITION_CONTROL);
+  configureTargetPositionControl(i : number) {
+    const schema = this.getSchema(...SCHEMA_CODE[i].TARGET_POSITION_CONTROL);
     if (!schema) {
       return;
     }
 
     const isOldSchema = !(schema.property as TuyaDeviceSchemaEnumProperty).range.includes('open');
 
-    this.mainService().getCharacteristic(this.Characteristic.TargetPosition)
+    const service = this.accessory.getService(SCHEMA_CODE[i].NAME) ||
+       this.accessory.addService(this.Service.WindowCovering, SCHEMA_CODE[i].NAME, SCHEMA_CODE[i].NAME);
+
+    service.getCharacteristic(this.Characteristic.TargetPosition)
       .onGet(() => {
         const status = this.getStatus(schema.code)!;
         if (status.value === 'close' || status.value === 'FZ') {
