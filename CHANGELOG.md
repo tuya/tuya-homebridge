@@ -28,6 +28,7 @@
 - Add Layout to display schema in sections. (#283) Thanks @donavanbecker for the contribution
 - Add option to make accessory and unbridged accessory (#285) Thanks @donavanbecker for the contribution
 - Add inching button for switches.
+- Add support to 2ch windows covering. (#339) Thanks @CryptoIR for the contribution
 
 
 ### Fixed
