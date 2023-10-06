@@ -156,7 +156,7 @@ Most category code is pinyin abbreviation of Chinese name.
 | ---- | ---- | ---- | ---- | ---- | ---- |
 | Smart Electricity Meter | 智能电表 | zndb | | | [Documentation](https://developer.tuya.com/en/docs/iot/smart-meter?id=Kaiuz4gv6ack7) |
 | Smart Water Meter | 智能水表 | znsb | | | [Documentation](https://developer.tuya.com/en/docs/iot/smart-water-meter?id=Kaiuz4jf0jy9f) |
-| Circuit Breaker | 断路器 | dlq | | | [Documentation](https://developer.tuya.com/en/docs/iot/dlq?id=Kb0kidk9enyh8) |
+| Circuit Breaker | 断路器 | dlq | Switch | ✅ | [Documentation](https://developer.tuya.com/en/docs/iot/dlq?id=Kb0kidk9enyh8) |
 
 
 ## Digital Entertainment
