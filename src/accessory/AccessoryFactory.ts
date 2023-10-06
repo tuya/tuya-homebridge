@@ -70,6 +70,7 @@ export default class AccessoryFactory {
         break;
 
       // Electrical Products
+      case 'dlq':
       case 'kg':
       case 'tdq':
       case 'qjdcz':
