@@ -7,6 +7,7 @@ const SwitchAccessory = require('./lib/switch_accessory');
 const SmokeSensorAccessory = require('./lib/smokesensor_accessory');
 const Fanv2Accessory = require('./lib/fanv2_accessory');
 const HeaterAccessory = require('./lib/heater_accessory');
+const AirConditionerAccessory = require('./lib/air_conditioner_accessory');
 const GarageDoorAccessory = require('./lib/garagedoor_accessory');
 const AirPurifierAccessory = require('./lib/air_purifier_accessory')
 const WindowCoveringAccessory = require('./lib/window_covering_accessory')
@@ -154,6 +155,11 @@ class TuyaPlatform {
         break;
       case 'ywbj':
         deviceAccessory = new SmokeSensorAccessory(this, homebridgeAccessory, device);
+        this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
+        this.deviceAccessories.set(uuid, deviceAccessory);
+        break;
+      case 'kt':
+        deviceAccessory = new AirConditionerAccessory(this, homebridgeAccessory, device);
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
