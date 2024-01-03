@@ -1,12 +1,14 @@
 const TuyaOpenAPI = require("./lib/tuyaopenapi");
 const TuyaSHOpenAPI = require("./lib/tuyashopenapi");
 const TuyaOpenMQ = require("./lib/tuyamqttapi");
+const TuyaInfraredsAPI = require("./lib/tuyainfraredsapi");
 const OutletAccessory = require('./lib/outlet_accessory');
 const LightAccessory = require('./lib/light_accessory');
 const SwitchAccessory = require('./lib/switch_accessory');
 const SmokeSensorAccessory = require('./lib/smokesensor_accessory');
 const Fanv2Accessory = require('./lib/fanv2_accessory');
 const HeaterAccessory = require('./lib/heater_accessory');
+const IRAirConditionerAccessory = require('./lib/irremote_air_conditioner_accessory');
 const GarageDoorAccessory = require('./lib/garagedoor_accessory');
 const AirPurifierAccessory = require('./lib/air_purifier_accessory')
 const WindowCoveringAccessory = require('./lib/window_covering_accessory')
@@ -94,6 +96,7 @@ class TuyaPlatform {
         return;
       }
     }
+    this.tuyaIRAPI = new TuyaInfraredsAPI(api);
 
     for (const device of devices) {
       this.addAccessory(device);
@@ -104,6 +107,7 @@ class TuyaPlatform {
     this.tuyaOpenMQ = mq;
     this.tuyaOpenMQ.start();
     this.tuyaOpenMQ.addMessageListener(this.onMQTTMessage.bind(this));
+
   }
 
   addAccessory(device) {
@@ -183,6 +187,38 @@ class TuyaPlatform {
         this.accessories.set(uuid, deviceAccessory.homebridgeAccessory);
         this.deviceAccessories.set(uuid, deviceAccessory);
         break;
+      // <-- IR start
+      case 'wnykq': 
+        Promise.all([this.tuyaIRAPI.getCategories(device.id), 
+            this.tuyaIRAPI.getRemotes(device.id)])
+          .then((resp) => {
+            for(const remote of resp[1]) {
+              this.tuyaIRAPI.getACStatus(device.id, remote.remote_id).then((status) => {
+                let category = resp[0].find((e) => e.category_id == 5);
+                switch (category.category_name) {
+                  case 'Air Conditioner':
+                    let accessory = new IRAirConditionerAccessory(this, homebridgeAccessory, {
+                      id: device.id,
+                      remote_id: remote.remote_id,
+                      name: remote.remote_name,
+                      index: remote.remote_index,
+                      category: remote.category_id,
+                      brand: remote.brand_name,
+                      status: status
+                    });
+                    this.accessories.set(uuid, accessory.homebridgeAccessory);
+                    this.deviceAccessories.set(uuid, accessory);
+                    break;
+                    default:
+                      break;
+                }
+              });
+            }
+        }).catch((error) => {
+          this.log.error('[GET][%s] Remote Error: %s', device.id, error);
+        });
+        break;
+      // IR end -->
       default:
         break;
     }
