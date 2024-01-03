@@ -1,3 +1,16 @@
+
+Version 1.59
+
+rewrite smart boiler \ timer switch to support double (and more) switches.
+
+This Fork adds more device support for the fantastaic Homebridge-Tuya plugin!
+
+* Valve accessory support for switches! - turn your regular switch (kg category) to a valve accessory! what it means? it means that you 
+  set a countdown timer for the switch to turn off automatically directly from the home app! (great for boiler switches). 
+* Motion sensor support with modification.
+* Zigbee curtain switch support with percentage control.
+* Push accessory support - currently only Fingerbot is supported.
+
 Tuya Homebridge Plugin
 ========================
 
