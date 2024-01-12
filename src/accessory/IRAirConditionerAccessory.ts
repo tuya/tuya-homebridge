@@ -231,8 +231,10 @@ export default class IRAirConditionerAccessory extends BaseAccessory {
       return undefined;
     }
 
-    const min = keyRangeItem.temp_list[0].temp;
-    const max = keyRangeItem.temp_list[keyRangeItem.temp_list.length - 1].temp;
+    const tempList = keyRangeItem.temp_list.map((temp) => temp.temp);
+
+    const min = Math.min(...tempList);
+    const max = Math.max(...tempList);
     return [min, max];
   }
 
