@@ -16,31 +16,35 @@ export function configureEnergyUsage(
   if (currentSchema) {
     const amperes = createAmperesCharacteristic(api);
     if (!service.testCharacteristic(amperes)) {
-      service.addCharacteristic(amperes).onGet(
-        createStatusGetter(accessory, currentSchema, isUnit(currentSchema, 'mA') ? 1000 : 0),
-      );
+      service.addCharacteristic(amperes);
     }
+    service.getCharacteristic(amperes).onGet(
+      createStatusGetter(accessory, currentSchema, isUnit(currentSchema, 'mA') ? 1000 : 0),
+    );
   }
 
   if (powerSchema) {
     const watts = createWattsCharacteristic(api);
     if (!service.testCharacteristic(watts)) {
-      service.addCharacteristic(watts).onGet(createStatusGetter(accessory, powerSchema));
+      service.addCharacteristic(watts);
     }
+    service.getCharacteristic(watts).onGet(createStatusGetter(accessory, powerSchema));
   }
 
   if (voltageSchema) {
     const volts = createVoltsCharacteristic(api);
     if (!service.testCharacteristic(volts)) {
-      service.addCharacteristic(volts).onGet(createStatusGetter(accessory, voltageSchema));
+      service.addCharacteristic(volts);
     }
+    service.getCharacteristic(volts).onGet(createStatusGetter(accessory, voltageSchema));
   }
 
   if (totalSchema) {
     const kwh = createKilowattHourCharacteristic(api);
     if (!service.testCharacteristic(kwh)) {
-      service.addCharacteristic(kwh).onGet(createStatusGetter(accessory, totalSchema));
+      service.addCharacteristic(kwh);
     }
+    service.getCharacteristic(kwh).onGet(createStatusGetter(accessory, totalSchema));
   }
 }
 
