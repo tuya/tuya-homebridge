@@ -38,6 +38,8 @@
 - Fix crash when camera sends an invalid status message.
 - Fix incorrect Door and Window Controller state. (#178)
 - Fix Thermostat cold mode not working (#242).
+- Order temp before get the min and max for IRAirConditionerAccessory. (#433) Thanks @tuliocll for the contribution
+- Fix enerage usage not updated after homebridge restart. (#268)
 
 
 ### Changed
