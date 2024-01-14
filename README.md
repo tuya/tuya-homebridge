@@ -11,6 +11,12 @@
 Fork version of the official Tuya Homebridge plugin, with a focus on fixing bugs and adding new device support.
 
 
+
+⚠️**Update on 2024.1.14:** Thanks for the attention on this project. There's more and more "problem device", which has wrong definition by manufacture (reversed 0%-100% state, wrong range, wrong unit, ...). Support them one by one really cost a lot. I'm not going to support them in the future, please try solve them by yourself. PRs are still welcome, and bugs will be focused. Thanks again :)
+
+
+
+
 ## Features
 
 - Optimized and improved code for better readability and maintainability.
