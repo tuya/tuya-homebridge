@@ -312,7 +312,7 @@ export default class TuyaOpenAPI {
       }
 
       req.on('error', e => {
-        this.log.error('Netrork error: %s. Retrying...', e.message);
+        this.log.error('Network error: %s. Retrying...', e.message);
         reject(e);
       });
       req.end();
