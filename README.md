@@ -1,3 +1,7 @@
+>[!IMPORTANT]
+>!!! Fork of the <font color="#ff0000">initial Tuya Platform</font> Homebridge Plugin released by Tuya to fix Homebridge v2 incompatibilites. !!!
+
+
 Tuya Homebridge Plugin
 ========================
 
