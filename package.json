@@ -1,7 +1,7 @@
 {
   "name": "homebridge-tuya-platform",
-  "version": "1.5.0",
-  "description": "Official Homebridge plugin for Tuya Open API, maintained by the Tuya Developer Team.",
+  "version": "2.0.0",
+  "description": "Fork of the official Homebridge plugin for Tuya Open API to fix Homebridge v2 compatibility issues.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
